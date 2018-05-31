@@ -1,0 +1,27 @@
+name: "EPIC SNA"
+output_dir: "docs"
+navbar:
+  title: "EPIC SNA"
+  left:
+    - text: "Syllabus"
+      href: syllabus.html
+    - text: "Intro R"     ##### the new
+      href: introR.html  ##### stuff
+    - text: "Day 1"
+      href: day1.html
+    - text: "Day 2"
+      href: day2.html
+    - text: "Day 3"
+      href: day3.html
+    - text: "Day 4"
+      href: day4.html
+    - text: "Day 5"
+      href: day5.html
+output:
+  html_document:
+    theme: cosmo ### cosmo ###### flatly
+    highlight: tango
+    include:
+      after_body: footer.html
+    css: style.css
+    

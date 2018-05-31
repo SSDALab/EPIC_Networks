@@ -1,0 +1,125 @@
+img {
+  width: 400px;
+  display: block;
+  margin: 0 auto;
+}
+
+blockquote {
+  font-style: italic
+}
+
+.navbar {
+  background-color:gray;
+  border-color:gray;
+}
+
+.navbar:hover {
+  opacity: .9;
+  font-color:#AD1824!important;
+}
+
+.navbar-brand {
+color:#C8969A!important;
+}
+
+
+#rStudioFooter {
+  position: relative;
+  z-index: 2;
+
+  box-sizing: border-box;
+  height: 91px;
+}
+
+#rStudioFooter   a:link{
+  color:white;
+} 
+
+#rStudioFooter   a:visited{
+  color:white;
+} 
+
+#rStudioFooter   a:hover{
+  color:black;
+} 
+
+#rStudioFooter.band {
+  background-color: #C8969A;
+  padding: 30px 5%;
+
+  color: #fff;
+
+  font-weight: 300;
+  font-size: 12px;
+
+  line-height: 25px;
+}
+
+#rStudioFooter .bandContent {
+  color: #fff;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  line-height: 20px;
+}
+
+#rStudioFooter .bandContent #copyright {
+  flex-shrink: 5;
+}
+
+#rStudioFooter .bandContent #logos {
+  flex-shrink: 1;
+}
+
+#rStudioFooter .bandContent .footerLogo {
+  display: inline-block;
+  height: 25px;
+  width: 25px;
+
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-position: center center;
+
+  margin: 0 8px;
+}
+
+#rStudioFooter .bandContent #logos .footerLogo:last-child {
+  margin-right: 0px;
+}
+
+#rStudioFooter .bandContent .footerLogo.twitter {
+  background-image: url(../images/twitterLogo.svg);
+}
+
+#rStudioFooter .bandContent .footerLogo.gitHub {
+  background-image: url(../images/gitHubLogo2.svg);
+}
+
+#rStudioFooter .bandContent .footerLogo.linkedIn {
+  background-image: url(../images/linkedInLogo.svg);
+}
+
+#rStudioFooter .bandContent .footerLogo.facebook {
+  background-image: url(../images/facebookLogo.svg);
+}
+
+#rStudioFooter .bandContent .footerLogo.researchgate {
+  background-image: url(../images/researchgate-logo.svg);
+}
+
+#rStudioFooter .bandContent .footerLogo.orcid {
+  background-image: url(../images/ORCID_logo.png);
+}
+
+#rStudioFooter .bandContent .footerLogo.googlescholar {
+  background-image: url(../images/google-scholar-logo2.png);
+}
+
+#rStudioFooter .bandContent .footerLogo.pmc {
+  background-image: url(../images/pmc_logo.png);
+}
+
+.left{float:left; width:200px;}
+.wrapper{float:left; width:100%;}

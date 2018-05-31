@@ -1,0 +1,17 @@
+---
+title: "Projects"
+---
+
+Sometimes I like to do projects and then post them on the internet for the whole world to benefit!
+here's some examples. 
+
+## [Data Visualization in R](http://nickstrayer.me/visualization_in_r/)
+
+- An RMarkdown presentation on the common mistakes made in visualization and how to fix them.
+- Includes a github repo for access to all the code.
+- Look at how high quality my work is, hire and or collaborate with me. 
+
+## [Statistical Plots](http://bl.ocks.org/nstrayer/37a503dd1db369a8f7e3ce21757e19ee)
+
+- Interactive plots of things
+- I can code!

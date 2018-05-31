@@ -1,0 +1,16 @@
+---
+title: "Syllabus: EPIC Introduction to Social Network Analysis"
+---
+
+Why I am awesome. 
+
+- __Name:__ Nick
+- __Ocupation:__ "Student"
+- __Hobbies:__ Learning software development instead of studying for exams. 
+
+Here is a super cool photo of me doing one of my favorite things, yawning. 
+
+<img src="figs/network.png" style="width:50%; border:1px solid; margin-right: 20px" align="left">
+
+
+Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. 
