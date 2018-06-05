@@ -21,6 +21,21 @@
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 
+<link rel="icon" type="image/png" href="images/favicon.png" />
+
+<script type="text/javascript" src="js/rmarkdown.js"></script>
+<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-120355645-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-120355645-1');
+</script>
+
 
 
 
@@ -165,7 +180,7 @@ $(document).ready(function () {
   <a href="syllabus.html">Syllabus</a>
 </li>
 <li>
-  <a href="introR.html">Intro R</a>
+  <a href="https://ssdalab.github.io/IntroR/">Intro R</a>
 </li>
 <li>
   <a href="day1.html">Day 1</a>
@@ -189,6 +204,13 @@ $(document).ready(function () {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+<script type="text/javascript">
+$(".main-container").removeClass("main-container").removeClass("container-fluid").addClass("footerPushDown");
+</script>
+
+
+<div id="pageContent" class="standardPadding">
+  <div class="articleBandContent">
 
 <div class="fluid-row" id="header">
 
@@ -198,16 +220,155 @@ $(document).ready(function () {
 
 </div>
 
-
-<p>Why I am awesome.</p>
+<div id="TOC">
 <ul>
-<li><strong>Name:</strong> Nick</li>
-<li><strong>Ocupation:</strong> “Student”</li>
-<li><strong>Hobbies:</strong> Learning software development instead of studying for exams.</li>
+<li><a href="#course-description">Course Description</a><ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+</ul></li>
+<li><a href="#course-objectives">Course Objectives</a></li>
+<li><a href="#course-readings">Course Readings</a></li>
+<li><a href="#course-structure">Course Structure</a></li>
 </ul>
-<p>Here is a super cool photo of me doing one of my favorite things, yawning.</p>
-<p><img src="figs/network.png" style="width:50%; border:1px solid; margin-right: 20px" align="left"></p>
-<p>Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words. Lots of words.</p>
+</div>
+
+<div id="course-description" class="section level1">
+<h1>Course Description</h1>
+<p><img src="figs/network.png" style="width:20%; border:1px solid; margin-right: 20px" align="left"></p>
+<p>This course lays the groundwork of Social Network Analysis (SNA) from a <em>Conceptual</em>, mathematical and <em>Computational</em> perspective. SNA differs from other analytic perspectives in requirements for data collection, storage, descriptive, and statistical analysis. The course will address each of these by sampling from a range of the most commonly used classes of analytic concepts, demonstrating for each their implementation in primary data collection efforts and empirical analyses (in R).</p>
+<p>We will address these concepts around two organizing principles: (1) the two primary theoretical frameworks capturing reasons networks “matter”; and (2) how each class of measures can be applied across different units of analysis: individuals, groups and “whole” networks. While by no means exhaustive, this course will provide students with the beginning toolkit for SNA. SNA is a rapidly advancing field, and these tools are intended to provide the orienting frameworks that can guide further study of SNA on your own.</p>
+<div id="prerequisites" class="section level2">
+<h2>Prerequisites</h2>
+<p>No formal statistical training or prior experience with R is assumed. However, students’ prior familiarity with statistical and computing principles will enhance the course experience, easing the extension of coursework to your own research. Each course module’s presentation will <em>Conceptual</em>ly build only from prior material covered in this course. Code templates will be provided for the measurement and computation of each of the introduced concepts. All slides, scripts and data will be posted to github (<a href="https://ssdalab.github.io/EPIC_Networks/" class="uri">https://ssdalab.github.io/EPIC_Networks/</a>). Participants should bring a computer for personal use (Windows, Mac or Linux), with R previously installed. We recommend going through the <a href="https://ssdalab.github.io/IntroR/">Intro R Tutorial</a> before class starts. We will use a number of R packages, which will require that you have privileges on your machine that allow you to install programs/applications. All details about installation of R and RStudio can be found in <a href="https://ssdalab.github.io/IntroR/syllabus.html">Intro R Syllabus</a> and details on the necessary packages can be found in <a href="https://ssdalab.github.io/IntroR/Tutorial5.html">Intro R: Tutorial 5</a> and <a href="https://ssdalab.github.io/IntroR/Tutorial6.html">Intro R: Tutorial 6</a>.</p>
+</div>
+</div>
+<div id="course-objectives" class="section level1">
+<h1>Course Objectives</h1>
+<p>By the end of the course, participants will be able to: 1. Understand the primary theoretical &amp; analytic frameworks that underpin SNA.<br />
+2. Grasp the primary strategies for gathering &amp; storing social network data.<br />
+3. Compute &amp; interpret several primary classes of measures, for varying analytic levels.<br />
+4. Describe some of the most commonly observed patterns in empirical networks<br />
+5. Run descriptive &amp; statistical analyses (in R) to identify these patterns in real data.</p>
+</div>
+<div id="course-readings" class="section level1">
+<h1>Course Readings</h1>
+</div>
+<div id="course-structure" class="section level1">
+<h1>Course Structure</h1>
+<p>Class meets from 8:30 AM – 12:30 PM Monday – Friday for a week (20 hours total). Each meeting will be interspersed with combinations of structured lecture and hands on applications of course material.</p>
+<table class="minimalistBlack">
+<thead>
+<tr>
+<th colspan="2">
+Session 1 – Frameworks, Data Structure &amp; Data Collection
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+June 11
+</td>
+<td>
+<p><u>Learning Objectives</u>:</p>
+<p><em>Conceptual</em>: Overview of theoretical frameworks, levels of analysis, modes of data storage, and strategies of data collection.</p>
+<em>Computational</em>: Introduction to R &amp; the igraph package, data types, transformation between storage strategies, matrix manipulations, network visualizations.
+</td>
+</tr>
+</tbody>
+</tr>
+</table>
+<table class="minimalistBlack">
+<thead>
+<tr>
+<th colspan="2">
+Session 2 – Descriptive Measures I: Composition, Density, Distance, Balance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+June 12
+</td>
+<td>
+<p><u>Learning Objectives</u>:</p>
+<p><em>Conceptual</em>: Introduction to descriptive compositional measures - including those of ego-network composition, density, distance and social balance / transitivity.</p>
+<em>Computational</em>: Estimate ego-level, small group and network-wide statistics for these measures (where appropriate) using R’s igraph package.
+</td>
+</tr>
+</tbody>
+</tr>
+</table>
+<table class="minimalistBlack">
+<thead>
+<tr>
+<th colspan="2">
+Session 3 – Descriptive Measures II: Equivalence, Centrality, Clustering, Cohesion
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+June 13
+</td>
+<td>
+<p><u>Learning Objectives</u>:</p>
+<p><em>Conceptual</em>: Continuation of descriptive measures for describing position and group-identification strategies, e.g., equivalence, centrality, clustering/cohesion.</p>
+<em>Computational</em>: Introduction to the statnet package. Estimate each measure using a combination of R’s packages igraph and statnet.
+</td>
+</tr>
+</tbody>
+</tr>
+</table>
+<table class="minimalistBlack">
+<thead>
+<tr>
+<th colspan="2">
+Session 4 – Applications: Influence, Diffusion &amp; Search
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+June 14
+</td>
+<td>
+<p><u>Learning Objectives</u>:</p>
+<p><em>Conceptual</em>: Putting the measures introduced on Tues/Wed “to work” on empirically motivated problems addressing frequent applications of SNA in epidemiologically-oriented research.</p>
+<em>Computational</em>: Replicate several simple analyses of “classic” studies, and explore similar possibilities on other constructed examples. If you have some data of your own, work through some preliminary analyses.
+</td>
+</tr>
+</tbody>
+</tr>
+</table>
+<table class="minimalistBlack">
+<thead>
+<tr>
+<th colspan="2">
+Session 5 – Statistical Models
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+June 14
+</td>
+<td>
+<p><u>Learning Objectives</u>:</p>
+<p><em>Conceptual</em>: Introduce Network Autocorrelation, MRQAP, ERGM and Stochastic Actor Oriented (SIENA) Models.</p>
+<em>Computational</em>: Work through a few tutorials demonstrating ERGM and SIENA models in R. Understand data needs, model fitting strategies, interpreting output, and run a few exemplar models.
+</td>
+</tr>
+</tbody>
+</tr>
+</table>
+<div class="wrapper">
+<p> <br/>  <br/></p>
+</div>
+</div>
 
 </div> <!-- articleBandContent -->
 </div> <!-- pageContent -->

@@ -5,8 +5,8 @@ navbar:
   left:
     - text: "Syllabus"
       href: syllabus.html
-    - text: "Intro R"     ##### the new
-      href: introR.html  ##### stuff
+    - text: "Intro R"    
+      href: https://ssdalab.github.io/IntroR/  
     - text: "Day 1"
       href: day1.html
     - text: "Day 2"
@@ -22,6 +22,8 @@ output:
     theme: cosmo ### cosmo ###### flatly
     highlight: tango
     include:
+      in_header: include_head.html
+      before_body: include_header.html
       after_body: footer.html
     css: style.css
     

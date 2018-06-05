@@ -21,6 +21,21 @@
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 
+<link rel="icon" type="image/png" href="images/favicon.png" />
+
+<script type="text/javascript" src="js/rmarkdown.js"></script>
+<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-120355645-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-120355645-1');
+</script>
+
 
 
 
@@ -165,7 +180,7 @@ $(document).ready(function () {
   <a href="syllabus.html">Syllabus</a>
 </li>
 <li>
-  <a href="introR.html">Intro R</a>
+  <a href="https://ssdalab.github.io/IntroR/">Intro R</a>
 </li>
 <li>
   <a href="day1.html">Day 1</a>
@@ -189,6 +204,13 @@ $(document).ready(function () {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+<script type="text/javascript">
+$(".main-container").removeClass("main-container").removeClass("container-fluid").addClass("footerPushDown");
+</script>
+
+
+<div id="pageContent" class="standardPadding">
+  <div class="articleBandContent">
 
 <div class="fluid-row" id="header">
 
@@ -200,8 +222,10 @@ $(document).ready(function () {
 
 <div id="introduction-to-social-network-analysis" class="section level1">
 <h1><strong>Introduction To Social Network Analysis</strong></h1>
-<p><img src="figs/network.png" style="width:30%; border:1px solid; margin-right: 20px" align="left"></p>
-<p>STUFF</p>
+<p><img src="figs/network.png" style="width:20%; border:1px solid; margin-right: 20px" align="left"></p>
+<p>This course lays the groundwork of Social Network Analysis (SNA) from a <em>Conceptual</em>, mathematical and <em>Computational</em> perspective. SNA differs from other analytic perspectives in requirements for data collection, storage, descriptive, and statistical analysis. The course will address each of these by sampling from a range of the most commonly used classes of analytic concepts, demonstrating for each their implementation in primary data collection efforts and empirical analyses (in R).</p>
+<p>We will address these concepts around two organizing principles: (1) the two primary theoretical frameworks capturing reasons networks “matter”; and (2) how each class of measures can be applied across different units of analysis: individuals, groups and “whole” networks. While by no means exhaustive, this course will provide students with the beginning toolkit for SNA. SNA is a rapidly advancing field, and these tools are intended to provide the orienting frameworks that can guide further study of SNA on your own.</p>
+<p><strong>Before Class Starts</strong>: I recommend reviewing the <a href="https://ssdalab.github.io/IntroR/">Intro R Tutorial</a> for the course and make sure you can install R, RStudio and all the necessary packages.</p>
 <div class="wrapper">
 <p> <br/>  <br/></p>
 </div>

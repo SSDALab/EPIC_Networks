@@ -1,8 +1,13 @@
 # __Introduction To Social Network Analysis__
 
-<img src="figs/network.png" style="width:30%; border:1px solid; margin-right: 20px" align="left">
 
-STUFF
+<img src="figs/network.png" style="width:20%; border:1px solid; margin-right: 20px" align="left">
+
+This course lays the groundwork of Social Network Analysis (SNA) from a *Conceptual*, mathematical and *Computational* perspective. SNA differs from other analytic perspectives in requirements for data collection, storage, descriptive, and statistical analysis. The course will address each of these by sampling from a range of the most commonly used classes of analytic concepts, demonstrating for each their implementation in primary data collection efforts and empirical analyses (in R).
+
+We will address these concepts around two organizing principles: (1) the two primary theoretical frameworks capturing reasons networks “matter”; and (2) how each class of measures can be applied across different units of analysis: individuals, groups and “whole” networks. While by no means exhaustive, this course will provide students with the beginning toolkit for SNA. SNA is a rapidly advancing field, and these tools are intended to provide the orienting frameworks that can guide further study of SNA on your own.
+
+**Before Class Starts**: I recommend reviewing the [Intro R Tutorial](https://ssdalab.github.io/IntroR/) for the course and make sure you can install R, RStudio and all the necessary packages.
 
 <div class ="wrapper">
 &nbsp;<br/>
