@@ -1,0 +1,441 @@
+% Slides for talk on hydrogen fuel cells
+% given in the department on October 27, 2003.
+% 
+% The original slides were in Prosper.  This file contains the
+% translation of the original slides to Beamer.
+% 
+% Rouben Rostamian <rostamian@umbc.edu>
+% August 31, 2004
+
+\documentclass[10pt]{beamer}
+\usetheme{umbc4}
+\usepackage{tikz}
+\usepackage{colortbl}
+\usepackage[absolute,overlay]{textpos}
+%\usepackage{movie15}
+\usepackage{multimedia}
+\useinnertheme{umbcboxes}
+\setbeamercolor{umbcboxes}{bg=violet!12,fg=black}
+\usepackage{synttree}
+\usepackage{multirow}
+
+
+\usepackage{rotating} % for defining \schwa
+
+\newcommand{\pop}[1]{{\textcolor{red}{#1}}}
+\newcommand{\schwa}{\raisebox{1ex}{\begin{turn}{180}e\end{turn}}}
+\newcommand{\death}[1]{{\textcolor{white}{#1}}}
+\newcommand{\mob}[1]{{\textcolor{black}{#1}}}
+\definecolor{darkblue}{rgb}{.3,0,.7}
+\newcommand{\darkblue}[1]{{\textcolor{darkblue}{#1}}}
+\newcommand{\birth}[1]{{\textcolor{white}{#1}}}
+
+\definecolor{blue}{rgb}{0,0,1}
+\newcommand{\blue}[1]{{\textcolor{blue}{#1}}}
+
+
+%%%%%%%%
+%%Bib
+%%%%%%%%
+\renewcommand{\refname}{}
+\usepackage{natbib}
+\usepackage{enumerate}
+
+%%%%%%%%
+%% Commands
+%%%%%%%%
+
+\newcommand{\arcsinh}{\mathop\mathrm{arcsinh}\nolimits}
+\newcommand{\arccosh}{\mathop\mathrm{arccosh}\nolimits}
+\newcommand{\Pu}{P_{\mathrm{amb}}}
+%%%%%%%%
+%% Commands
+%%%%%%%%
+
+%%%%%%%%
+%% Block
+%%%%%%%%
+\definecolor{light-gray}{gray}{0.8}
+\definecolor{lightskyblue}{rgb}{0.53,0.81,0.98}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{block title}{bg = gray, fg=white}
+\setbeamercolor{block body}{bg = lightgray,fg=black}
+\setbeamercolor{block body alerted}{bg = lightskyblue, fg=black}
+\setbeamercolor{block tile alerted}{bg = lightskyblue, fg=black}
+%%%%%%%%
+%%blcok
+%%%%%%%%
+
+
+%%%%%%%%
+%% itemize
+%%%%%%%%
+\definecolor{darkred}{rgb}{.8,0,0}  
+\newcommand{\dd}[1]{{\textcolor{darkred}{#1}}}
+\definecolor{lightblue}{rgb}{.2,0,1}  
+\setbeamertemplate{itemize        item}{\large{\textcolor{darkred}{$\bullet$}}}
+\setbeamertemplate{itemize     subitem}{\textcolor{lightblue}{$\bullet$}}
+\setbeamertemplate{itemize  subsubitem}{$\bullet$}
+%%%%%%%%
+%% itemize
+%%%%%%%%
+%Network Dynamics:Distributional and Relationship Properties of Human Aggregates
+
+\title[]{Network Autocorrelation Models}
+%\subtitle[]{}
+\author[Zack W Almquist]{Zack W Almquist$^{*}$\\}
+\institute[Sociology and Statistics, UMN]{
+  ${}^{*}$Department of Sociology and School of Statistics\\
+  University of Minnesota}
+\date{EPIC - SNA}
+\begin{document}
+
+%----------- titlepage ----------------------------------------------%
+{
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{graphics/minn.png}}
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+}
+
+\section[Outline]{}
+\frame{
+\vspace{.5in}
+\hspace{.5in}\tableofcontents
+
+}
+
+\section{The Network Autocorrelation Model}
+%\section{Section 1}
+
+\begin{frame}
+Based on Carter Butts. Social Network Methods. University of California, Irvine.
+\end{frame}
+
+\begin{frame}{From Indices to Autocorrelation}
+
+
+\begin{itemize}
+\item Last time, we discussed how properties of positions could be related to covariates....
+\begin{itemize}
+\item Does being a gatekeeper help your career?
+\item Do high-degree organizations make all the decisions?
+\end{itemize}
+\item Today: how covariates relate to each other through ties
+\begin{itemize}
+\item Network autocorrelation: (usually linear) dependence of individual attributes across positions
+\end{itemize}
+\item Applicable to many phenomena
+\begin{itemize}
+\item E.g., Social influence, organizational isomorphism, work- family spillover, neighborhood quality, economic productivity, etc.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Network Autocorrelation Model}
+
+\begin{itemize}
+\item Simplest tool for modeling network autocorrelation: the (linear) network autocorrelation model
+\begin{itemize}
+\item Builds on standard (OLS) regression
+\item Closely analogous to ARMA models in the time series literature
+\item Identical to the spatial ARMA models of Cliff and Ord (1973), Anselin (1988), etc. (But we use a different name!)
+\end{itemize}
+\item Basic components
+\begin{itemize}
+\item Response variable (to be modeled)
+\item ``Weight" matrices (identical to or derived from original networks) Predictive covariates
+\item Parameters measuring nature/extent of dependence, covariate effects
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.5\linewidth]{figure/auto1}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto2}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto3}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto4}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto5}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto6}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto7}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto8}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto9}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto10}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto11}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/auto12}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa1}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa2}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa3}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa4}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa5}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa6}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa7}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa8}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa9}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa10}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa11}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa12}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa13}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa14}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa15}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa16}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa17}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa18}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa19}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Network Autocorrelation Model}
+\begin{textblock*}{100mm}(20mm,.2\textheight)
+\includegraphics[width=.8\linewidth]{figure/fa20}
+\end{textblock*}
+\end{frame}
+
+\section{Inference with the Network Autocorrelation Model}
+
+\begin{frame}{Inference with the Network Autocorrelation Model}
+\begin{itemize}
+\item In practice, rarely given parameters
+\begin{itemize}
+\item Usually observe $y$, $X$, and $W$ and/or $Z$, want to infer $\beta$, $\theta$, $\psi$
+\item Need each $I-W$, $I-Z$ invertible for solution to exist
+\end{itemize}
+\item Typical approach: maximum likelihood
+\begin{itemize}
+\item Generally take $v$ as iid, $v_i\sim N(0,\sigma^2)$
+\item Standard errors based on the inverse information matrix at the MLE
+\item Compare models in the usual way (e.g., AIC, BIC)
+\item (Could also do this in a Bayesian way, could substitute other forms for $v$, etc.)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Choosing the Weight Matrix}
+\begin{textblock*}{55mm}(5mm,.2\textheight)
+\begin{itemize}
+\item An important modeling issue: choosing the form for $W$ and/or $Z$
+\begin{itemize}
+\item Must satisfy invertibility condition
+\item $i,j$ cell must express the dependence of $i$ on $j$
+\end{itemize}
+\item Many suggestions given by Leenders (2002)
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(65mm,.2\textheight)
+\begin{itemize}
+\item Ex: Friedkin-Johnson criteria
+\begin{itemize}
+\item Based on small-group social influence experiments
+\item Induce quasi-convexity in equilibrium attitudes
+\item $W_{ij} \geq 0$, $W_{ij} \leq 1$
+\item $\sum_j W_{ij} \leq 1$
+\item Diagonal can be $>0$
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Important Errors to Avoid}
+\begin{textblock*}{55mm}(5mm,.2\textheight)
+\begin{itemize}
+\item  Using NAMs when you need NLIs (or vice versa)
+\begin{itemize}
+\item Am I affected by my position, or by the properties of my neighbors?
+\item Nearly all influences theories imply some sort of autocorrelation; ditto for some theories of competition
+\end{itemize}
+\item Confusing correlation with influence
+\begin{itemize}
+\item If influence occurs through direct ties, structurally equivalent positions will correlate; NAM will shown an SE effect
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(65mm,.2\textheight)
+\begin{itemize}
+\item Confusing AT and MA terms
+\begin{itemize}
+\item AR terms imply diffusion of response values, MA terms imply diffusion of perurbations
+\item Do my neighbors' covariates affect me? If so, this is an AR process! (If not, it's an MA process.)
+\end{itemize}
+\item Forgetting selection effects
+\begin{itemize}
+\item NAM assumes that weight matrix is fixed
+\item If selection is present, NAM results will be misleading
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\end{frame}
+
+\end{document}
+
+
+
+\begin{frame}{Instruments: Name Generators and Rosters}
+\begin{textblock*}{55mm}(5mm,.2\textheight)
+\begin{itemize}
+\item 
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(65mm,.2\textheight)
+\begin{itemize}
+\item
+\end{itemize}
+\end{textblock*}
+
+\end{frame}
+

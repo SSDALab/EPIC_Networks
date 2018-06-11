@@ -1,0 +1,38 @@
+unnamed-chunk-2	set.seed	g	rgraph	print	xtable
+unnamed-chunk-3	sociomatrixplot	g
+unnamed-chunk-4	gplot	g
+unnamed-chunk-5	load	index.nna	sapply	rdNets	is.network	timeAgg	i	length	ec	matrix	rgb	sum	network.size	cv	rep	%v%	gplot	title
+unnamed-chunk-6	data	mids_1993	gplot	rgb	network.vertex.names	title
+unnamed-chunk-7	load	diag	IRSmig01	s	quantile	as.vector	seq	gplot	rgb	title	rm
+unnamed-chunk-8	data	faux.desert.high	plot	rgb
+unnamed-chunk-9	load	WTCPoliceNet	as.sociomatrix.eventlist	WTCPoliceCalls	gplot	WTCPoliceIsICR	rgb	title
+unnamed-chunk-10	data	krack	kfr.conc	consensus	krackfr	gplot
+unnamed-chunk-11	data	emon	par	c	i	length	plot	rgb	title	names
+unnamed-chunk-12	library	ergm	data	florentine	m1	flomarriage	edges	nodecov	m2	absdiff
+unnamed-chunk-15	ergm	y	term1	arg	term2
+unnamed-chunk-16	help
+unnamed-chunk-17	library	ergm	data	florentine	plot	flomarriage
+unnamed-chunk-18	flom.e	ergm	flomarriage	edges
+unnamed-chunk-19	summary	flom.e
+unnamed-chunk-20	flom.et	ergm	flomarriage	edges	triangle
+unnamed-chunk-21	summary	flom.et
+unnamed-chunk-22	data	samplike	ergm	edges
+unnamed-chunk-23	ergm	samplike	edges	nodematch
+unnamed-chunk-24	ergm	samplike	edges	sender	receiver	mutual
+unnamed-chunk-25	flom.ets	ergm	flomarriage	edges	kstar	summary
+unnamed-chunk-26	flom.ets	ergm	flomarriage	edges	kstar
+unnamed-chunk-27	summary	flom.ets
+unnamed-chunk-28	flom.et	ergm	flomarriage	edges	triangle	summary
+unnamed-chunk-29	flom.et	ergm	flomarriage	edges	triangle
+unnamed-chunk-30	summary	flom.et
+unnamed-chunk-31	set.seed	che.m1	ergm	emon	Cheyenne	edges	triangles	control.ergm	g.sim	simulate	triangle	summary
+unnamed-chunk-32	plot	data.frame	edges	triangle	rgb	c	max	points	summary	emon	Cheyenne	triangles	title
+unnamed-chunk-33	fit	ergm	Y	term	mcmc.diagnostics
+unnamed-chunk-34	flom.b1	ergm	flobusiness	edges	kstar	triangle
+unnamed-chunk-35	mcmc.diagnostics	flom.b1	F
+unnamed-chunk-36	mcmc.diagnostics	flom.b1	F
+unnamed-chunk-37	args	control.ergm
+unnamed-chunk-38	got	fit	term1	term2
+unnamed-chunk-39	flom.b1	ergm	flobusiness	edges	flo_gof	gof
+unnamed-chunk-40	flo_gof
+unnamed-chunk-41	par	c	plot	flo_gof

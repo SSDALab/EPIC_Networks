@@ -1,0 +1,2 @@
+library(networkMethods)#
+data(contig_1993)

@@ -1,0 +1,847 @@
+---
+title: "Social Network Analysis: Introduction to Statistical Models Part 1"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 14th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=70)
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+
+## Useful functions
+pretty_sum_ergm<-function(l){
+list_models<-lapply(l,summary)
+form<-lapply(list_models,"[[","formula")
+form<-sapply(form,function(x){paste("Formula:",Reduce(paste, deparse(x)),"\n")})
+form<-sapply(1:length(list_models),function(x){sub("Formula",paste("Formula",x),form[x])})
+BIC<-sapply(list_models,"[[","bic")
+#o<-order(BIC)
+o<-1:length(list_models)
+coef<-lapply(list_models,"[[","coefs")
+coef<-lapply(1:length(coef),function(x){rownames(coef[[x]])<-paste("Model ",x,": ",rownames(coef[[x]]),sep="");coef[[x]]})
+
+coef<-do.call(rbind,coef)
+
+for(i in o){
+cat(form[i])
+}
+cat("\n")
+print(round(coef,3))
+cat("BIC\n")
+cat(paste("Model ",1:length(o),": ",round(BIC,2),sep=""),"\n")
+}
+
+```
+
+# Statistical Models for Social Networks
+## Why Model Statistical Models for Networks?
+
+### Relational Data
+
+\begin{textblock*}{50mm}(-3mm,-.3\textheight)
+\tiny
+```{r,echo=FALSE,results='asis'}
+set.seed(1982)
+g <-rgraph(5)
+print(xtable(g,digits=0),floating=FALSE)
+```
+\end{textblock*}
+\begin{textblock*}{40mm}(40mm,-.4\textheight)
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='left'}
+sociomatrixplot(g,cex.lab=3)
+```
+\end{textblock*}
+\begin{textblock*}{30mm}(80mm,-.4\textheight)
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='right'}
+gplot(g)
+```
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-5mm,0\textheight)
+\begin{itemize}
+\item A collection of entities and a set of measured relations between them
+\begin{itemize}
+    \item \red{Entities}: nodes, actors, egos, units, respondents
+    \item \red{Relations}: ties, links, edges
+\end{itemize}
+\item Relations can be
+\begin{itemize}
+    \item Directed or undirected
+    \item Valued or dichotomous (binary)
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+### Core Areas of Statistical Network Analysis
+
+ 1. \red{Design-based inference}: Network inference from sampled data
+    - Design: survey and data-gathering procedures.
+    - Inference: generaliation of sample data to full network
+ 2. \red{Statistical modeling}: evaluation and fitting of network models
+    - Testing: evaluation of competing theories of network formation
+    - Estimation: evaluation of param in a presumed network model
+    - Description: summaries of main network patterns
+    - Prediction: prediction of missing or future network relations
+
+
+### Data Analysis Goals
+
+\begin{textblock*}{40mm}(40mm,-.5\textheight)
+```{r,echo=FALSE,out.width='1\\textwidth',fig.align='left'}
+load("data/rdNets.rda")
+
+index.nna<-sapply(rdNets,is.network)
+timeAgg<-rdNets[[1]][,]
+for(i in 2:length(rdNets)){
+	if(index.nna[i]){
+		timeAgg<-timeAgg+rdNets[[i]][,]
+	}
+}
+
+ec<-matrix(rgb(0,0,0,timeAgg/sum(timeAgg)*150),nc=network.size(rdNets[[1]]),nr=network.size(rdNets[[1]]))
+cv<-rep(NA,network.size(rdNets[[1]]))
+cv[(rdNets[[1]]%v%"dnc")==1]<-"blue"
+cv[(rdNets[[1]]%v%"rnc")==1]<-"red"
+gplot(timeAgg,edge.col=ec,vertex.col=cv,vertex.cex=.7)
+title("2004 RNC/DNC Credentialed Blogs Citation Network")
+```
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-5mm,0\textheight)
+\begin{itemize}
+\item How do network features drive our data analysis?
+\begin{enumerate}
+    \item How can we describe features of social relations?
+    \begin{itemize}
+        \item E.g., reciprocity/sociability/transitivity: descriptive
+    \end{itemize}
+    \item How can we identify nodes with similar network roles?
+    \begin{itemize}
+        \item E.g., stochastic equivalence : node partitioning
+    \end{itemize}
+    \item How do we relate the network to covariate information?
+    \begin{itemize}
+        \item E.g., homophily: regression modeling
+    \end{itemize}
+\end{enumerate}
+\end{itemize}
+\end{textblock*}
+
+
+
+### Common Features of Interest
+
+Beyond nodal and dyadic attributes, many networks exhibit the following features:
+
+- \red{Reciprocity} of ties
+- \red{Degree heterogeneity} among actors 
+    - Sociability, Popularity
+- \red{Homophily} by actor attributes
+    - Higher propensity to form ties between actors with similar attr
+- \red{Transitivity} of relationships
+    - Friends of friends have a higher propensity to be friends
+- \red{Balance} of relationships
+    - Liking those who dislike whom you dislike
+- \red{Equivalence} of nodes
+    - Some nodes may have identical/similar patterns of relationships
+
+### Examples!
+
+Now let's look at some examples\dots
+
+### Militarized Interstate Disputes
+
+```{r, echo=FALSE,message=FALSE,out.width='.6\\textwidth',fig.align='center'}
+data(mids_1993)
+gplot(mids_1993, 
+boxed.labels=FALSE, 
+label.cex=0.5, 
+edge.col=rgb(0,0,0,.4),
+label=network.vertex.names(mids_1993),
+displayisolates=FALSE)  
+title("1993 militarized interstate disputes (MIDs)",sub="Correlates of War Project")
+```
+
+### County-to-County Migration in the US
+```{r,eval=T,echo=FALSE,message=FALSE,fig.align='center',out.width='.5\\textwidth',eval=TRUE}
+load("data/IRSmig01.rda")
+### Build Match between IRS and US County data
+diag(IRSmig01)<-0
+s<-quantile(as.vector(IRSmig01)[as.vector(IRSmig01)>0],probs = seq(.9,.99,.01))
+IRSmig01[IRSmig01<s["99%"]]<-0
+IRSmig01[IRSmig01>=s["99%"]]<-1
+gplot(IRSmig01,displayisolates=FALSE,edge.col=rgb(0,0,0,.1))
+title("IRS Migration Data, 2000-2001",sub="Threshold at 99%")
+rm(IRSmig01)
+```
+
+### Faux Desert High (Simulation of an Add Health HS)
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.6\\textwidth'}
+
+data(faux.desert.high)
+plot(faux.desert.high,vertex.col="grade",edge.col=rgb(0,0,0,.3),displayisolates=FALSE)
+```
+
+### World Trade Center Radio Communication
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.6\\textwidth'}
+load("data/relevent_sunbelt_2014.Rdata")
+WTCPoliceNet <- as.sociomatrix.eventlist(WTCPoliceCalls,37) 
+gplot(WTCPoliceNet,edge.lwd=WTCPoliceNet^0.75,vertex.col=2+WTCPoliceIsICR,vertex.cex=1.25,edge.col=rgb(0,0,0,.5))
+title(main="Data set coded by Butts et al. (2007)")
+```
+
+### David Krackhardt (1987) Perceived Friendships
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.6\\textwidth'}
+data(krack)
+kfr.conc<-consensus(krack$krackfr,method="romney.batchelder",verbose=FALSE)
+##Plot
+gplot(kfr.conc,displaylabels=TRUE)
+```
+
+### SAR EMONs, All Reported Ties, from Drabek et al 1981
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.8\\textwidth'}
+data(emon)   #Load the emon data set
+#Plot the EMONs
+par(mfrow=c(2,4),mar=c(0, 0, .6, 0) + 0.1)
+for(i in 1:length(emon)){
+  plot(emon[[i]],edge.lwd="Frequency",edge.col=rgb(0,0,0,.4))
+	title(main=names(emon)[i],outer=FALSE)
+}
+```
+
+
+### Inferential Goals in the Regression Framework
+
+$y_{ij}$ measures $i\rightarrow j$, $x_{ij}$ is a vector of explanatory variables
+$$
+\small
+Y = 
+\begin{pmatrix}
+y_{11} & y_{12} & y_{13} & \red{NA} & y_{15} & \dots \\ 
+y_{21} & y_{22} & y_{23} & y_{24} & y_{25} & \dots \\ 
+y_{31} & y_{32} & y_{33} & y_{34} & y_{35} & \dots \\ 
+y_{41} & y_{42} & y_{43} & y_{44} & y_{45} & \dots \\ 
+\vdots & \vdots & \vdots & \vdots & \vdots & 
+\end{pmatrix} \ 
+X =
+\begin{pmatrix}
+x_{11} & x_{12} & x_{13} & x_{14} & x_{15} & \dots \\ 
+x_{21} & x_{22} & x_{23} & x_{24} & x_{25} & \dots \\ 
+x_{31} & x_{32} & x_{33} & x_{34} & x_{35} & \dots \\ 
+x_{41} & x_{42} & x_{43} & x_{44} & x_{45} & \dots \\ 
+\vdots & \vdots & \vdots & \vdots & \vdots & 
+\end{pmatrix}
+$$
+Consider a basic (generalized) linear model
+$$y_{ij} \sim \beta^Tx_{ij}+ e_{ij}$$
+A model can provide
+
+- A measure of the association between $X$ and $Y$: $\hat{\beta}$, $se(\hat{\beta})$
+
+- Imputations of missing observations: $\Pr(y_{14}|Y,X)$
+
+- A probabilistic description of network features: $g(\tilde{Y}), \ \tilde{Y} \sim \Pr(\tilde{Y}|Y, X)$
+
+
+### Statistical Models for Social Networks
+- A \red{social network} is defined as a set of $n$ entities (e.g., social "actors") 
+and a relationship (e.g., friendship) between each pair of entities
+$$Y_{ij} =          
+\begin{cases}
+1 & \textrm{ relationship from actor $i$ to actor $j$}\\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+- Often $Y := [Y_{ij}]_{n\times n}$ is called a \red{sociomatrix}
+- And, graphical representation of $Y$ a \red{sociogram}
+    - Diagonal typically undefined or 0 (i.e., $Y_{ii}=NA$)
+    - $Y$ represents a random network with nodes as the actors and edges the relationship
+- The basic problem of stochastic modeling is to specify a distribution for $Y$, i.e. $\Pr(Y=y)$
+
+### A Framework for Network Modeling: ERGM
+
+- Let $\mathcal{Y}$ be the sample space of $Y$, e.g. $\{0,1\}^N$
+- Any model-class for the multivariate distribution of $Y$ can be \red{parameterized} in the form
+$$\Pr(Y=y) = \frac{\exp\{\theta^T g(y)\}}{\kappa(\theta,\mathcal{Y})}, \ \ \ y \in \mathcal{Y}$$
+    - $\theta \in \Theta \subset R^q$ $q$-vector of parameters
+    - $g(y)$ $q$-vector of \red{network statistics}
+    - For a "saturated" model-class $q= 2^{|\mathcal{Y}|}-1$
+    - $\kappa(\theta)$ distribution normalizing constant
+    $$ \kappa(\theta,\mathcal{Y}) = \sum_{y\in \mathcal{Y}} \exp\{\theta^T g(y)\}$$
+    
+# Classic Probability Models for Networks
+### Classics: Bernoulli Graphs
+
+- $Y_{ij}$ are independent but have arbitrary distributions (conditional independence of edges)
+\begin{align*}
+\Pr(Y=y) &= \frac{\exp\left\{ \sum_{ij} \theta_{ij} y_{ij}\right\}}{\kappa(\theta)}, &y \in \mathcal{Y}\\
+g_{ij} (y) = y_{ij},& \ \ i,j = 1,\dots, n &q = N \\
+\theta_{ij} &= \textrm{logit}(\Pr(Y_{ij}=1)) \\
+\kappa(\theta) &= \prod_{ij} (1+\exp(\theta_{ij}))
+\end{align*}
+- $Y_{ij}$ can depend on dyadic covariates $X_{ij}$ $$\theta_{ij} = X_{ij} \beta$$
+
+
+### Classics: Holland and Leinhardt's $p_1$ model
+
+- Holland and Leinhardt (1981) proposed a general dyad independence model
+- Also, a homogeneous version they refer to as the $p_1$ model
+$$ \Pr(Y=y) = \frac{\exp\{ \rho \sum_{i<j} y_{ij}y_{ji}+\phi y_{++}+\sum_i \alpha_i y_{i+} + \sum_j \beta_j y_{+j}\}}{\kappa(\rho,\alpha,\beta,\phi)}$$
+    - Where $\theta = (\rho,\alpha,\beta,\phi)$
+        - $\phi$ controls the expected number of edges
+        - $\rho$ represent the expected tendency toward \red{reciprocation}
+        - $\alpha_i$ \red{productivity} of node $i$
+        - $\beta_j$ \red{attractiveness} of node $j$ 
+
+### Classics: Nodal Markov Statistics
+
+- Frank and Strauss (1986)
+    - Motivated by notions of "symmetry" and "homogeneity"
+    - Edges in $Y$ that do not share an actor are conditionally independent given the rest of the network
+- Analogous to nearest neighbor ideas in spatial statistics
+
+- Degree distribution: $d_k(y) =$ proportion of nodes of degree $k$ in $y$
+- $k$-star distribution: $s_k(y)=$ proportion of $k$-stars in graph $y$
+- triangels: $t(y)=$ proportion of triangles in the graph y.
+
+
+# Connecting Logistic Network Regression to Bernoulli Graphs
+### Review: Logistic Network Regression
+
+- A simple family of models for predicting unvalued ties
+    - Special case of standard logistic regression
+    - Dependent variable is a network adjacency matrix
+- Model form: 
+$$\log \left( \frac{\Pr(Y_{ij} = 1)}{\Pr(Y_{ij}=0)}\right) = \theta_1 X_{ij1}+\theta_2 X_{ij2}+\dots +\theta_k X_{ijk} = \theta^T X_{ij}$$
+- Where $Y_{ij}$ is the value of the edge from $i$ to $j$ on the dependant relation, $X_{ijk}$ is the value of the $k$th predictor for the $(i,j)$ ordered, and $\theta_1,\dots,\theta_k$ are coefficients
+$$\log(\frac{p}{1-p}) = \textrm{logit}(p), \textrm{maps (0,1) to }(-\infty,\infty)$$
+      
+### Logistic Network Regression in Practice
+
+- Interpretation: Effects are on logit scale 
+    - Unit change in $i$th covariate multiplies odds by $\exp(\theta_i)$
+- We are assuming that edges are independent predictors, covariates
+- QAP tests also apply (\red{warning}: known tests may not be robust to third variable effects, etc)
+- In \texttt{statnet}, two ways to perform it
+    - \texttt{netlogit}, specialized tool in package \texttt{sna}
+    - \texttt{ergm}, generalized ERG function
+
+### Example: Florentine families
+- This is a data set of marriage ties among Renaissance Florentine families. The data is originally from Padgett (1994) 
+
+\small
+```{r,eval=FALSE}
+library(ergm)
+
+data(florentine)
+m1 = ergm(flomarriage~edges+nodecov("wealth"))
+m2 = ergm(flomarriage~edges+absdiff("wealth"))
+```
+```{r,include=FALSE,cache=FALSE}
+library(ergm)
+
+data(florentine)
+m1 = ergm(flomarriage~edges+nodecov("wealth"))
+m2 = ergm(flomarriage~edges+absdiff("wealth"))
+```
+
+### Example: Florentine families
+\small
+```{r,echo=FALSE,cache=FALSE}
+pretty_sum_ergm(list(m1,m2))
+```
+
+
+# ERGM 
+### Moving Beyond the Logistic Case
+
+- The logistic model works for dichotomous data, but is still very limiting
+    - No way to model conditional dependence among edges
+        - E.g., true triad closure bias, reciprocity
+        <!-- - Can't handle exotic support constraints --> 
+- A more general framework: \red{discrete exponential families}
+    - Very general way of representing discrete distributions 
+    - Turns up frequently in statistics, physics, etc.
+
+### The Probability of a Graph (ERGM)
+
+$$\Pr(Y=y) = \frac{\exp\{\theta^T g(y)\}}{\kappa(\theta,\mathcal{Y})}, \ \ \ y \in \mathcal{Y}$$
+
+- This is the probability of a single \underline{graph}
+- Also, the likelihood function for the general model
+- The normalizing constant is summed over all possible graphs
+
+### Interpreting ERGMS: Goal
+
+- To re-express the probability of the graph in terms of the probabilities of an individual tie
+- This gives a "local" view of the model
+- And some insight into what the $\theta$ coefficients mean
+
+### Interpreting ERGMS: Some Notation
+
+In order to re-express the probability of the graph in terms of the probabilities of a tie, we need to introduce some notation:
+
+- $Y_{ij}^+ = \{ Y \textrm{ with } Y_{ij} = 1\}$ \red{the graph w/ the ($i,j$)th dyad set to 1}
+- $Y_{ij}^- = \{ Y \textrm{ with } Y_{ij} = 0\}$ \red{the graph w/ the ($i,j$)th dyad set to 0}
+- $Y_{ij}^c = \{ Y_{kl} \textrm{ with } (k,l)\neq (i,j)\}$ \red{all dyads except (i,j)}
+
+### Interpreting ERGMS: The conditional probability of a link
+
+This is a simple logical re-expression of $\Pr(Y=y) = \frac{\exp\{\theta^T g(y)\}}{\kappa(\theta,\mathcal{Y})}$
+
+\begin{align*}
+\Pr(Y_{ij}=1|Y_{ij}^c) &= \frac{\Pr(Y=y_{ij}^+)}{\Pr(Y=y_{ij}^+)+\Pr(Y=y_{ij}^-)}\\
+&= \frac{\exp\{\theta^T g(y_{ij}^+)\}}{\exp\{\theta^T g(y_{ij}^+)\}+\exp\{\theta^T g(y_{ij}^-)\}}
+\end{align*}
+
+Note: the $\kappa(\theta)$ has canceled out, but \dots there is an even simpler expression, in terms of the odds
+
+### Interpreting ERGMS: the Conditional log-odds of a link
+
+Reminder: $\textrm{logit}(p) = \log \left( \frac{p}{(1-p)} \right)$
+
+- Given, $\Pr(Y_{ij}=1|Y_{ij}^c) = \frac{\exp\{\theta^T g(y_{ij}^+)\}}{\exp\{\theta^T g(y_{ij}^+)\}+\exp\{\theta^T g(y_{ij}^-)\}}$
+- Then
+
+\begin{align*}
+\log \left\{ \frac{\Pr(Y_{ij}=1|Y_{ij}^c)}{\Pr(Y_{ij}=0|Y_{ij}^c)} \right\} &= \theta^T [g(y_{ij}^+)-g(y_{ij}^-)] \\
+&= \theta^{T}\delta(y_{ij})
+\end{align*}
+
+Note: $\delta(y_{ij})$ is known as the \red{change statistic}
+
+### Interpreting ERGMS: Interpreting $\theta$
+
+- Simple case, The Bernoulli model, where $g(y)$ is just the number of ties in the graph
+$$\textrm{logit}(\Pr(Y_{ij}=1|Y_{ij}^c)) = \theta\delta(y)$$
+- For the edges term (and dyad independent term), $\delta(y)$ is the change in the statistic when toggling $y_{ij}$ from 0 to 1 is $1$, so 
+$$\log\left(\frac{p}{(1-p)}\right) = \theta$$
+and
+$$ p = \frac{e^{\theta}}{(1+e^\theta)}$$
+
+### Interpreting ERGMS: Review
+
+- So, the conditional probability of an $(i,j)$ edge is simply the inverse logit of $\theta^T\delta(y_{ij})$
+  - \red{One idea}: to find $\theta$, why not set this up as a logistic network regression problem (i.e., regressing y on $\delta$)?
+    - This is an "autologistic regression," and the resulting estimator is known as a \emph{pseudolikelihood} estimator (more on this later)
+  - \red{Problem}: the probability here is only conditional -- can use for any one $ij$, but the joint likelihood of $y$ is not generally the product of $\Pr(Y_{ij}=y_{ij}|Y_{ij}^c$)
+    - Another view: $y$ appears on both sides -- can't regress w/out accounting for the "feedback" (i.e., dependence) among edges
+    - Does work iff edges are indepenedent
+- Still, useful aid in interpretation!
+
+# MLE and Statistical Inference
+
+### MLE and Statistical Inference
+
+- What is Maximum Likelihood Estimation (MLE)?
+- The likelihood function for the general ERGM is:
+$$L(\theta) = \Pr(Y=y|\theta) = \frac{\exp(\theta^Tg(y,X))}{\kappa(\theta)}$$
+- We want to find the value of $\theta$ that maximizes the probability of our data $(Y,X)$
+- But the function depends on $\kappa(\theta)$, which makes direct calculation (and thus maximization) difficult (can be done for small networks of size up to 7)
+
+### Fitting ERGs to Data: Computing the MLE
+
+**Even simple models are too complex to get analytical solutions!**
+
+- ERG computations are too difficult to perform directly
+    - \red{Simulation} used for purely computational purposes (e.g., dealing with the normalizing factors)
+      
+- No (effective) way to draw directly from ERG distribution; have to use approximation algorithms
+
+- Primary tool: \red{Markov chain Monte Carlo (MCMC)}
+    - Iterative method for simulating draws from a given distirbution
+    - Algorithm is approximate (although often very, very good)
+    
+- What does this mean?
+    - MCMC requires more "care and feeding" than simple methods
+    - Algorithm can fail, requiring user intervention (rare in classic regression context!)
+
+### Fitting ERGs to Data: MCMC
+
+- **Markov chain**
+    - Stochastic process $X_1,X_2,\dots$ on a state space $S$, such that $\Pr(X_i|X_{i-1},X_{i-2},\dots) = \Pr(X_i|X_{i-1})$ (i.e., only the previous state matters -- this is the Markov condition)
+- **Monte Carlo procedure**
+    - Any procedure which uses randomization to perform a computation, fixed execution time and uncertain output (compare w/ Las Vegas procedures)
+- **Markov chain Monte Carlo (MCMC)**
+    - Family of procedures using Markov chains to perform computations and/or simulate target distributions; often, these cannot be done any other way
+
+### Fitting ERGs to Data: MCMC
+
+- **Important Example: Metropolis Algorithm**
+    - Given $X_i$, draw $X^{'}$ from $q(X_i)$; w/probability $\min\left(1,\frac{\Pr(X^{'})}{\Pr(X_i)}\right)$, let $X_{i+1}=X^{'}$, else $X_{i+1}=X_i$. Repeat for $i+1, i+2,$ etc.
+    - Started w/arbitrary $X_0,X_0,X_1,\dots,X_n$ converges to $p(X)$ in distribution as $n\rightarrow \infty$
+    - Requires some constraints on $q$, but is very general - used when we can't sample from target distribution $p$ directly (as when $p$ is an ERG distribution)
+
+### Fitting ERGs to Data: Computing the MLE
+
+- \texttt{statnet} employs MCMC methods and MCMC-MLE methods to perform likelihood-based inference
+- What happens when you run \texttt{ergm}?
+    - First guess at $\theta$ done using the MPLE
+    - Simulation of $y_1,\dots,y_n$ based on the initial guess
+    - The simulated sample is used to find $\theta$ using MLE
+    - Previous two steps are iterated for good measure 
+    (since initial estimate is likely off)
+
+### Fitting ERGs to Data: \texttt{statnet}
+
+No need to this yourself, software exists to handle this procedure!
+
+- Dedicated statnet package for fitting, simulating models in ERG form
+
+- Basic call structure:
+
+```{r,eval=FALSE}
+ergm(y~term1(arg)+term2(arg))
+```
+
+- All available terms can be found in:
+
+```{r,eval=FALSE}
+help("ergm-terms")
+```
+
+- Summary, print and other methods can be used on the "ergm" objects
+
+- \texttt{simulate} command can also be used take draws from the fitted model
+
+### Fitting ERGs to Data: \texttt{statnet}
+
+Let's do a simple example (remember the florentine network):
+
+\small
+```{r,fig.align='center',message=FALSE,out.width='.3\\textwidth'}
+library(ergm)
+data(florentine)
+plot(flomarriage)
+```
+
+### Fitting ERGs to Data: \texttt{statnet}
+
+\small
+```{r,fig.align='center',message=FALSE,out.width='.3\\textwidth'}
+# Begin with the most basic model: a lone edges term
+flom.e<-ergm(flomarriage~edges)                           # Fit the model
+flom.e                                                    # Print it
+```
+
+### Fitting ERGs to Data: \texttt{statnet}
+
+\tiny
+```{r}
+summary(flom.e)                                           # Get a summary
+```
+
+### Fitting ERGs to Data: \texttt{statnet}
+
+\tiny
+```{r,message=FALSE,warning=FALSE}
+# Triangles?
+flom.et<-ergm(flomarriage~edges+triangle)
+```
+### Fitting ERGs to Data: \texttt{statnet}
+
+\tiny
+```{r,message=FALSE,warning=FALSE}
+summary(flom.et)
+```
+
+### Fitting ERGs to Data: Some Basic Families
+
+- Several familiar and/or famous model families can be fit in \texttt{ergm}
+- Bernoulli Graph (N,p): edge term only:
+```{r,eval=FALSE}
+data(samplike)
+ergm(samplike~edges)
+```
+- Bernoulli Graph with covariates:
+```{r,eval=FALSE}
+ergm(samplike~edges+nodematch("group"))
+```
+- $p_1$: edge, row-sum, col-sum and mutuality (or any subset thereof)
+```{r,eval=FALSE}
+ergm(samplike~edges+sender+receiver+mutual)
+```
+
+### Fitting ERGs to Data: Beyond Independence
+
+\begin{textblock*}{55mm}(-5mm,-0.45\textheight)
+\vspace{.05in}
+\textbf{Star Terms}
+\vspace{-.1in}
+\begin{itemize}
+\item \textbf{Simple subgraph census terms}
+\begin{itemize}
+    \item k-stars: number of subgraphs isomorphic to $K_{ij}$
+    \item k-in/out-stars: number of subgraphs isomorphic to orientation of $K_{ij}$
+\end{itemize}
+\item \textbf{Interpretations}
+\begin{itemize}
+    \item Tendency of edges to ``stick together" on endpoints ("edge clustering")
+    \item Fixes moments of the degree distribution
+    \begin{itemize}
+    \item 1-star fix mean degree, 2 star fixes variance
+    \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{100mm}(55mm,-0.3\textheight)
+\includegraphics[width=.6\linewidth]{figures/stars.pdf}
+\end{textblock*}
+
+### Let's try it!
+
+\tiny
+```{r,eval=FALSE}
+# How about 2-stars?
+flom.ets<-ergm(flomarriage~edges+kstar(2))
+summary(flom.ets)
+```
+```{r,echo=FALSE,results='hide'}
+flom.ets<-ergm(flomarriage~edges+kstar(2))
+```
+```{r,echo=FALSE}
+summary(flom.ets)
+```
+
+
+### Fitting ERGs to Data: Beyond Independence
+
+\begin{textblock*}{65mm}(-5mm,-0.45\textheight)
+\vspace{.05in}
+\textbf{Triad Census Terms}
+\vspace{-.1in}
+\begin{itemize}
+\item \textbf{Most basic terms for endogenous clustering}
+\begin{itemize}
+    \item Each term counts subgraphs isomorphic to triads of a given type (i.e., elements of the triad census)
+    \item In practice, triangles, cycles, and transitives most often used
+\end{itemize}
+\item \textbf{Interpretations}
+\begin{itemize}
+    \item Tendencies toward transitive closure, cycles, etc. 
+    \item Transitivity can be an indicator of latent hierarchy
+    \item Cyclicity can be an indicator of extended reciprocity
+    \end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{100mm}(65mm,-0.3\textheight)
+\includegraphics[width=.4\linewidth]{figures/triad.pdf}
+\end{textblock*}
+
+### Let's try it!
+
+\tiny
+```{r,eval=FALSE}
+# Triangles?
+flom.et<-ergm(flomarriage~edges+triangle)
+summary(flom.et)
+```
+```{r,echo=FALSE,results='hide'}
+flom.et<-ergm(flomarriage~edges+triangle)
+```
+```{r,echo=FALSE}
+summary(flom.et)
+```
+
+# Model Adequacy and Issues of Degeneracy 
+### Model Adequacy and Issues of Degeneracy 
+
+**Major Problems**
+
+1. \red{Model Degeneracy}
+2. \red{Quality of the Simulations}
+3. \red{Model Adquacy Assessment}
+
+
+### Model Degeneracy
+
+
+\begin{textblock*}{100mm}(0mm,-0.4\textheight)
+\small{
+Unstable ERGM specifications place almost all probability mass on a small set of graphs that do not resemble the observed graph, and the rest of the graphs in the model space have negligible probability
+}
+\end{textblock*}
+
+\begin{textblock*}{100mm}(0mm,-.3\textheight)
+\begin{center}
+\includegraphics[width=.5\linewidth]{figures/MarkHandcockDegeneracy.pdf}
+
+\tiny{Mark S. Handcock (2003). “Assessing Degeneracy in Statistical Models of Social Networks.”  Working Paper no. 39 Center for Statistics and the Social Sciences, University of Washington, Seattle.}
+\end{center}
+\end{textblock*}
+
+
+### Quality of the Simulations
+
+- **Simulations can fail in several ways**
+    1. \red{Insufficient burn-in}: starting point still affects results
+    2. \red{Insufficient post-burn samples}: sample hasn't converged
+    3. \red{May be degenerate}: almost all graphs are same (usually complete/empty)
+    4. Sample does not cover observed graph (problematic for inference)
+
+```{r,echo=FALSE,results='hide'}
+set.seed(17845)
+che.m1<-ergm(emon$Cheyenne~edges+triangles,control= control.ergm(MCMC.samplesize = 10000, MCMC.burnin = 20000,MCMLE.maxit=1))
+
+g.sim <- simulate(che.m1, nsim=1000)
+triangle<-summary(g.sim~triangle)
+edges<-summary(g.sim~edges)
+```
+
+```{r,echo=FALSE,out.width='.6\\textwidth',fig.align='center'}
+plot(data.frame(edges,triangle),pch=19,col=rgb(0,0,0,.5),xlim=c(0,max(edges)),ylim=c(0,max(triangle)))
+points(summary(emon$Cheyenne~edges),summary(emon$Cheyenne~triangles),col="red",pch=19)
+title("Bad Simulation: Cheyenne Triangle Model")
+```
+
+### Assessing Simulation Quality
+
+**Core MCMC diagnostic tools for ERGM**
+
+- In \texttt{ergm}, primary tool is \texttt{mcmcm.diagnostics()}
+
+    - Requires \texttt{coda} library
+
+    - Calculates various diagnostics on MCMC output
+    
+        - Correlations and lagged correlations of model statistics
+    
+        - Raftery-Lewis convergence diagnostics
+
+    - Basic syntax
+    
+```{r,eval=FALSE}
+    fit<-ergm(Y~term(1)+term(2))
+    mcmc.diagnostics(fit)
+```
+
+- Can also directly plot statistics vs observed
+  - \texttt{fit\$sample} provides normalized simulated stat from an \texttt{ergm} object with $0=$ observed value
+    
+### flobusines w/edges, 2-3 stars, triangles
+\small
+```{r,results='hide'}
+flom.b1<-ergm(flobusiness~edges+kstar(2)+kstar(3)+triangle)
+```
+
+```{r,results='hide',out.width='.6\\textwidth',fig.align='center'}
+mcmc.diagnostics(flom.b1, center=F)
+```
+
+### flobusines w/edges, 2-3 stars, triangles {.allowframebreaks}
+\tiny
+
+```{r,echo=FALSE,fig.show='hide'}
+mcmc.diagnostics(flom.b1, center=F)
+```
+
+### Strategies for Issues with MCMC Sample
+
+- For burn-in issues, increase \texttt{MCMC.burnin} parameter
+- For post-burn convergence, incease \texttt{MCMC.samplesize}
+    - \texttt{MCMC.samplesize} increasese final sample
+    - \texttt{MCMC.interval} increases subsampling interval; useful if chain mixes slowly 
+    (i.e.,high autocorrelation and/or slow movement)
+- If not of these work, it may be your model!
+    - E.g., degeneracy due to runaway clique formation
+    - Triangle, star terms especially bad (due to "nesting")
+    - Try cuved variants (e.g., \texttt{gwesp})
+
+### Strategies for Issues with MCMC Sample
+
+\tiny
+```{r}
+args(control.ergm)
+```
+
+### Model Assessment
+
+- **Model adequacy**:
+    - \red{Key idea:} Model should reproduce relevant properties of the observed data
+
+- **How does one assess model adequacy? Simulation!**
+    - Simulate draws from fitted model
+    - Compare observed graph to simulated graphs on measures of interest
+    - Verify that observed properties are well-covered by simulated ones
+    (e.g., not in 5\% tails)
+- **What properties should be considered?**
+    - This is application-sepcific -- no single uniform answer
+    - Start with "in-model" statistics; ERG must get means right, but still verify non-pathological distributions
+    - "Out-of-model" statistics can be common low-level properties (e.g., degree, triad census) 
+    or theoretically motivated quantities
+
+### Checking Adequacy with \texttt{gof}
+
+Basic syntax:
+```{r,eval=FALSE}
+got(fit,GOF=~term1+term2)
+```
+- Has \texttt{print}, \texttt{plot}, and \texttt{summary} methods
+- \red{Note:} still uses MCMC, so check convergence
+
+### Example: flobusiness with edges {.allowframebreaks}
+\tiny
+```{r,results='hide'}
+flom.b1<-ergm(flobusiness~edges)
+flo_gof<-gof(flom.b1)
+```
+```{r,echo=FALSE}
+flo_gof
+```
+
+### Example: flobusiness with edges 
+\tiny
+
+```{r,echo=FALSE}
+par(mfrow=c(2,2))
+plot(flo_gof)
+```
+
+### Common Strategies
+
+- Option 1: Add terms
+    - Which features are poorly captured? Is there a term which would add in such effects (ideally minimally)?
+- Option 2: Switch terms
+    - Can you replace an existing term with a similar one more likely to succeed? (E.g., sociality or degree terms versus k-stars)
+- Option 3: Do nothing
+    - Is the type of inadequacy a problem for your specific question? Can it be tolerated in this case? How good is the overall fit?
+
+# References and Places for More Information 
+
+### References and Places for More Information {.allowframebreaks}
+
+- Statnet wiki: [https://statnet.org/trac](https://statnet.org/trac)
+- JSS Special Issue: [https://www.jstatsoft.org/issue/view/v024](https://www.jstatsoft.org/issue/view/v024)
+**Workshop slides are based on the following courses**
+- Carter Butt's 2009 Analysis of Social Network Data at UCI
+- Mark Handcock's 2011 Statistical Analysis of Networks at UCLA
+- Peter Hoff's Statistical Analysis of Social Networks at UW
+- Martina Morris' 2016 Statistical Analysis of Social Networks at UW
+- Zack Almquist's 2015 Social Network Analysis: Theory and Methods at UMN
+
+
+

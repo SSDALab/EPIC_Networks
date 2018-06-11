@@ -1,9 +1,13 @@
 ---
-title: "Day"
+title: "Day 3: Descrptives and Intro to Statistical Inference for Networks"
 output:
   html_document:
     toc: true
     toc_depth: 2
 ---
 
-Material to be posted soon.
+- [Lecture 3](Lec/Almquist_Tutorial3_Part1.pdf)
+    - [Lab 3]()
+- [Lecture 3](Lec/Almquist_Tutorial3_Part2.pdf)
+    - [Supplement: Subgroups](Subgroups.html)
+    - [Lab 3]()

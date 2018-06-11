@@ -1,0 +1,726 @@
+---
+title: "Social Network Analysis: Descriptives Part 2"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 12th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=40)
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+```
+
+
+# Degree Distribution
+
+### Degree Distribution: Local Level
+
+Given some ego, what do we want to know about their alters?
+
+- Network Size
+    - Degree - total number of ties incident to a node
+        - E.g., GSS "Important matters" networks: \red{2.9}(1985);\red{2}(2004)
+        - E.g, "Dunbar Number": 150-200
+
+```{r,echo=FALSE,message=FALSE,fig.align='center',out.width='.3\\textwidth',cache=TRUE}
+betex.star<-matrix(0,nc=6,nr=6)
+betex.star[1,2:6]<-1
+betex.star[2:6,1]<-1
+gplot(betex.star,gmode="graph",vertex.cex = 2)
+```    
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+
+
+### Degree Estimation
+
+Not just central tendencies, but distribution(s) too.   
+
+- How many friends do most people have?
+
+vs.
+
+- How many friends "should" I have?
+
+```{r,echo=FALSE,fig.align='center',out.width='.4\\textwidth'}
+hist(rpois(10000,5))
+```
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+
+### Degree Estimation
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/feld}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Feld SL. Why Your Friends have More Friends than you do. American Journal of Sociology 1991;96:1464-1477.}
+
+### Degree Estimation
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/feld2}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Feld SL. Why Your Friends have More Friends than you do. American Journal of Sociology 1991;96:1464-1477.}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg17}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg18}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg16}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Barabasi AL, Albert R, Jeong H, Bianconi G. Power-Law Distribution of the World Wide Web. Science 2000;287:2115.}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg15}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Barabasi AL, Albert R, Jeong H, Bianconi G. Power-Law Distribution of the World Wide Web. Science 2000;287:2115.}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg14}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:Butler RJ, Cowan BW, Nilsson S. From Obscurity to Bestseller: Examining the Impact of Oprah's Book Club Selections. Publishing Research Quarterly 2005;20(4):23-34}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg13}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Dezso Z, Barabasi AL. Halting viruses in scale-free Networks. Physical Review E 2002.}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg12}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Dezso Z, Barabasi AL. Halting viruses in scale-free Networks. Physical Review E 2002.}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg11}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Amaral LAN, Scala A, Barthelemy M, Stanley HE. Classes of Small World Networks. PNAS 2000;97(21):1}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg10}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:}
+
+### Degree Distributions Matter
+
+**Adults & Children Estimated to be Living w/HIV, 2011**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg9}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg8}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:May RM, Anderson RM. Transmission Dynamics of HIV Infection. Nature 1987;326:137-142.}
+
+### Degree Distributions Matter
+
+**Who is at greatest/least risk?**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg7}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:}
+
+### Degree Distributions Matter
+
+**STI Interventions**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg6}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg5}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Liljeros F, Edling CR, Amaral LAN, Stanley HE, Aberg Y. The Web of Human Sexual Contacts. Nature 2001;411:9}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg4}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Morris (2003)}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg3}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Morris (2003)}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg2}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Galvin SR, COhen MS. The Role of Sexually Transmitted Diseases in HIV Transmission. Nature Reviews: Microbiology 2004;2:33-42.}
+
+### Degree Distributions Matter
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/deg1}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin:}
+
+# Network Composition
+
+### Homophily: Add Health Friendship Network
+
+\begin{textblock*}{100mm}(10mm,-.4\textheight)
+```{r,warning=FALSE,message=FALSE,out.width='1\\linewidth',echo=FALSE}
+library(networkdata)
+data(addhealth)
+plot(addhealth[[10]],vertex.col="grade",displayisolates=FALSE,edge.col=rgb(0,0,0,.1),vertex.cex=.5)
+legend("bottomleft",legend=unique(addhealth[[10]]%v%"grade")[order(unique(addhealth[[10]]%v%"grade"))],col=unique(addhealth[[10]]%v%"grade")[order(unique(addhealth[[10]]%v%"grade"))],pch=19,title="Grade")
+```
+\end{textblock*}
+
+
+### Selective Mixing
+
+\begin{textblock*}{70mm}(0mm,-.4\textheight)
+\begin{itemize}
+\item Observation: vertices in most real-world networks are heterogeneous
+\begin{itemize}
+\item Different classes of vertices unequally likely to be tied
+\end{itemize}
+\item Selective mixing: differences in marginal tie probability among groups
+\end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(60mm,-.2\textheight)
+```{r,warning=FALSE,message=FALSE,out.width='1\\linewidth',echo=FALSE}
+i<-1
+plot(addhealth[[i]],vertex.col="sex",displayisolates=FALSE,edge.col=rgb(0,0,0,.1),vertex.cex=.8)
+legend("bottomleft",legend=c("Male","Female"),col=unique(addhealth[[i]]%v%"sex")[order(unique(addhealth[[i]]%v%"sex"))],pch=19,title="Gender")
+```
+\end{textblock*}
+
+
+### Homophily
+
+\begin{textblock*}{70mm}(0mm,-.4\textheight)
+\begin{itemize}
+\item Very common type of selective mixing: marginal tendency of individuals with similar properties to be adjacent
+\begin{itemize}
+\item Term refers to association, not underlying mechanism
+\end{itemize}
+\item Can occur for many reasons
+\begin{itemize}
+\item Active selection (i.e., preferences)
+\item Passive selection (e.g., tracking in schools)
+\item Diffusion/influence
+\end{itemize}
+\item Less well-understood than one would think
+\end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(60mm,-.2\textheight)
+```{r,warning=FALSE,message=FALSE,out.width='.9\\linewidth',echo=FALSE}
+plot(addhealth[[1]],vertex.col="grade",displayisolates=FALSE,edge.col=rgb(0,0,0,.1),vertex.cex=.8)
+legend("bottomleft",legend=unique(addhealth[[1]]%v%"grade")[order(unique(addhealth[[1]]%v%"grade"))],col=unique(addhealth[[1]]%v%"grade")[order(unique(addhealth[[1]]%v%"grade"))],pch=19,title="Grade")
+```
+\end{textblock*}
+
+
+
+### Propinquity and Age Mixing
+
+\begin{textblock*}{70mm}(0mm,-.4\textheight)
+\begin{itemize}
+\item More complex mixing is also possible
+\item Propinquity: tendency of spatially proximate vertices to be tied
+\begin{itemize}
+\item Continuous covariate -- function form of effect important for resulting structure
+\end{itemize}
+\item Age mixing: differential association based on age 
+\begin{itemize}
+\item  Often broadly homophilous, but details can vary
+\item Asymmetries common, e.g., male/female age difference in marriages
+\end{itemize}
+\end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(60mm,0\textheight)
+```{r,warning=FALSE,message=FALSE,out.width='1\\linewidth',echo=FALSE}
+load("data/beach.rda")
+par(mfrow=c(1,1),mar=c(0, 0, 0, 0) + 0.3)
+for(i in 4){
+	if(is.network(beach[[i]])){
+gplot(beach[[i]],coord=beach[[i]]%n%"cord",vertex.cex=.4,usearrows=FALSE,edge.lwd=.5,edge.col=rgb(0,0,0,0.1),vertex.col=beach[[i]]%v%"regular"+1)
+mtext(paste(substr(names(beach)[i],1,1),"/",substr(names(beach)[i],2,3),"/1987",sep=""),side=1,cex=.5)
+}
+}
+```
+\end{textblock*}
+
+
+### Freeman et al. (1988)
+
+```{r,warning=FALSE,message=FALSE,out.width='1\\linewidth',echo=FALSE}
+load("data/beach.rda")
+par(mfrow=c(3,10),mar=c(0, 0, 0, 0) + 0.3)
+for(i in 1:length(beach)){
+	if(is.network(beach[[i]])){
+gplot(beach[[i]],coord=beach[[i]]%n%"cord",vertex.cex=.4,usearrows=FALSE,edge.lwd=.5,edge.col=rgb(0,0,0,0.1),vertex.col=beach[[i]]%v%"regular"+1)
+mtext(paste(substr(names(beach)[i],1,1),"/",substr(names(beach)[i],2,3),"/1987",sep=""),side=1,cex=.5)
+}
+}
+```
+
+
+### Mixing Rates: Some Basics
+
+\begin{itemize}
+\item Observation: we already know how to calculate one kind of mixing rate -- the density!
+\begin{itemize}
+\item Rate at which all vertices mix with all other vertices
+\end{itemize}
+\item Generalization to multiple groups
+\begin{itemize}
+\item Let $S$, $S^{'}$ be two groups. Then
+$$r_{SS^{'}} = \frac{\sum_{i\in S}\sum_{j\in S^{'}}Y_{ij}}{|\{ (s,s^{'}):s\in S,s^{'}\in S^{'}, s\neq s^{'})\}|}$$
+\item Not that this reduces to density when $S=S^{'}=V$ (loops omitted here)
+\end{itemize}
+\item Relationship to inhomogeneous Bernoulli Model
+\begin{itemize}
+\item For $i\in S$, $j\in S^{'}$ let $\Phi_{ij}=r_{SS^{'}}$. Bernoulli model with parameter $\Phi$ expresses distribution in which edges are independent and homogeneous within groups, with fixed inter/intra-group mixing rates 
+\end{itemize}
+\end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+
+### Null Distributions
+\begin{itemize}
+\item Several ways to obtain null distributions
+\begin{itemize}
+\item Binomial model
+\begin{itemize}
+\item Let $X_{SS^{'}}$ be the number of edges from $S$ to $S^{'}$, and let $X_{SS^{'}}^{*}$ be the number of possible edges. If all $S,S^{'}$ edge variables are independent with probability $p$, then $X_{SS^{'}} \sim Binom(X_{SS^{'}}^{*} ,p)$; its expected value is thus $pX_{SS^{'}}^{*}$ and its variance is $p(1-p)X_{SS^{'}}^{*}$
+\item Can get null from assumption that $p$ is equal to the density
+\end{itemize}
+\item Poisson approximation
+\begin{itemize}
+\item If $X_{SS^{'}}^{*} \rightarrow \infty$ with $pX_{SS^{'}}^{*}$ fixed, then $X_{SS^{'}}^{*}\sim Pois(pX_{SS^{'}}^{*})$; expected value and variance in this case are both $pX_{SS^{'}}^{*}$
+\item Can get null expectation using two-way marginals: $pX_{SS^{'}}^{*}=X_S X_{S^{'}}/(\sum_i\sum_j Y_{ij})$; comparison using z-scores typically works fairly well for exploratory purposes
+\end{itemize}
+\item Permutation of vertex labels
+\begin{itemize}
+\item Randomly re-assign set memberships, holding set sizes constant, and recalculate $X_{SS^{'}}$. This both exact, and preserves edge value distributions (useful if valued)
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+
+# Network Position (Theories)
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh11}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Burt RS. “Structural Holes versus Network Closure as Social Capital.” Pp.31-56ininLinN,CookK,BurtRS.Social}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh10}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Burt RS. Structural Holes: The social structure of competition. Harvard University Press; 1992.}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh9}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Rodan S. Structural Holes and Managerial Performance:Identifying Underlying  Mechanisms. Social Networks.2010;32(3).}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh8}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Burt RS. Secondhand Brokerage: Evidence on the Importance of Local Structure for Managers, Bankers, and Analysts.
+Academy of Management Journal 2007;50(1):119-148.}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh7}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh6}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh5}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Burt RS. Structural Holes: The social structu}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh4}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Burt RS. Structural Holes: The social structure of competition. Harvard University Press; 199}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh3}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Granovetter M. The Strength of Weak Ties. American Journal of Sociology 1973;81:1287-1303.}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh2}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Jim Moody}
+
+### Structural Holes
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/sh1}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+# Distance Measures
+
+### Distance Measures (reachability)
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/dist21}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Milgram S. The Small World Problem. Psychology Today 1967;1:61-67}
+
+### Distance Measures (reachability)
+
+**The Small World of Facebook**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist20}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{[Facebook](https://www.facebook.com/notes/facebook-data-team/anatomy-of-facebook/10150388519243859)}
+
+### Distance Measures (reachability)
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist19}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist18}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist17}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist16}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist15}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist14}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist13}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist12}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist11}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Geodesics**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist10}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Distance Matters**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist9}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Distance Matters**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist8}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Incomplete Path Lengths**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist7}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Is 6 large or small number?**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist6}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Direct Searches**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist5}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{}
+
+### Distance Measures (reachability)
+
+**Why were they so far off?**
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist4}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Killworth PD, McCarty C, Bernard HR, House M. The Accuracy of Small World Chains in Social Networks. Social Networks 2006;28.}
+
+### Distance Measures (reachability)
+
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist3}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Milgram S. The Small World Problem. Psychology Today 1967;1:61-6}.}
+
+### Distance Measures (reachability)
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist2}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Milgram S. The Small World Problem. Psychology Today 1967;1:61-6}
+
+### Distance Measures (reachability)
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/dist1}
+\end{center}
+
+\tiny{jimi adams. EPIC- SNA 2017. Columbia University.}
+\tiny{Origin: Milgram S. The Small World Problem. Psychology Today 1967;1:61-6}
+
+
+# R for Descriptive Analysis: More tools
+
+### References and Places for More Information {.allowframebreaks}
+

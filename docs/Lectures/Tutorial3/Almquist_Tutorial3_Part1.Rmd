@@ -1,0 +1,679 @@
+---
+title: "Social Network Analysis: Node and Graph Level Statistics Part 1"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 13th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=70)
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+```
+
+# Node-Level Indices
+
+### Node-Level Indices
+
+Introduction to classic Social Network Metrics (Positional or Node-level indices)
+
+
+### Node-level Indices
+
+\begin{textblock*}{60mm}(-5mm,-.4\textheight)
+\begin{itemize}
+\item Node-level index: a real- valued function of a graph and a vertex
+\begin{itemize}
+\item Purely structural NLIs depend only on unlabeled graph properties
+\begin{itemize}
+\item I.e., $f(v,G)\rightarrow \Re$
+\item Invariant to node relabeling
+\end{itemize}
+\item Covariate-based NLIs use both structural and covariate properties
+\begin{itemize}
+\item I.e., $f(v,G,X)\rightarrow \Re$
+\item Not labeling invariant
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(55mm,-.4\textheight)
+\begin{itemize}
+\item Primary uses:
+\begin{itemize}
+\item Quantify properties of individual positions
+\item Describe local neighborhood
+\end{itemize}
+\item Several common families:
+\begin{itemize}
+\item Centrality
+\item Ego-net structure
+\item Alter covariate indices
+\end{itemize}
+\item Centrality is the most prominent, and our focus today/lecture
+\end{itemize}
+\end{textblock*}
+
+
+### Centrality
+
+\begin{itemize}
+\item Returning to the core question: how do individual \underline{positions} vary?
+\item One manner in which positions vary is the extent to which they are ``central" in the network
+\begin{itemize}
+\item Important concern of social scientists (and junior high school students)
+\end{itemize}
+\item Many distinct concepts
+\begin{itemize}
+\item No one way to be central in a network - many different kinds of centrality!
+\item Different types of centrality aid/hinder different kinds of actions
+\item Being highly central in one respect doesn't always mean being central in other respects (although the measures generally correlate)
+\end{itemize}
+\end{itemize}
+
+
+### Types of Centrality Measures
+
+\begin{itemize}
+\item One attempted classification by Koschutzki et al. (2005):
+\begin{itemize}
+\item \underline{Reach}: Centrality based on ability of ego to reach other vertices
+\begin{itemize}
+\item Degree, closeness
+\end{itemize}
+\item \underline{Flow Mediation}: Centrality based on quantity/weight of walks passing through ego
+\begin{itemize}
+\item Stress, betweenness
+\end{itemize}
+\item \underline{Vitality}: Centrality based on effect of removing ego from the network
+\begin{itemize}
+\item Flow betweenness (oddly), cutpoint status
+\end{itemize}
+\item \underline{Feedback}: Centrality of ego defined as a recursive function of alter centralities
+\begin{itemize}
+\item Eigenvector centrality, Bonacich Power
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+
+### Degree
+
+\begin{textblock*}{70mm}(-5mm,-.4\textheight)
+\begin{itemize}
+\item Degree: number of direct ties
+\begin{itemize}
+\item Overall activity or extent of involvement in relation
+\item High degree positions are influential, but also may be subject to a great deal of influence from others
+\end{itemize}
+\item Formulas:
+\begin{itemize}
+\item Degree (undirected):
+$$d(i,Y)=\sum_{j=1}^N Y_{ij}$$
+\item Indegree: $d_i(i,Y)=\sum_{j=1}^N Y_{ji}$
+\item Outdegree: $d_o(i,Y)=\sum_{j=1}^N Y_{ij}$
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(60mm,-.4\textheight)
+
+```{r,fig.align='center',out.width='.6\\textwidth',echo=FALSE}
+star<-network(cbind(rep(1,7),matrix(rep(0,times=6,each=7),nc=6,nr=7)),directed=FALSE)
+plot(star,main="Undirected Star",label=1:7, edge.col=rgb(0,0,0,.3),label.cex=2)
+
+set.seed(9902211)
+net<-rgraph(5)
+gplot(net,main="directed network",label=1:5,edge.col=rgb(0,0,0,.3),label.cex=2)
+```
+
+\end{textblock*}
+
+### Review: Shortest Paths
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\begin{itemize}
+\item A shortest path from $i$ to $j$ is called an $i,j$ geodesic
+\begin{itemize}
+\item Can have more than one (but all same length, obviously)
+\item The length of an $i,j$ geodesic is called the geodesic distance from $i$ to $j$
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(-5mm,-.1\textheight)
+
+```{r,fig.align='left',out.width='.7\\textwidth',echo=FALSE,results='asis'}
+set.seed(9902211)
+gplot(symmetrize(net),main="Directed Network",label=1:5,edge.col=rgb(0,0,0,.3),label.cex=2)
+```
+\end{textblock*}
+
+\begin{textblock*}{50mm}(40mm,0\textheight)
+\tiny{
+```{r,fig.align='center',out.width='.5\\textwidth',echo=FALSE,results='asis'}
+g<-sna::geodist(symmetrize(net))
+print(xtable(g$gdist),floating=FALSE)
+```
+}
+\end{textblock*}
+
+### Betweenness
+
+\begin{textblock*}{70mm}(-5mm,-.45\textheight)
+\begin{itemize}
+\item Betweenness: tendency of ego to reside on shortest paths between third parties
+\begin{itemize}
+\item Quantifies extent to which position serves as a bridge
+\item High betweenness positions are associated with ``broker" or ``gatekeeper" roles; may be able to ``firewall" information flow
+\end{itemize}
+\item Formula
+$$b(i,Y)=\sum_{j\neq i}\sum_{k\neq l} \frac{g^{'}(j,k,l)}{g(j,k)}$$
+Where $g(j,k)$ is the number of $j,k$ geodesics, $g^{'}(j,k,i)$ is the number of $j,k$ geodesics including $i$
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(65mm,-.4\textheight)
+
+```{r,fig.align='center',out.width='.5\\textwidth',echo=FALSE}
+set.seed(9902211)
+plot(star,main="Undirected Star",label=1:7, edge.col=rgb(0,0,0,.3),label.cex=2)
+
+gplot(symmetrize(net),main="directed",label=1:5,edge.col=rgb(0,0,0,.3),label.cex=2)
+```
+
+\end{textblock*}
+
+### Closeness
+
+\begin{textblock*}{80mm}(-10mm,-.45\textheight)
+\begin{itemize}
+\item Closeness: ratio of minimum distance to other nodes to observed distance to other nodes
+\begin{itemize}
+\item Extent to which position has short paths to other positions
+\item High closeness positions can quickly distribute information, but may have limited direct influence
+\item Limitation: not useful on disconnected graphs (may need to symmetrize directed graphs, too)
+\end{itemize}
+\item Formula
+$$c(i,Y)= \frac{N-1}{\sum_{j=1}^N D(i,j)}$$
+Where $D(I,j)$ is the distance from $i$ to $j$
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(70mm,-.4\textheight)
+\includegraphics[width=.9\linewidth]{figures/closeness}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+
+### Classic Centrality Measures Compared
+
+\begin{textblock*}{100mm}(10mm,-.4\textheight)
+\includegraphics[width=.9\linewidth]{figures/compare}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+
+
+### Classic Centrality Measures Compared
+
+\begin{textblock*}{100mm}(10mm,-.4\textheight)
+\includegraphics[width=.9\linewidth]{figures/krackExample}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+### Relatedness of Centrality Indices
+
+\begin{textblock*}{60mm}(0mm,-.4\textheight)
+\begin{itemize}
+\item Centrality indices are strongly correlated in practice
+\item Simple example: total degree versus ``complex" NLIs
+\begin{itemize}
+\item Squared correlations for sample UCINET data sets
+\item Some diversity, but usually accounts for majority of variance
+\item Theoretical insight: if you can capture degree, you can capture many other aspects of social position
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(70mm,-.4\textheight)
+\includegraphics[width=.9\linewidth]{figures/correlationCent}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+
+
+### Relating NLIs to Vertex Covariates
+
+\begin{textblock*}{70mm}(-10mm,-.45\textheight)
+\begin{itemize}
+\item Common question: are NLIs related to non-structural covariates?
+\begin{itemize}
+\item Centrality to power or influence
+\item Constraint to advancement
+\item Diversity to attainment
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(70mm,-.4\textheight)
+\includegraphics[width=.9\linewidth]{figures/texasEmon}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+### ``Linear" Permutation Tests
+
+\begin{textblock*}{55mm}(-10mm,-.45\textheight)
+\small
+\begin{itemize}
+\item Simple, nonparametric test of association between vectors
+\begin{itemize}
+\tiny
+\item Sometimes called ``linear" or ``vector" permutation test (or monte carlo test)
+\item Tests marginal association against exchangeability null (independence conditional on marginal distributions)
+\end{itemize}
+\item Null interpretation: ``musical chairs" model
+\begin{itemize}
+\tiny
+\item If we randomly switched the positions of people in the network (leaving structure as-is), what is the chance of observing a similar degree of association?
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{75mm}(40mm,-.45\textheight)
+\small
+\begin{itemize}
+\item Monte Carlo procedure:
+\begin{itemize}
+\small
+\item Let $x_{obs} = (f(v_1,G),\dots,f(v_N,G))$ be the observed NLI vector, w/covariate vector $y$
+\item Let $t_{obs} = s(x_{obs},y)$
+\item For $i$ in $1,\dots,n$
+\begin{itemize}
+\small
+\item Let $x^{(0)}$ be a random permutation of $x_{obs}$
+\item Let $t^{(i)}=s(x^{(i),y})$
+\end{itemize}
+\end{itemize}
+\item Estimated p-values:
+\begin{itemize}
+\item One-seided
+\begin{itemize}
+\tiny
+\item $\Pr(t^{(i)} \leq t_{obs} )\approx\sum_{i} I(t^{(i)} \leq t_{obs})/n$
+\item $\Pr(t^{(i)}\geq t_{obs})\approx\sum_{i} I(t^{(i)}\geq t_{obs})/n$
+\end{itemize}
+\item Two-sided
+\begin{itemize}
+\tiny
+\item $\Pr(|t^{(i)}|\geq|t_{obs}|)\approx\sum_{i} I(|t^{(i)}|\geq|t_{obs}|)/n$
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+
+### Understanding the Null Model
+
+\begin{textblock*}{100mm}(10mm,-.4\textheight)
+\includegraphics[width=.9\linewidth]{figures/nullPerm}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+
+
+### Texas SAR EMON Example
+
+\begin{textblock*}{65mm}(-5mm,-.4\textheight)
+\begin{itemize}
+\item Question: do organizations in constant communication w/many alters end up more/less prominent in the decision-making process?
+\begin{itemize}
+\small
+\item Measure ($s$): correlation of decision rank score ($y$) with degree in confirmed ``continuous communication" network ($x_{obs}$)
+\item Null: no relationship between degree and decision making
+\item Alternative: decision making has linear marginal relationship w/degree
+\end{itemize}
+\item Results
+\begin{itemize}
+\item $t_{obs}= 0.86$; $\Pr(|t^{(i)}\geq|t_{obs}|) \approx 3e-5$
+\item Correlation this large very unlikely under null hypothesis
+\item Upper tail test similar (see figure)
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(70mm,-.4\textheight)
+\includegraphics[width=.9\linewidth]{figures/permDist}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+\end{textblock*}
+
+
+### NLIs as Covariates
+
+\begin{textblock*}{60mm}(-5mm,-.4\textheight)
+\begin{itemize}
+\item NLIs can also be used as covariates (e.g., in regression analyses)
+\begin{itemize}
+\item Modeling assumption: position properties predict properties of those who hold them
+\item Conditioning on NLI values, so dependence doesn't matter (if no error in $G$)
+\item NLIs as dependent variables are much more problematic; we'll revisit this problem when we discuss ERGs
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{60mm}(55mm,-.4\textheight)
+\begin{itemize}
+\item Things to keep in mind....
+\begin{itemize}
+\item Make sure that your theory really posits a direct relationship w/the NLI
+\item NLI distributions could be quite skewed or irregular; be sure this makes sense (e.g., via analysis of residuals)
+\item Multiple NLIs may be strongly correlated; may not be able to distinguish among related measures in practice
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+# Graph Level Indicies 
+
+### Graph-Level Properties
+
+\begin{itemize}
+\item Earlier, we discussed the notion of node-level indices (mainly centrality)
+\begin{itemize}
+\item Dealt with position of the individual within the network
+\end{itemize}
+\item Today, we will focus on properties at the graph level
+\begin{itemize}
+\item Graph-level index: $f(v,G)\rightarrow\Re$
+\item Describes aggregate features of structure as a whole
+\end{itemize}
+\item Provide complementary insight into social structure
+\begin{itemize}
+\item Node-level properties tell you who's where, but graph- level properties provide the broader context
+\end{itemize}
+\end{itemize}
+
+
+### Review Density
+
+\begin{itemize}
+\item Density: fraction of possible edges which are present
+\begin{itemize}
+\item Probability that a given graph edge is in the graph
+\end{itemize}
+\item Formulas:
+\begin{itemize}
+\item Undirected: $\delta = \frac{2 \sum_{i=1}^N \sum_{j=i}^N Y_{ij}}{N(N-1)}$
+\item Directed: $\delta = \frac{2 \sum_{i=1}^N \sum_{j=1}^N Y_{ij}}{N(N-1)}$
+\end{itemize}
+\end{itemize}
+
+**R Code**
+\tiny
+```{r}
+undirected<-rgraph(10,mode="graph")
+directed<-rgraph(10,mode="digraph")
+gden(undirected,mode="graph")
+gden(directed,mode="digraph")
+```
+
+### Size, Density, and Mean Degree
+
+\begin{itemize}
+\item Important fact: size, density, and mean degree are intrinsically related
+\begin{itemize}
+\item Formally, $d_m = \delta(N-1)$ [I.e., mean degree = density times size-1]
+\item Also, $\delta=d_m/(N-1)$ [I.e., density = mean degree over size-1]
+\end{itemize}
+\item Simple fact, with non-obvious implications
+\begin{itemize}
+\item If mean degree fixed, density falls with 1/group size
+\item To maintain density, have to increase degree linearly, but actors can only support so many ties!
+\item Thus, growing networks become increasingly sparse over time
+\begin{itemize}
+\item Durkheim, Parsons, etc: modern social order depends on/produces norms of generalized exchange, since only tiny fraction of person can be directly related
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+### Illustration: Mean Degree Constancy and Density Decline
+
+\tiny
+```{r,echo=TRUE,fig.align='center',message=FALSE,warning=FALSE,out.width='.6\\linewidth',cache=TRUE}
+library(ggplot2)
+library(gridExtra)
+library(networkdata)
+data(addhealth)
+data<-data.frame(size=sapply(addhealth,network.size),
+density=sapply(addhealth,gden))
+data$meandegree<-data$density*(data$size-1)
+
+p1<-ggplot(data, aes(size,density)) + geom_point() + geom_smooth()
+p2<-ggplot(data, aes(size,meandegree)) + geom_point() + geom_smooth()
+grid.arrange(p1, p2, ncol=1)
+```
+
+### Beyond Density: the Dyad Census
+
+\begin{textblock*}{70mm}(-10mm,-.45\textheight)
+\begin{itemize}
+\item Dyad census: a count of the number of mutual, asymmetric and null dyads in a network
+\begin{itemize}
+\item Mutual: $(i,j)$ and $(j,i)$
+\item Asymmetric: $(i,j)$ or $(j,i)$, but not both
+\item Null: neither $(i,j)$ nor $(j,i)$
+\item Traditionally written as $(M,A,N)$
+\end{itemize}
+\item Used as ``building block"
+\begin{itemize}
+\item $M+A+N$ = Number of dyads
+\item $2M+A$= Number of edges
+\item $(M+A/2)/(M+A+N)$= Density
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{60mm}(60mm,-.3\textheight)
+\tiny
+```{r,out.width='.8\\linewidth',echo=FALSE,cache=TRUE}
+asym<-matrix(0,nc=4,nr=4)
+asym[1,4]<-1
+asym[3,2]<-1
+mut<-matrix(c(0,1,1,0),nc=2)
+null<-matrix(c(0,0,0,0),nc=2)
+par(mfrow=c(1,3),cex.main=4)
+gplot(mut,mode="circle",main="Mutual")
+box()
+gplot(asym,mode="circle",main="Asymmetric")
+box()
+gplot(null,mode="circle",main="Null")
+box()
+```
+
+\end{textblock*}
+
+### Reciprocity
+
+\begin{textblock*}{60mm}(-5mm,-.45\textheight)
+\begin{itemize}
+\item Reciprocity: tendency for relations to be symmetric
+\item Several notions:
+\begin{itemize}
+\item Dyadic: probability that any given dyad is symmetric (mutual or null)
+$$\frac{M+N}{M+A+N}$$
+\item Edgewise: probability that any given edge is reciprocated
+$$\frac{2M}{2M+A}$$
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{60mm}(65mm,-.4\textheight)
+\tiny
+```{r,out.width='.4\\linewidth',echo=FALSE,results='asis',fig.align='center'}
+graph<-rgraph(15)
+gplot(graph)
+print(xtable(dyad.census(graph)))
+#print(xtable(grecip(graph,measure ="edgewise")))
+#print(xtable(grecip(graph,measure ="dyadic")))
+```
+\end{textblock*}
+
+### Reachability
+
+\begin{textblock*}{60mm}(-10mm,-.45\textheight)
+\begin{itemize}
+\item Reachability graph
+\begin{itemize}
+\item Digraph, $R$, based on $G$ such that $(i,j)$ is an edge in $R$ iff there exists an $i,j$ path in $G$
+\begin{itemize}
+\item If $G$ is undirected or fully reciprocal, $R$ will also be fully reciprocal
+\end{itemize}
+\item Intuitively, an edge in $R$ connects vertices which are connected in $G$
+\item Strong components of $G$ (including cycles) form cliques in $R$
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{60mm}(65mm,-.4\textheight)
+\includegraphics[width=.7\linewidth]{figures/reachability}
+\end{textblock*}
+
+### Hierarchy
+
+\begin{textblock*}{70mm}(-10mm,-.45\textheight)
+\begin{itemize}
+\item Hierarchy: tendency for structures to be asymmetric
+\item As with reciprocity, many notions; for instance\dots
+\begin{itemize}
+\item Dyadic Hierarchy: 1- (Dyadic Reciprocity)
+\begin{itemize}
+\item Intuition: extent to which dyads are asymmetric
+\end{itemize}
+\item Krackhard Hierarchy: $1-M/(M+A)$ in Reachability Graph
+\begin{itemize}
+\item Intuition: for pairs which are in a contact, what fraction are asymmetric?
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{60mm}(65mm,-.4\textheight)
+
+```{r,out.width='.4\\linewidth',echo=FALSE,results='hide',cache=TRUE,fig.align='center',messages=FALSE}
+graph<-rgraph(15,tprob=.1)
+gplot(graph)
+krack<-hierarchy(graph,measure ="krackhardt")
+rec<-invisible(hierarchy(graph,measure ="reciprocity"))
+```
+```{r,echo=FALSE,results='asis'}
+cat("Reciprocity\n\n")
+print(xtable(matrix(rec)),include.rownames = FALSE, include.colnames = FALSE,floating = FALSE)
+cat("Krackhardt\n\n")
+rec<-krack
+print(xtable(matrix(rec)),include.rownames = FALSE, include.colnames = FALSE,floating = FALSE)
+```
+\end{textblock*}
+
+### Centralization
+
+\begin{textblock*}{65mm}(-5mm,-.45\textheight)
+\begin{itemize}
+\item Centralization: extent to which centrality is concentrated on a single vertex
+\item Definition dut to Freeman (1979):
+$$C(G) = \sum_{i=1}^N \left(\max_v c(v,G)-c(i,G)\right) $$
+\begin{itemize}
+\item Defined for any centrality measure
+\item Often used with degree, betweenness, closeness, etc.
+\end{itemize}
+\item Most centralized structure usually star network
+\begin{itemize}
+\item True for most centrality measures
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{60mm}(65mm,-.4\textheight)
+\tiny
+```{r,out.width='.65\\linewidth',echo=FALSE,fig.align='center'}
+graph<-rgraph(15,tprob=.5,mode="graph")
+star<-matrix(0,nc=10,nr=10); star[1,]<-1; star[,1]<-1
+par(mfrow=c(2,1),mar=c(0, 0, 0, 0),cex.main=3)
+gplot(graph,main="Random Network")
+gplot(star,main="Star Network")
+```
+
+```{r,echo=FALSE,results='asis',cache=TRUE}
+cat("Random Network\n\n")
+print(xtable(cbind(centralization(graph,g=1,degree),centralization(graph,g=1,closeness))),include.rownames = FALSE,include.colnames = FALSE,floating=FALSE)
+cat("Star Network\n\n")
+print(xtable(cbind(centralization(star,g=1,degree),centralization(star,g=1,closeness))),include.rownames = FALSE,include.colnames = FALSE,floating=FALSE)
+```
+\end{textblock*}
+
+### Centralization Versus Hierarchy
+
+\begin{itemize}
+\item Aren't centralization and hierarchy the same thing?
+\item No! Two very different ideas:
+\begin{itemize}
+\item Hierarchy: asymmetry in interaction
+\item Centralization: inequality in centrality
+\end{itemize}
+\item Can have centralized mutual structures, hierarchical decentralized structures
+\end{itemize}
+
+
+
+### Centralization and Team Performance
+
+\begin{itemize}
+\item Bavelas, Leavitt and others studied work teams with four structural forms:
+\end{itemize}
+\includegraphics[width=.8\linewidth]{figures/bavelas}
+
+\begin{itemize}
+\item Performance generally highest in centralized groups
+\begin{itemize}
+\item Star, ``Y" took least time, made fewest errors, used fewest messages
+\end{itemize}
+\item Satisfaction generally highest in decentralized groups
+\begin{itemize}
+\item Circle$>$Chain$>$``Y"$>$Star (but central persons had fun!)
+\end{itemize}
+\item A lesson: optimal performance $\neq$ optimal satisfaction ...
+\end{itemize}
+
+# References and Places for More Information 
+
+### References and Places for More Information {.allowframebreaks}
+
+
+
+

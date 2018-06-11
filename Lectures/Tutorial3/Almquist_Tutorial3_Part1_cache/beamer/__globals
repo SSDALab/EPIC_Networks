@@ -1,0 +1,12 @@
+unnamed-chunk-2	star	network	cbind	rep	matrix	plot	rgb	set.seed	net	rgraph	gplot
+unnamed-chunk-3	set.seed	gplot	symmetrize	net	rgb
+unnamed-chunk-4	g	geodist	symmetrize	net	print	xtable	gdist
+unnamed-chunk-5	set.seed	plot	star	rgb	gplot	symmetrize	net
+unnamed-chunk-6	undirected	rgraph	directed	gden
+unnamed-chunk-7	library	ggplot2	gridExtra	networkdata	data	addhealth	data.frame	sapply	network.size	gden	meandegree	density	size	p1	ggplot	aes	geom_point	geom_smooth	p2	grid.arrange
+unnamed-chunk-8	asym	matrix	mut	c	null	par	gplot	box
+unnamed-chunk-9	graph	rgraph	gplot	print	xtable	dyad.census
+unnamed-chunk-10	graph	rgraph	gplot	krack	hierarchy	rec	invisible
+unnamed-chunk-11	cat	print	xtable	matrix	rec	krack
+unnamed-chunk-12	graph	rgraph	star	matrix	par	c	gplot
+unnamed-chunk-13	cat	print	xtable	cbind	centralization	graph	degree	closeness	star

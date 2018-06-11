@@ -1,0 +1,16 @@
+unnamed-chunk-2	data	emon	i	plot	names	rainbow	legend	%v%	degree
+unnamed-chunk-3	i	sf	x	mat	emon	degree	col	rainbow	nam	paste	substr	rownames	colnames	print	xtable
+unnamed-chunk-4	link	data	read.csv	el	vnam	unique	unlist	order	e1	match	e2	el_sna	cbind	rep	length	colnames	c	attr	mat	as.sociomatrix.sna	symmetrize	col	nrow	rownames	gplot
+unnamed-chunk-5	cl	c	rl	mat	matrix	rownames	colnames	cat	print	xtable
+unnamed-chunk-7	plot	flag_needle_net
+unnamed-chunk-8	plot	flag_sex_net
+unnamed-chunk-9	plot	flag_social_net
+unnamed-chunk-10	plot	flag_drug_net
+unnamed-chunk-11	library	networkdata	data	krack	length
+unnamed-chunk-12	par	c	i	plot	krack
+unnamed-chunk-13	kfr	as.sociomatrix.sna	krack	krackfr	np	matrix	emp	sapply	c	rep	epp	kfr.post.fixed	bbnam.fixed	kfr.post.pooled	bbnam.pooled	kfr.post.actor	bbnam.actor
+unnamed-chunk-14	gplot	apply	kfr.post.fixed	net	c	median
+unnamed-chunk-15	gplot	apply	kfr.post.pooled	net	c	median
+unnamed-chunk-16	gplot	apply	kfr.post.actor	net	c	median
+unnamed-chunk-17	gplot	apply	kfr.post.actor	net	c	median
+unnamed-chunk-6	library	sna	network	load	url

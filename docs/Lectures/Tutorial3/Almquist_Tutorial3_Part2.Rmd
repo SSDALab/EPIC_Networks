@@ -1,0 +1,150 @@
+---
+title: "Social Network Analysis: Node and Graph Level Statistics Part 2"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 13th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=70)
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+```
+
+# Introduction to Statisticsl Inference
+
+### A First Look at Random Graphs
+
+\begin{itemize}
+\item So far, we have been measuring properties of graphs (and modeling their effects)
+\item Next step: modeling graphs themselves
+\begin{itemize}
+\item Long-running and ongoing research area
+\item Will crop up repeatedly in the coming weeks
+\end{itemize}
+\item Today -- a quick introduction to some basic families
+\begin{itemize}
+\item We'll see some uses of these model families in the next lecture...
+\end{itemize}
+\end{itemize}
+
+### The Notion of Random Graphs
+
+\begin{itemize}
+\item Let $G=(V,E)$ be a graph. If $E$ (and perhaps $V$) is a random set, then $G$ is a random graph
+\begin{itemize}
+\item Can consider $G$ to be a random variable on some set $G$ of possible graphs (``multinomial" representation)
+\item Write probability mass function (pmf) as $\Pr(G=g)$
+\end{itemize}
+\item Let $Y$ be the adjacency matrix of random graph $G$. Then $Y$ is a random matrix
+\begin{itemize}
+\item Write graph pmf as $\Pr(Y=y)$
+\item $Y_{ij}$ is a binary random variable which indicates the state of the (random) $i,j$ edge
+\item $\Pr(Y_{ij}=y_{ij})$ is the (marginal) proability of the $Y_{ij}$ edge state
+\end{itemize}
+\end{itemize}
+
+### ``Classical" Random Graphs
+
+\begin{itemize}
+\item Two families from the early (mathematical) literature:
+\begin{itemize}
+\item The ``N,M" family (Erd\"{o}s-R\'{e}nyi, size/density CUG)
+\item Let $M_m$ be the maximum number of edges in $G$. Then:
+$$\Pr(G=g \; | \; N,M) = {M_m \choose M}^{-1}$$
+\item The ``N,p" family (homogeneous Bernoulli graphs)
+$$\Pr(G=g \; | \; N,p) = p^{M}(1-p)^{M_m-M}$$
+\item Both used as baseline models, but very limited
+\begin{itemize}
+\item No heterogeneity, (almost) no dependence
+\item Starting point for more complex models
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+
+### Relaxation 1: Intra-dyadic Independence
+
+\begin{itemize}
+\item First way to build richer models: relax independence
+\item Intra-dyadic dependence models
+\begin{itemize}
+\item Allow for size, density, reciprocity effects
+\end{itemize}
+\item Two parallel models
+\begin{itemize}
+\item Dyad census conditioned CUG ($U|MAN$)
+\item Let $G$ have fixed dyad census $M,A,N$. Then
+$$\Pr(G=g \; | \; M,A,N) = \frac{M!A!N!}{(M+A+N)!}$$
+\item Homogeneous dyadic multinomial family $(u|man)$
+$$\Pr(G=g \; | \; m,a,n)= m^{M}a^{A}n^{N}$$
+\end{itemize}
+\end{itemize}
+
+
+
+### Relaxation 2: Homogeneity
+
+\begin{itemize}
+\item Second way to build richer models: relax homogeneity in edge probabilities
+\item Development for Bernoulli, multinomial cases:
+\item Inhomogeneous Bernoulli graph
+\begin{itemize}
+\item  Let $\Phi \in [0,1]^{N\times N}$ be a parameter matrix, and $B(X=x\; | \; p)$ the Bernoulli pmf.
+$$\Pr(G=g \; | \; \Phi) = \prod_{(i,j)} B(Y_{ij}=y_{ij} \; | \; \Phi_{ij})$$
+\item Inhomogeneous independent dyad graph
+\item Let $\Phi, \Psi \in [0,1]^{N\times N}$ be parameter matrices w/ $\Phi_{ij} + \Psi_{ij} \leq 1$. Then
+{\tiny
+$$\Pr(G=g\; | \; \Phi,\Psi) = \prod_{(i,j)} \left[ 
+ \Phi_{ij} y_{ij}y_{ji} + \Psi_{ij}(y_{ij}(1-y_{ij})+(1-y_{ij}y_{ij})+(1-\Phi_{ij}-\Psi_{ij} )(1-y_{ij})(1-y_{ij})
+\right]$$
+}
+\item Intuitively, $\Phi$ sets the probability of mutuals, and $\Psi$ sets the probability of asymmetrics
+\end{itemize}
+\end{itemize}
+
+
+### Simple Random Graph Models in Practice
+
+\begin{itemize}
+\item Models without trivial cross-dyadic dependence still have many uses
+\begin{itemize}
+\item Baseline models for null hypothesis testing
+\item Mathematical tools for exploring the space of graphs
+\item Serious data models (in the inhomogeneous case)
+\begin{itemize}
+\item Start with inhomogenous family, model parameter matrix using greression-like model (see, e.g., {\tt sna::netlogit}) and/or with latent variables (e.g. package {\tt latentnet})
+\item Can be extremely effective, if sufficiently strong covariates are available 
+\end{itemize}
+\item Dyad dependent models are much more complex, but we'll see them later\dots
+\end{itemize}
+\end{itemize}
+
+# Cohesion and Subgroups
+
+### Introduction to Cohesion and Subgroups
+
+- [R Lab](Subgroups.html)
+
+### References and Places for More Information {.allowframebreaks}
+

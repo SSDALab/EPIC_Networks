@@ -1,9 +1,18 @@
 ---
-title: "Day"
+title: "Day 1: Introduction to Networks"
 output:
   html_document:
     toc: true
     toc_depth: 2
 ---
 
-Material to be posted soon.
+- [Lecture 1](Lec/Almquist_Tutorial1_Part1.pdf)
+    - [Intro R](https://github.com/SSDALab/IntroR)
+    - [R Helper Card](Labs/R_Short-refcard.pdf)
+- [Lecture 2](Lec/Almquist_Tutorial1_Part2.pdf)
+    - [Lab 1: Intro](Labs/Tutorial_1-Intro.R)
+    - [Lab 1: Data](Labs/Tutorial_data.R)
+    - [Data Zipfile](Labs/data.zip)
+    - [Lab 1:](Labs/intro_Statnet.R)
+    - [igraph visualization](http://kateto.net/network-visualization)
+- [Supp Matrix Algebra](Lec/adams_matrix.pdf)

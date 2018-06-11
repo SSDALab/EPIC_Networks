@@ -1,9 +1,11 @@
 ---
-title: "Day"
+title: "Day: Advance Statistical Network Models"
 output:
   html_document:
     toc: true
     toc_depth: 2
 ---
 
-Material to be posted soon.
+- Network Autocorrelation Models
+- TERGM
+- SAOM

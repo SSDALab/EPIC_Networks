@@ -1,0 +1,7 @@
+unnamed-chunk-2	betex.star	matrix	gplot
+unnamed-chunk-3	hist	rpois
+unnamed-chunk-4	library	networkdata	data	addhealth	plot	rgb	legend	unique	%v%	order
+unnamed-chunk-5	i	plot	addhealth	rgb	legend	c	unique	%v%	order
+unnamed-chunk-6	plot	addhealth	rgb	legend	unique	%v%	order
+unnamed-chunk-7	load	par	c	i	is.network	beach	gplot	%n%	rgb	%v%	mtext	paste	substr	names
+unnamed-chunk-8	load	par	c	i	length	beach	is.network	gplot	%n%	rgb	%v%	mtext	paste	substr	names

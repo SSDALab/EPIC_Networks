@@ -1,0 +1,29 @@
+unnamed-chunk-2	data	emon	i	w	as.sociomatrix	max	pdf	set.seed	par	c	plot	rgb	rainbow	dev.off	plot.new	legend	%v%	degree
+unnamed-chunk-3	data	mids_1993	ideg	degree	odeg	gplot	rgb	max	network.vertex.names	title
+unnamed-chunk-4	data	contig_1993	bet	betweenness	gplot	sqrt	title
+unnamed-chunk-5	data	faux.desert.high	plot	rgb	col	colorLegend	legend	order
+unnamed-chunk-6	load	WTCPoliceNet	as.sociomatrix.eventlist	WTCPoliceCalls	gplot	WTCPoliceIsICR	rgb	title
+unnamed-chunk-7	data	krack	kfr.conc	consensus	krackfr	gplot	title
+unnamed-chunk-8	data	emon	par	c	i	length	plot	rgb	title	names
+unnamed-chunk-9	load
+unnamed-chunk-10	plot	flag_needle_net	col	colorLegend	legend
+unnamed-chunk-11	plot	flag_sex_net	col	colorLegend	legend
+unnamed-chunk-12	plot	flag_social_net	col	colorLegend	legend
+unnamed-chunk-13	plot	flag_drug_net	col	colorLegend	legend
+unnamed-chunk-14	set.seed	g	rgraph	print	xtable
+unnamed-chunk-15	sociomatrixplot	g
+unnamed-chunk-16	gplot	g
+unnamed-chunk-17	adj	matrix	c	rownames	colnames	print	xtable
+unnamed-chunk-18	el	as.edgelist.sna	adj	print	xtable
+unnamed-chunk-19	set.seed	gplot	adj	colnames
+unnamed-chunk-20	adj	matrix	c	rownames	colnames	print	xtable
+unnamed-chunk-21	el	as.edgelist.sna	adj	print	xtable	is.na
+unnamed-chunk-22	set.seed	gplot	adj	colnames
+unnamed-chunk-23	adj	matrix	c	rownames	colnames	print	xtable
+unnamed-chunk-24	el	as.edgelist.sna	adj	print	xtable	is.na
+unnamed-chunk-25	set.seed	gplot	adj	colnames
+unnamed-chunk-26	adj	matrix	c	rownames	colnames	print	xtable
+unnamed-chunk-27	adjf	matrix	c	rownames	colnames	adjfp	paste	diag	print	xtable	x
+unnamed-chunk-28	set.seed	coords	gplot	adj	colnames	adjf
+unnamed-chunk-29	load	build_edgelist_sna	vnam	unique	unlist	el	order	e1	match	e2	el_sna	cbind	rep	length	colnames	c	attr	egonet	mat	as.sociomatrix.sna	symmetrize	col	nrow	rownames	par	gplot
+unnamed-chunk-30	data	emon	i	plot	names	rainbow	rgb	legend	%v%	degree

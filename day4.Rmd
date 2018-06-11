@@ -1,9 +1,10 @@
 ---
-title: "Day"
+title: "Day 4: "
 output:
   html_document:
     toc: true
     toc_depth: 2
 ---
 
-Material to be posted soon.
+- [Lecture 4](Lec/Almquist_Tutorial4_Part1.pdf)
+    - [Lab 4]()

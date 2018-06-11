@@ -1,0 +1,184 @@
+---
+title: "Social Network Analysis: Overview Part 2"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 11th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=70)
+options(xtable.comment = FALSE)
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+```
+
+# Network Vizualization: Theory and Methods
+
+### Visualization
+
+- "The success of a visualization is based on deep knowledge and care about the substance, and the quality, relevance and integrity of the content." (Tufte, 1983)
+
+- Thus a network graph’s aim is to clearly communicate something (about patterns of social relationships) that we would have difficulty knowing any other way.
+
+\begin{center}
+\includegraphics[width=.7\linewidth]{figures/visexample}
+\end{center}
+
+\tiny{Euler 1741, as reproduced in Freeman LC. Visualizing Social. Journal of Social Structure 2000;1(1).}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis15}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: }
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis14}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: }
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis13}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin:}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis12}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: Moreno 1934, as reproduced in Freeman LC. 2000. Visualizing Social Networks. Journal of Social Structure 1(1).}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis11}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: Mitchell 1994, as reproduced in Freeman LC. 2000. Visualizing Social Networks. Journal of Social Structure 1(1).}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis10}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: }
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis9}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: Moody J, McFarland DA, Bender-DeMoll S.network visualization. American Journal of Sociology 110(4):1206-1241.}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis8}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: }
+
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis7}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: Lada Adamic }
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis6}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: }
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis5}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: James Moody; Lada Adamic; Lin Freeman}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis4}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: Lada Adamic}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis3}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: Moody J, McFarland DA, Bender-DeMoll S. 2005. network visualization. American Journal of Sociology 110(4):1206-1241.}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis2}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: Moody J, McFarland DA, Bender-DeMoll S. 2005. network visualization. American Journal of Sociology 110(4):1206-1241.}
+
+### Visualization: Gaining Some Intuition
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/vis/vis1}
+\end{center}
+\tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
+\tiny{Origin: }
+
+# Network Vizualization: R
+
+### Network Vizualization: R
+
+**Why R?**
+
+- Open Source
+- Large community of developers for SNA
+    - STATNET, igraph, ...
+- Extensible 
+
+# References and Places for More Information 
+
+### References and Places for More Information {.allowframebreaks}
+

@@ -1,9 +1,12 @@
 ---
-title: "Day"
+title: "Day 2: Descriptives"
 output:
   html_document:
     toc: true
     toc_depth: 2
 ---
 
-Material to be posted soon.
+- [Lecture 1](Lec/Almquist_Tutorial2_Part1.pdf)
+    - [Lab 1]()
+- [Lecture 2](Lec/Almquist_Tutorial2_Part2.pdf)
+    - [Lab 2]()

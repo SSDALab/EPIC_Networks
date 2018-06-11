@@ -1,0 +1,56 @@
+---
+title: "Social Network Analysis: Introduction to Statistical Models Part 2"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 11th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=70)
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+
+
+```
+# Dynamics on Networks an Overview
+
+# Search over a Network
+
+# Network Diffusion 
+
+# Network Autocorrelation Model
+
+# References and Places for More Information 
+
+### References and Places for More Information {.allowframebreaks}
+
+# Statistical models of Networks
+
+# Network Regression
+
+# Logistic Network Regression
+
+# References and Places for More Information 
+
+### References and Places for More Information {.allowframebreaks}
+

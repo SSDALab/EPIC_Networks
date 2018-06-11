@@ -1,0 +1,577 @@
+
+
+
+
+
+
+# Network Sampling: Overview
+
+```{r,fig.align='center',message=FALSE,warning=FALSE,echo=FALSE,results="hide",out.width='.6\\textwidth'}
+
+
+load("data/HealthNetworks/flagstaff_rural.rda")
+
+lg<-component.largest(flag_social_net)
+flag_social_net_lg<-flag_social_net
+network::delete.vertices(flag_social_net_lg,v=which(!lg))
+cl<-unique(data.frame(race=(flag_social_net_lg%v%"race"),col=plotArgs.network(flag_social_net_lg,"vertex.col","race")))
+
+#par(mar=c(0,0,0,0)+.01)
+plot(flag_social_net_lg,vertex.col="race",edge.col=rgb(0,0,0,.3),vertex.cex=.7)
+title("Flagstaff Rural Network Study, 1996-1998")
+legend("bottomleft",legend=cl$race,col=cl$col,pch=19,bty="n")
+
+```
+
+Morris and Rotheberg. HIV Transmission Network Metastudy Project: An Archive of Data From Eight Network Studies, 1988--2001 (ICPSR 22140).
+
+
+
+
+### Review: Design based inference
+
+* The population is viewed as fixed.
+* The values of the variables of interest are fixed.
+* *Sampling is the only stochastic process*, the only source of uncertainty.
+* This is in contrast to model-based inference that posits an underlying datagenerating
+model. Hence the variables of interest in the population are
+viewed as random variables.
+* Survey sampling methods are typically design-based.
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',out.width='.6\\textwidth'}
+library(openintro)
+data(COL)
+
+par(mar=c(0,0,0,0)+.01)
+plot(c(0,2), c(0,1.1), type='n', axes=F,xlab="",ylab="")
+temp <- seq(0, 2*pi, 2*pi/100)
+x <- 0.5+0.5*cos(temp)
+y <- 0.5+0.5*sin(temp)
+lines(x,y)
+
+s <- matrix(runif(700), ncol=2)
+S <- matrix(NA, 350, 2)
+j <- 0
+for(i in 1:dim(s)[1]){
+	if(sum((s[i,] - .5)^2) < .23){
+		j <- j+1
+		S[j,] <- s[i,]
+	}
+}
+points(S, col=COL[4,3], pch=20)
+text(0.5, 1, 'Population', pos=3)
+
+set.seed(50)
+N <- sample(j, 25)
+lines((x-0.5)/2+1.5, (y-.5)/2+.5, pch=20)
+
+SS <- (S[N,]-0.5)/2 + 0.5
+points(SS[c(2,5,11,10,12),1]+1, SS[c(2,5,11,10,12),2], col=COL[1,2], pch=20, cex=1.5)
+text(1.5, 0.75, 'sample', pos=3)
+
+for(i in c(2,5,11,10,12)){
+	arrows(S[N[i],1], S[N[i],2], SS[i,1]+1-0.03, SS[i,2], length=0.08, col=COL[5], lwd=1.5)
+}
+
+```
+
+
+
+
+### Review: Design based inference
+
+* Class sampling is interested in two key statistics
+	* The mean $\bar{X}$ (pop) and $\bar{x}$ (sample estimate)
+		* Capital represents the population ($\bar{X}= \frac{1}{N} \sum_{i=1}^N X_i$)
+		* Lowercase represents estimate from the sample ($\bar{x}= \frac{1}{n} \sum_{i=1}^n x_i$)
+	* The total $T$ (pop) and $\hat{T}$ (sample estimate)
+		* Capital represents the population ($T= \sum_{i=1}^N X_i$
+		* $\hat{T}$ represents estimate from the sample ($\hat{T} = \frac{N}{n} \sum_{i=1}^n$)
+
+
+
+
+### Review: Design based inference
+
+* $N$ is the population size
+* $n$ is the sample size
+* In SRS proabibility is $\pi_i = \frac{1}{n}$, thus the general formula is
+$$\bar{x} = \sum_{i=1}^n \pi_i x_i$$
+* The key idea for probability sampling is that the *design* controls the $\pi_i$'s
+
+
+
+
+### Review: Design based inference
+
+
+**Classic exmaple: Proportions $(\hat{p})$ from a population**
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/2.2}
+pHat <- rbinom(10^4, 62, 0.1)/62
+M    <- max(pHat)*62
+histPlot(pHat, breaks=(-1:(2*M)+0.75)/2/62, 
+		 xlab=expression(hat(p)[sim]*"    "), col=COL[7,3], ylab="")
+histPlot(pHat[pHat < 0.05], 
+		 breaks=(-1:(2*M)+0.75)/2/62, col=COL[1], add=TRUE)
+par(las=0)
+mtext("Number of simulations", 2, 3.3)
+```
+
+
+
+
+
+
+> Defn: **Network Sampling Methods:** Any sampling design which attempts to uncover features of the population and/or network characteristics through tracing a network (or graph) through a population.
+
+* Common statistics of interest:
+	* Mean degree ($\bar{d}= \frac{1}{N}\sum_{i=1}^N degree(v_i)$)
+	* Degree distribution ($\bar{d}_i = \frac{1}{N_k}\sum_{i=1}^N degree_k(v_i)$)
+	* Subgroup Total (e.g., drug users)
+
+**Issues**
+
+* Boundary
+* Selecting Candidates
+* Method/Design for tracing through a population
+
+
+
+
+
+> Examples
+
+* Snow Ball Sampling (chain sampling, chain-referral sampling, referral sampling)
+	* Respondent Driven Sampling
+	* Linke Trace Sampling
+	* Breadth First Search (and Stochastic Breadth First Search)
+
+
+
+
+
+
+> Snowball Sampling ([Wikipedia](https://en.wikipedia.org/wiki/Snowball_sampling))
+
+1. Draft a participation program (likely to be subject to change, but indicative).
+2. Approach stakeholders and ask for contacts.
+3. Gain contacts and ask them to participate.
+4. Community issues groups may emerge that can be included in the participation program.
+5. Continue the snowballing with contacts to gain more stakeholders if necessary.
+6. Ensure a diversity of contacts by widening the profile of persons involved in the snowballing exercise.
+
+
+
+
+
+
+
+> Snowball Sampling ([Wikipedia](https://en.wikipedia.org/wiki/Snowball_sampling))
+
+**Example**
+* "Snowball sampling can be used to identify experts in a certain field such as medicine, manufacturing processes, or customer relation methods, and gather professional and valuable knowledge." - [Wikipedia](https://en.wikipedia.org/wiki/Snowball_sampling)
+
+
+
+
+
+
+> Snowball Sampling ([Wikipedia](https://en.wikipedia.org/wiki/Snowball_sampling))
+
+**Example**
+* "Snowball sampling can be used to identify experts in a certain field such as medicine, manufacturing processes, or customer relation methods, and gather professional and valuable knowledge." - [Wikipedia](https://en.wikipedia.org/wiki/Snowball_sampling)
+
+
+
+
+
+
+
+> Snowball Sampling ([Wikipedia](https://en.wikipedia.org/wiki/Snowball_sampling))
+
+**Advantages**
+
+1. **Locate hidden populations**: It is possible for the surveyors to include people in the survey that they would not have known but through their social network.
+2. **Locating people of a specific population**: There are no lists or other obvious sources for locating members of the population (e.g. the homeless, users of illegal drugs). 
+3. **Methodology**: As subjects are used to locate the hidden population, the researcher invests less money and time in sampling. Snowball sampling method does not require complex planning and the staffing required is considerably smaller in comparison to other sampling methods.
+
+
+
+
+
+> Snowball Sampling ([Wikipedia](https://en.wikipedia.org/wiki/Snowball_sampling))
+
+**Disadvantages**
+
+1.  **Community bias**: The first participants will have a strong impact on the sample. Snowball sampling is inexact and can produce varied and inaccurate results. 
+2. **Non-random**: Snowball sampling contravenes many of the assumptions supporting conventional notions of random selection and representativeness However, social systems are beyond researchers' ability to recruit randomly. 
+3. **Unknown sampling population size**: There is no way to know the total size of the overall population.
+4. **Anchoring**: Lack of definite knowledge as to whether or not the sample is an accurate reading of the target population. 
+5. **Lack of control over sampling method**: As the subjects locate the hidden population, the research has very little control over the sampling method.
+
+
+
+
+
+**Snowball sampling as a probability sample**
+
+* Respondent Driven Sampling
+* Random Walk Sampling / Metropolis Hastings Sampling
+
+
+
+
+
+> Respondent Driven Sampling ([Encyclopedia for Survey Research Methods](http://methods.sagepub.com/reference/encyclopedia-of-survey-research-methods/n479.xml))
+
+"Respondent-driven sampling (RDS) is a method for drawing probability samples of 'hidden,' or alternatively, hard-to-reach, populations."
+
+
+
+
+
+
+
+> Respondent Driven Sampling ([Encyclopedia for Survey Research Methods](http://methods.sagepub.com/reference/encyclopedia-of-survey-research-methods/n479.xml))
+
+<div style='text-align: center;'>
+    <img height='350' src='assets/img/netSampPic.png' />
+</div>
+
+
+
+
+
+
+> Respondent Driven Sampling ([Encyclopedia for Survey Research Methods](http://methods.sagepub.com/reference/encyclopedia-of-survey-research-methods/n479.xml))
+
+Populations such as these are difficult to sample using standard survey research methods for two reasons: 
+
+1. They lack a sampling frame, that is, an exhaustive list of population members from which the sample can be drawn. 
+2. Constructing a sampling frame is not feasible because one or more of the following are true: 
+
+* The population is such a small part of the general population that locating them through a general population survey would be prohibitively costly
+* Because the population has social networks that are difficult for outsiders to penetrate, access to the population requires personal contacts 
+* Membership in the population is stigmatized, so gaining access requires establishing trust. 
+
+
+
+
+
+
+> Respondent Driven Sampling ([Encyclopedia for Survey Research Methods](http://methods.sagepub.com/reference/encyclopedia-of-survey-research-methods/n479.xml))
+
+Populations such as these are difficult to sample using standard survey research methods for two reasons: 
+
+**Examples:**
+> Populations with these characteristics are important to many research areas, including arts and culture (e.g. jazz musicians and aging artists), public policy (e.g. immigrants and the homeless), and public health (e.g. drug users and commercial sex workers). 
+
+
+
+
+
+
+**History**
+- ([RDS](http://www.respondentdrivensampling.org/reports/RDSsummary.htm))
+
+* Proposed by Douglas Heckathorn in a 1997 paper in *Social Problems*
+* He laid out this popular method for sampling hard to reach populations
+* Key Extensions by Salganick and Heckathorn (2004) in *Sociological Methodology* expand on the methodology for acquiring "unbiased" estimates of population characteristics from RDS samples.
+* Important statistical develops, include Gile and Handcock (2010) in *Sociological Methodology* and *Annals of Applied Statistics* (model based methods).
+
+
+**History**
+- ([RDS](http://www.respondentdrivensampling.org/reports/RDSsummary.htm))
+
+* Proposed by Douglas Heckathorn in 1997 paper in *Social Problems*
+* He laid out this popular method for sampling hard to reach populations
+* Key Extensions by Salganick and Heckathorn (2004) in *Sociological Methodology* expand on the methodology for acquiring "unbiased" estimates of population characteristics from RDS samples.
+* Important statistical develops, include Gile and Handcock (2010) in *Sociological Methodology* and *Annals of Applied Statistics* (model based methods).
+
+
+
+
+
+There is a package in `R` for managing RDS samples and performing statistical analysis
+
+```{r}
+#install.packages("RDS")
+library(RDS)
+help(package=RDS)
+```
+
+Developed by Mark Handcock, Krista Gile, Ian Fellows, Neely Whipple.
+
+
+### Example from the RDS package in R:
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.2}
+library(RDS)
+data(faux)
+plot(faux)
+```
+
+
+
+
+### Examples from RDS package in R: fauxmadrona
+
+**The Population (simulated case)**
+* Population $N=1000$ nodes.
+* Sample size is 500 (i.e., sample fraction is 50%).
+* There is homophily on disease status (R=5) 
+* Differential activity by disease status 
+	* The infected nodes have mean degree twice that of the uninfected (w=1.8)
+* In the sampling, the seeds are chosen randomly from the full population
+* Each sample member is given 2 uniquely identified coupons to distribute to other members of the target population in their acquaintance
+* Further each respondent distributes their coupons completely at random from among those they are connected to
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.2}
+
+```
+
+
+
+
+
+### Examples from RDS package in R: fauxmadrona
+
+**Visualization**
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.2}
+data(fauxmadrona)
+plot(fauxmadrona)
+```
+
+
+
+
+### Examples from RDS package in R: fauxmadrona
+
+**Visualization**
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.4}
+library(gridExtra)
+par(mfrow=c(1,2))
+grid.arrange(plot(fauxmadrona, plot.type='Recruits by wave'),
+plot(fauxmadrona, plot.type='Recruits per seed'),
+plot(fauxmadrona, plot.type='Recruits per subject'),nrow=2)
+
+```
+
+
+
+
+### Examples from RDS package in R: fauxmadrona
+
+**Visualization**
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.4}
+library(gridExtra)
+grid.arrange(plot(fauxmadrona, plot.type='Recruits by wave', stratify.by='disease'),
+plot(fauxmadrona, plot.type='Recruits per seed', stratify.by='disease'),
+plot(fauxmadrona, plot.type='Recruits per subject', stratify.by='disease'),		 
+			 nrow = 2)
+```
+
+
+
+
+### Examples from RDS package in R: faux
+
+* Exemplar RDS data set
+
+**Visualization**
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.2}
+data(faux)
+plot(faux)
+```
+
+
+
+
+### Examples from RDS package in R: faux
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,results='asis'}
+library(xtable)
+mat10<-faux[1:10,]
+print(xtable(mat10),type="html")
+```
+
+
+
+
+### Examples from RDS package in R: faux
+
+* Horvitz-THompson Estimator
+	* Assuming inclusion probability proportional to the inverse of degree
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.4}
+get.h.hat(faux,"X")
+```
+
+
+
+
+### Examples from RDS package in R: faux
+
+[Example in Google Sheets](https://docs.google.com/spreadsheets/d/1zh3IGwXRcPg-Lf4SYRER3x360p0slSKLuj3JvzSyCRw/edit?usp=sharing)
+
+
+
+
+
+### Examples from RDS package in R: faux
+
+* Exemplar RDS data set with catagorical covariates
+
+* Stability of the estimate
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.height=8/1.6}
+convergence.plot(faux,c("X","Y"))
+```
+
+
+
+
+### Example
+
+[Respondent-Driven Sampling: Evaluating the Effects of the Cure Violence Model with Neighborhood Surveys
+](https://johnjayrec.nyc/2015/08/04/rds2015/)
+
+* The problem: The Cure Violence model posits that violence spreads through a community like an infectious epidemic.
+* The sample: The study measures changes in violence-related attitudes and values of young men (age 18-30) in at-risk neighborhoods and compares areas with and without Cure Violence programs.
+* The sample: Completed through an RDS design
+
+
+
+
+### Example: RDS Neighborhood Crime
+
+\begin{center}
+\includegraphics[width=.7\linewidth]{figures/recruitmentTicket.png}
+\end{center}
+
+
+
+### Example: RDS Neighborhood Crime
+
+\begin{center}
+\includegraphics[width=.7\linewidth]{figures/RDSexample.png}
+\end{center}
+
+[Respondent-Driven Sampling: Evaluating the Effects of the Cure Violence Model with Neighborhood Surveys](https://johnjayrec.nyc/2015/08/04/rds2015/)
+
+
+
+
+### Example: RDS Neighborhood Crime
+
+> Data collection typically requires eight to ten working days. The consistency of recruitment is critical in maintaining the referral chain for each site. Survey sessions begin around 3:00 p.m. and usually conclude by 7:00 p.m. Seeing the research team at the same time and location throughout the data collection period is important as a means of encouraging repondents to recruit from their social networks. Prior to the start of data-collection, the research team scouts each area to find an appropriate place to manage the administration of interviews. Locations are chosen based upon considerations of safety for the research team and survey respondents as well as the opportunity for private conversations between respondents and survey staff. -[RDS Report](https://johnjayrec.nyc/2015/08/04/rds2015/)
+
+
+
+
+### Example: RDS Neighborhood Crime
+
+> The first day of data-collection (the “seed day”) begins with the recruitment of one person—i.e. the seed participant. The seed participant is someone who fits the sample criteria, is willing to participate in the survey, and is willing to assist the study team in recruiting three other subjects who fit the criteria and who reside in the defined neighborhood area. Each subject is asked to recruit another three subjects. -[RDS Report](https://johnjayrec.nyc/2015/08/04/rds2015/)
+
+
+
+
+
+### Other Examples:
+
+* Arfken, Cynthia L., Sameera Ahmed, and Wahiba Abu-Ras (2013). Respondent-driven sampling of Muslim undergraduate U.S. college students and alcohol use: Pilot study. Social Psychiatry & Psychiatric Epidemiology, 48, 945-953.
+* Lausevic, Dragan, Senad Begic, Boban Mugosa, Natasa Terzic, Zoran Vratnica, Itana Labovic, and Ivana Bozicevic (2015). Prevalence of HIV and other infections and correlates of needle and syringe sharing among people who inject drugs in Podgorica, Montenegro: A respondent-driven sampling survey. Harm Reduction Journal, 12 (2), 1-7.
+* McCreesh, Nicky, Matilda Nadagire Tarsh, Janet Seeley, Joseph Katongole, and Richard G. White (2013). Community understanding of respondent-driven sampling in a medical research setting in Uganda: Importance for the use of RDS for public health research. International Journal of Social Research Methodology, 16 (4), 269-284.
+
+
+
+
+### Random Walk Sampling
+
+* Typical use case is Online Social Networks (OSN)
+* Conceptually similar to RDS case, how?
+
+
+
+
+
+### Random Walk Sampling
+
+* Breadth First Search (BFS)
+* Random Walk (RW)
+* Re-Weighted Random Walk (RWRW)
+* Metropolis-Hastings Random Walk (MHWR)
+
+
+
+
+### Random Walk Sampling
+
+* At each new iteration the earliest explored but not-yet-visited node is selected next.
+* As this method discovers all nodes within some distance from the starting point, an incomplete BFS is likely to densely cover only some specific region on the graph.
+
+
+
+
+### Example: Online Social Network, Facebook Friendships
+
+\includegraphics[width=1\linewidth]{figures/OSNCollection.png}
+
+\tiny{Gjoka, M., Kurant, M., Butts, C. T., \& Markopoulou, A. (2010, March). Walking in facebook: A case study of unbiased sampling of osns. In Infocom, 2010 Proceedings IEEE (pp. 1-9).}
+
+
+### Example: Online Social Network, Facebook Friendships
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/comparisonOSN.png}
+\end{center}
+
+\tiny{Gjoka, M., Kurant, M., Butts, C. T., \& Markopoulou, A. (2010, March). Walking in facebook: A case study of unbiased sampling of osns. In Infocom, 2010 Proceedings IEEE (pp. 1-9).}
+
+
+
+
+
+### Scale up methods (Network scale up)
+
+"Survey respondents have information about other people in their personal networks" (Barnard et al, 1987)
+
+* We can take a random (probability-based) survey and ask people questions like
+
+> "How many people do you know who inject drugs?"
+
+
+
+
+### Scale up methods (Network scale up)
+
+**Advantages**
+
+* Easily added to existing survey instruments
+* Can be standardized across time and location
+* Can concurrently estimate the size of several different hidden populations
+* Partially self-validating
+* Can produce estimations at nation, regional or city level
+* Does not require respondents to admit that they are members of stigmatized group
+
+
+
+
+### Scale up methods (Network scale up)
+
+Key idea: "To estimate network size, we ask question about connections to groups of **known** size." (Killworth et al, 1998)
+
+### Scale up methods (Network scale up)
+
+\includegraphics[width=.7\linewidth]{figures/feehanScaleUp1}
+
+\tiny{Dennis Feehan, UC Berkeley}
+
+
+### Scale up methods (Network scale up): More examples
+
+[Russell Bernard's page on Scale up methods](http://nersp.osg.ufl.edu/~ufruss/scale-up.htm)

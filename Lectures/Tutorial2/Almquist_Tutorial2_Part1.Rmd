@@ -1,0 +1,868 @@
+---
+title: "Social Network Analysis: Data Collection and Descriptives Part 1"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 12th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=40)
+
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+options(xtable.comment = FALSE)
+
+colorLegend<-function(net,attr){
+  unique(cbind(net%v%attr,plotArgs.network(net, "vertex.col", attr)))
+}
+
+```
+
+# Network Data Collection
+
+### One-mode data
+```{r,echo=FALSE,message=FALSE,fig.align='center',out.width='.6\\textwidth',cache=TRUE}
+data(emon)
+i<-4
+plot(emon[[i]],
+main=names(emon)[i],
+edge.lwd="Frequency",
+displayisolates=FALSE, 
+vertex.col=rainbow(8),displaylabels=FALSE)
+legend("bottomright",legend=(emon[[i]]%v%"vertex.names")[sna::degree(emon[[i]])!=0],pch=19,col=rainbow(8),bty="n",cex=.7)
+```
+
+### One-mde data
+
+```{r, echo=FALSE, results='asis', warning=FALSE,message=FALSE,cache=TRUE}
+i<-4
+sf<-function(x){x}
+mat<-emon[[i]][sna::degree(emon[[i]])!=0,sna::degree(emon[[i]])!=0]
+col<-rainbow(8)
+#nam<-paste("<font color=",substr(col,2,7),">",1:8,"<//font>",sep="")
+nam<-paste("\\color[HTML]{",substr(col,2,7),"}{",1:8,"}",sep="")
+rownames(mat)<-colnames(mat)<-nam
+print(xtable(mat,caption="Mt. Si SAR EMON, Confirmed Ties"),size="tiny",sanitize.rownames.function=sf,
+sanitize.colnames.function=sf,xtable.comment = FALSE)
+```
+
+### Special Case: Egocentric network
+
+Egocentric network: focal actor ("ego") + neighbors ("alters") + ties among alters</li>
+
+- **What does it tell us?**
+    - Number of ties ego has (neighborhood size)</li>
+    - Triangles (3-cliques) containing ego</li>
+    - Connections among alters</li>
+    - Neighborhood composition (if asked)</li>
+    - Note:</b> Sometimes called *personal networks*
+
+```{r,echo=FALSE,fig.align='center',out.width='.35\\textwidth',cache=TRUE}
+link<-"https://goo.gl/g5SAor"
+data<-read.csv(link,stringsAsFactors=FALSE)
+el<-data[,1:2]
+vnam<-unique(unlist(el))
+vnam<-vnam[order(vnam)]
+e1<-match(el[,1],vnam)
+e2<-match(el[,2],vnam)
+el_sna<-cbind(e1,e2,rep(1,length(el)))
+colnames(el_sna)<-c("snd","rec","weight")
+attr(el_sna,"n")<-length(vnam)
+attr(el_sna,"vnames")<-vnam
+mat<-as.sociomatrix.sna(el_sna)
+mat[,]<-symmetrize(as.sociomatrix.sna(el_sna))
+col<-rep("red",nrow(mat))
+col[rownames(mat)=="Me"]<-"blue"
+gplot(mat,gmode="graph",vertex.col=col,label=rownames(mat),label.cex=.5)
+```
+
+### Modes of Data: Review
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{figures/kindsofdata}
+\end{center}
+\tiny{Credit: ??}
+
+### Two mode data
+
+* Networks with two vertex class
+	* Different entity types
+	* Membership
+	* Matching/containment
+* Represented by incidence matrices
+	*  "Senders" on rows, "receivers" on columns
+*  Can be used to obtain "dual" representations
+
+\begin{center}
+\includegraphics[width=.7\linewidth]{figures/bipartitenetworks}
+\end{center}
+\tiny{Aaron Clauset. 2015. A short introduction to networks. Santa Fe Institute.}
+
+
+### Two mode data: Projecting into one mode data
+
+*  Let $A$ be an $N\times M$ incidence matrix; the row-projection of $A$ is the $N\times N$ matrix $B$ such that $$B_{ij} = \sum_{k=1}^M A_{ik}A_{jk}$$
+* Likewise, the column projection of $A$ is the $M\times M$ matrix $C$ such that 
+$$C_{ij} = \sum_{k=1}^N A_{kj}A_{kj}$$
+
+$$
+A  =  \left(  \begin{matrix} 
+1 & 0 & 1\\
+0 & 1 & 1\\
+0 & 0 & 1\\
+1 & 1 & 0\\
+   \end{matrix} \right), 
+B =  \left(  \begin{matrix} 
+2 & 1 & 1 & 1\\
+1 & 2 & 1 & 1\\
+1 & 1 & 1 & 0\\
+1 & 1 & 0 & 2\\
+   \end{matrix} \right), \textrm{ and }
+C =  \left(  \begin{matrix} 
+2 & 1 & 1\\
+1 & 2 & 1\\
+1 & 1 & 3\\
+   \end{matrix} \right)
+$$
+
+
+
+
+### Two mode data: Projecting into one mode data
+
+**What the Projections Mean**
+
+- Projections have simple meaning
+    - Row: $B_{ij}$ is the number of column elements shared by row elements $i$ and $j$
+	  - Column: $C_{ij}$ is the number of row elements shared by column elements $i$ and $j$
+- Ex: Number of shared interests between two faculty; number of faculty having a given interest area in common
+
+### Two mode data: Projecting into one mode data
+
+**What the Projections Mean**
+
+- To analyze network data, we must first collect it!
+    - Many approaches exist -- some better than others for particular purposes
+	  - Complex topic overall, but we will at least skim the surface\dots
+- Two important concepts (not always separable):
+	  - **Instruments**: tools used to elicit information from respondents, assess presence/absence of ties from sensors or archival materials, etc.
+	  - **Designs**: protocols for determining how information should be elicited, who should be sampled, etc.
+
+### Levels of Analysis
+
+What scope of information do you want? 
+
+- Boundary Specification:  key is what constitutes the “edge” of the network
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{figures/boundary}
+\end{center}
+
+### Levels of Analysis
+
+Boundary Specification Probblem
+
+\includegraphics[width=.5\linewidth]{figures/boundary2}
+
+While students were given the option to name friends in the other school, they rarely do.  As such, the school likely serves as a strong substantive boundary
+
+
+
+
+
+
+### Relational Data - Designs
+
+* Own-tie reports
+	* Personal ties elicited from each ego
+	* Standard instruments: roster and name generator 
+	* Pros: Easily implemented, most common design 
+	* Cons: Vulnerable to reporting error
+* Egocentric network sampling
+	* Personal ties elicited from ego, followed by induced ties 
+	* Standard instrument: name generator followed by roster
+	* Pros: Well-suited to large-scale survey sampling; provides information on ego's neighborhood
+	* Cons: Vulnerable to reporting error; false positives/negatives on own ties contaminate sampling of neighbors' ties
+
+
+
+
+### Instruments: Name Generators and Rosters
+
+* Name generator: asks respondents to list names
+	* E.g. "Think about the persons with whom you have talked in the past week. Please list all such persons in the following space." (followed by space to enter names)
+* Pros:
+	* Don't have to know name list; can use with large groups or organizations
+* Cons:
+	* High rate of forgetting; unclear boundary
+
+
+
+
+### Roster: asks respondents to choose names from fixed list
+
+* E.g. "For each of the following persons, place a check in the associated blank if you have talked with him her in the past week." (followed by check list)
+	* Pros: More accurate, clear boundary
+	* Cons: List may be prohibitively long, can be imposing; alters must be known in advance
+
+
+
+
+### Instruments: Complete Egonet
+
+* Common way to elicit ego nets: complete instrument followed by roster
+	* Asked to name those with whom you discussed important matters
+	* Then, asked to fill in same question for all pairs of persons named initially
+* Pros:
+	* Relatively easy to administer; don't need entire list of possible alters; don't have to ask about all group members
+* Cons:
+	* Step 1, step 2 questions have different error rates; may need large roster if many alters; hard to use with paper-based surveys
+
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
+
+### GSS: Important Matters
+
+* Famous Example: General Social Survey
+
+> From time to time, most people discuss important
+matters with other people. Looking back over the
+last six months—who are the people with whom
+you discussed matters important to you? Just tell
+me their first names or initials.
+
+* IF LESS THAN 5 NAMES MENTIONED, PROBE: Anyone else?
+
+
+
+
+### GSS: Important Matters
+
+* Famous Example: General Social Survey
+
+> From time to time, most people discuss important
+matters with other people. Looking back over the
+last six months—who are the people with whom
+you discussed matters important to you? Just tell
+me their first names or initials.
+
+* [Survey](https://goo.gl/forms/7jJsYfroJwAjlyl12)
+
+
+### GSS: Important Matters
+
+**Basic findings**
+
+> McPherson, Smith-Lovin, Brashears, "Social Isolation in America: Changes in Core Discussion Networks over Two Decade" ASR 2006
+
+* The number of people saying there is no one with whom they discuss important matters nearly tripled. The mean network size decreases by about a third (one confidant), from 2.94 in 1985 to 2.08 in 2004.
+
+* The modal respondent now reports having no confidant; the modal respondent in 1985 had three confidants
+
+
+### GSS: Important Matters
+
+**Basic findings**
+
+>  Small et al. "How stable is the core discussion network." Social Networks 2015.
+
+1. "We found that when actors enter new institutional environments, their core discussion
+network changes rather quickly"
+2. "Our findings are consistent with the idea that the core discussion network may include people who are not close associates or intimates."
+
+### Designs: **Link-tracing**
+
+* Personal ties elicited from ego; new ego(s) chosen from alters; process is iterated (possibly many times)
+* Standard instruments: multiwave own-report, RDS
+    * Pros: Allows estimation of network properties for large and/or hard to reach populations; highly scalable; can be robust to poor seed sampling
+    * Cons: Vulnerable to reporting error; reporting errors can contaminate design (but may be less damaging than ego net case); often difficult to execute
+
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
+
+### Designs: **Arc Sampling**
+
+- Reports on third-party ties elicited from ego; multiple egos may be sampled for each third-party tie
+- Archival/observer data is a special case Standard instrument: CSS
+    - Pros: Very robust to reporting error (via modeling); can be very robust to missing data 
+    - Cons: Can impose large burden on respondents; can be difficult to execute
+
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
+
+### Designs: **RDS**
+
+* Respondent Driven Sampling (RDS)
+	* Combine standard network instrument with recruitment "tickets"
+	* Respondents given tickets to give to others; if they volunteer, both get paid
+* Pros:
+	* Can use with hidden, vulnerable populations
+* Cons:
+	* Difficult; expensive; complex to analyze; poorly understood
+
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
+
+### Example: **Link-tracing**
+
+**The Data**
+
+The data was aggregated by Martina Morris (University of Washington) and Richard Rothenberg (Emory University) and put online at ICPSR. The original data can be found here. In this exercise we are goint to investigate four networks derived from the Rural Arizona risk networks in Flagstaff, AZ. These networks were collected from May 1996 to Jan 1998 and originally had 95 respondents interviewed 5 times each. All participants are over 18 years old. 
+
+### Example: **Link-tracing**
+
+**Instrument**
+
+* Name generator
+	* Sex, needle, other (illicit) drug contact, social contact in last 6 months
+	* Sampling strategy
+		* Six seeds chosen at random within same geographic area (Flagstaff) from persons presumed to be at elevated risk for HIV acquisition (through sex and/or drug behaviors)
+
+
+### Designs: **Link-tracing**
+
+
+```{r,message=FALSE,warning=FALSE,cache=TRUE,echo=FALSE}
+addr<-"https://github.com/zalmquist/ERGM_Lab/raw/master/data/flagstaff_rural.rda"
+load(url(addr))
+```
+\tiny
+```
+addr<-"https://github.com/zalmquist/ERGM_Lab/raw/master/data/flagstaff_rural.rda"
+load(url(addr))
+```
+
+### Designs: **Link-tracing**
+
+```{r,fig.align='center',out.width='.5\\textwidth'}
+plot(flag_needle_net,vertex.col="race",
+     main="Needle Exchange Network")
+```
+
+
+
+
+### Designs: **Link-tracing**
+
+```{r,fig.align='center',out.width='.5\\textwidth'}
+main<-"Sexual Contact Network"
+plot(flag_sex_net, vertex.col="race",main=main)
+```
+
+
+
+### Designs: **Link-tracing**
+
+```{r,fig.align='center',out.width='.4\\textwidth'}
+plot(flag_social_net,vertex.col="race",
+     main="Social")
+```
+
+### Designs: **Link-tracing**
+
+```{r,fig.align='center',out.width='.5\\textwidth'}
+plot(flag_drug_net,vertex.col="race",
+     main="Drug")
+```
+
+
+### Designs: **CSS**
+
+* Cognitive Social Structure (CSS)
+	* Ask each group member to report on all members` ties
+	* Ex: "Which of the following persons does Steve go to for help or advice?"
+* Pros:
+	  * Gets information on perception; can be used to get high-accurate estimates
+* Cons:
+    * Hard to use; requires roster; doesn't scale well
+
+
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
+
+### Designs: **CSS**
+
+**The Data**
+David Krackhardt collected cognitive social structure data from 21 management personnel in a high-tech, machine manufacturing firm to assess the effects of a recent management intervention program. The relation queried was 
+
+* “Who does X go to for advice and help with work?" (`krackad`) 
+* “Who is a friend of X?" (`krackfr`). 
+
+Each person indicated not only his or her own advice and friendship relationships, but also the relations he or she perceived among all other managers, generating a full 21 by 21 matrix of adjacency ratings from each person in the group.
+
+
+
+### Designs: **CSS**
+
+```{r,message=FALSE,warning=FALSE,fig.align='center',out.width='.5\\textwidth'}
+library(networkdata)
+data(krack)
+length(krack[[1]])
+length(krack[[2]])
+```
+
+
+
+
+### Designs: **CSS**
+
+```{r,message=FALSE,warning=FALSE,fig.align='center',out.width='.5\\textwidth'}
+par(mfrow=c(3,3),mar=c(0, 0, 0, 0) + 0.1)
+for(i in 1:9)
+plot(krack[[1]][[i]])
+```
+
+
+
+
+### Designs: **CSS** Analysis
+
+```{r,message=FALSE,warning=FALSE,cache=TRUE}
+kfr<-as.sociomatrix.sna((krack$krackfr))
+np<-matrix(0.5,21,21)  # 21 x 21 matrix of Bernoulli parameters (since n=21)
+emp<-sapply(c(3,11),rep,21)  # Beta(3,11) priors for false negatives
+epp<-sapply(c(3,11),rep,21)  # Beta(3,11) priors for false positives
+
+
+kfr.post.fixed<-bbnam.fixed(kfr,nprior=np,em=3/(3+11),ep=3/(3+11))
+kfr.post.pooled<-bbnam.pooled(kfr,nprior=np,em=emp[1,],ep=epp[1,])
+kfr.post.actor<-bbnam.actor(kfr,nprior=np,em=emp,ep=epp)
+```
+
+\tiny{Butts, C. T. (2003). Network inference, error, and informant (in) accuracy: a Bayesian approach. social networks, 25(2), 103-140.}
+
+
+
+### Designs: **CSS**
+
+```{r,message=FALSE,warning=FALSE,fig.align='center',out.width='.5\\textwidth'}
+gplot(apply(kfr.post.fixed$net,c(2,3),median),displaylabels=TRUE,boxed.lab=FALSE)
+```
+
+
+
+
+### Designs: **CSS**
+
+```{r,message=FALSE,warning=FALSE,fig.align='center',out.width='.6\\textwidth'}
+
+gplot(apply(kfr.post.pooled$net,c(2,3),median),displaylabels=TRUE,boxed.lab=FALSE)
+
+```
+
+
+
+
+### Designs: **CSS**
+
+```{r,message=FALSE,warning=FALSE,fig.align='center',out.width='.6\\textwidth'}
+
+gplot(apply(kfr.post.actor$net,c(2,3),median),displaylabels=TRUE,boxed.lab=FALSE)
+
+```
+
+
+### Designs: **Coding Schemes as "Instruments"**
+
+* Can also think of coding schemes for archival materials as "instruments"
+* Transcripts
+	* Tag each line by sender/receiver - $(i,j)$ tie if $i$ sends to $j$
+* Descriptive lists/tables
+	* Common for two-mode data
+	* Build entity/property table; fill in $(i,j)$ as $1$ if $i$th row entity has property $j$
+
+* Video/Audio
+	* Determine criterion for interaction
+	* Find all interactions, code by sender/receiver
+	* $(i,j)$ tie if $i$ sends to $j$
+
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
+
+### Designs: **Coding Schemes as "Instruments"**
+
+* Narrative documents
+	* Determine criterion for interactions
+	* As before, code by sender/receiver (or just by dyad, if not directed)
+	* $(i,j)$ tie if $i$ sends to $j$, or $\{i,j\}$ tie if $i$ and $j$ interact
+
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
+
+### Designs: **Coding Schemes as "Instruments"**
+
+\includegraphics[width=.8\linewidth]{figures/gameofthrones.png}
+
+\tiny{Andrew Beveridge and Jie Shan's Network of Thrones}
+
+
+# Descriptives: What are Descriptive Statistics for Networks?
+
+
+### Network Summary Statistics
+
+Relational data can be complicated! 
+
+$$Y= \begin{bmatrix}
+	& & & & & \\
+    NA     & 1 & 0 & 0 & \dots  \\
+    1      & NA & 0 & 1 & \dots \\
+    0      & 0 & NA & 1 & \dots \\
+        0      & 1 & 0 & NA & \dots \\
+        \vdots &   &   &    & \\
+\end{bmatrix}$$
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+
+### Network Summary Statistics
+
+Relational data can be complicated!
+
+$$Y= \begin{bmatrix}
+	& & & & & \\
+    NA     & 1 & 0 & 0 & \dots  \\
+    1      & NA & 0 & 1 & \dots \\
+    0      & 0 & NA & 1 & \dots \\
+        0      & 1 & 0 & NA & \dots \\
+        \vdots &   &   &    & \\
+\end{bmatrix}$$
+
+* **Statistic:** A *statistic* $t(Y)$ is any function of the data
+* **Descriptive data analysis:** A representation of the main features of a dataset via a set of statistics $t_1(Y),\dots,t_k(Y)$
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics
+
+Relational data can be complicated!
+
+$$Y= \begin{bmatrix}
+	& & & & & \\
+    NA     & 1 & 0 & 0 & \dots  \\
+    1      & NA & 0 & 1 & \dots \\
+    0      & 0 & NA & 1 & \dots \\
+        0      & 1 & 0 & NA & \dots \\
+        \vdots &   &   &    & \\
+\end{bmatrix}$$
+
+* **Statistic:** A *statistic* $t(Y)$ is any function of the data
+* **Descriptive data analysis:** A representation of the main features of a dataset via a set of statistics $t_1(Y),\dots,t_k(Y)$
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics
+
+> Many important statistics can be computed from the sociomatrix using basic matrix calculations!
+
+$$Y= \begin{bmatrix}
+	& & & & & \\
+    NA     & 1 & 0 & 0 & \dots  \\
+    1      & NA & 0 & 1 & \dots \\
+    0      & 0 & NA & 1 & \dots \\
+        0      & 1 & 0 & NA & \dots \\
+        \vdots &   &   &    & \\
+\end{bmatrix}$$
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics
+
+The most basic statistic of a relational dataset is the *mean* or *average*
+
+- **Mean:** The sum of the relational measurements divided by the number of relational measurements.
+
+For a *fully* observed directed relation with $n$ nodes:
+
+- The sum of the relational measurement is $\sum_{i\neq j} y_{ij}$
+- The number of relational measurments is $n\times (n-1)$
+- The mean is 
+	
+$$\bar{y} = \frac{\sum_{i\neq j} y_{ij}}{n(n-1)}$$
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics
+
+* The most basic statistic of a relational dataset is the *mean* or *average*
+
+* **Mean:** The sum of the relational measurements divided by the number of relational measurements.
+
+For a *fully* observed undirected relation with $n$ nodes:
+* The sum of the relational measurement is $\sum_{i< j} y_{ij}$
+* The number of relational measurments is $n\times (n-1)/2$
+* The mean is 
+	
+$$\bar{y} = \frac{\sum_{i< j} y_{ij}}{n(n-1)/2}$$
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics
+
+Means can be computed from adjacency matrices:
+
+$$Y= \begin{bmatrix}
+NA & 0 & 2 & 6\\
+1 & NA & 0 & 0\\
+0 & 0 & NA & 0\\
+3 & 0 & 2 & NA\\
+\end{bmatrix}$$
+
+**Let's do this on the board**
+$$\sum_{i\neq j} y_{ij}= 14$$
+$$n(n-1) = 12$$
+
+So the mean is $14/12 = 1.67$
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+ 
+
+### Network Summary Statistics: Now in R
+
+```{r}
+Y<-matrix(c(NA,0,2,6,1,NA,0,0,0,0,NA,0,3,0,2,NA),nc=4,byrow=TRUE)
+Y
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Now in R
+
+```{r}
+sum(Y)
+sum(Y,na.rm=TRUE)
+length(Y)
+sum(Y,na.rm=TRUE)/length(Y) ## This is wrong!
+```
+
+\begin{textblock*}{80mm}(30mm,0\textheight)
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+\end{textblock*}
+
+### Network Summary Statistics: Now in R
+
+```{r}
+Y<-matrix(c(NA,0,2,6,1,NA,0,0,0,0,NA,0,3,0,2,NA),nc=4,byrow=TRUE)
+Y
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Now in R
+
+```{r}
+sum(Y,na.rm=TRUE)
+sum(!is.na(Y))
+length(Y[!is.na(Y)])
+sum(Y,na.rm=TRUE)/sum(!is.na(Y))
+```
+
+\begin{textblock*}{80mm}(30mm,0\textheight)
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+\end{textblock*}
+
+### Network Summary Statistics: Now in R
+
+```{r}
+Y<-matrix(c(NA,0,2,6,1,NA,0,0,0,0,NA,0,3,0,2,NA),nc=4,byrow=TRUE)
+Y
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Now in R
+
+```{r}
+mean(Y)
+mean(Y,na.rm=TRUE)
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics
+
+Means from adjacency matrices: The undirected case
+
+$$Y= \begin{bmatrix}
+NA & 0 & 2 & 4\\
+0 & NA & 0 & 0\\
+2 & 0 & NA & 3\\
+4 & 0 & 3 & NA\\
+\end{bmatrix}$$
+
+**Let's do this on the board**
+$$\sum_{i < j} y_{ij}= 9$$
+$$n(n-1)/2 = 6$$
+So the mean is $9/6=1.5$
+
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Now in R
+
+```{r}
+Y<-matrix(c(NA,0,2,4,0,NA,0,0,2,0,NA,3,4,0,3,NA),nc=4,byrow=TRUE)
+Y
+mean(Y,na.rm=TRUE)
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+
+### Network Summary Statistics: Means overview
+For an undirected relation:
+
+* mean of the relation = mean of the “upper triangle” of the sociomatrix = mean of the “lower triangle” of the sociomatrix = mean of the sociomatrix
+
+* So for either directed or undirected relations,
+
+$\bar{y}=$ average of the non-missing values of the sociomatrix
+
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Means via edgelists
+
+**Directed**
+```{r}
+Y<-matrix(c(NA,0,2,6,1,NA,0,0,0,0,NA,0,3,0,2,NA),nc=4,byrow=TRUE)
+Ed<-sna::as.edgelist.sna(Y)
+Ed<-Ed[!is.na(Ed[,3]),]
+Ed
+```
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Means via edgelists
+
+How can we compute the mean?
+
+```{r}
+sum(Ed[,3])/(4*3)
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+
+### Network Summary Statistics: Means via edgelists
+
+**Undirected**
+
+```{r}
+Y<-matrix(c(NA,0,2,4,0,NA,0,0,2,0,NA,3,4,0,3,NA),nc=4,byrow=TRUE)
+Y[lower.tri(Y)]<-NA
+Eu<-sna::as.edgelist.sna(Y)
+Eu<-Eu[!is.na(Eu[,3]),]
+Eu
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+
+### Network Summary Statistics: Means via edgelists
+
+How can we compute the mean?
+
+```{r}
+sum(Eu[,3])/(4*3/2)
+```
+
+- When using an edgelist, you need to use the formula and be aware if the relation is directed or undirected
+- Additionally, it is more difficult to account for missing data with edgelists
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+
+### Network Summary Statistics: Density
+
+**Density:** The proportion of edges present in a graph
+> $= \frac{\textrm{the number of edges}}{\textrm{the maximum possible number of edges}}$ 
+
+The number of observed is $|E|$
+The number of possible edges is
+
+* $n(n-1)$ in a directed graph
+* $n(n-1)/2$ in an undirected graph
+    * **Derivation** A $n$ by $n$ adjacency matrix (minus its diagonals) has $2*{n \choose 2} = \frac{n!}{2!(n-2)!} = n(n-1)$ cells
+
+$$\delta_d = \frac{|E|}{n(n-1)} \textrm{ , } \delta_u =  \frac{|E|}{n(n-1)/2}$$
+
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Density
+
+Let $y_{ij}$ be the binary indicator of an eged from $i$ to $j$
+
+Then,
+
+* $|E|=\sum_{ i < j } y_{ij}$ or an undirected graph
+* $|E|=\sum_{i \neq j} y_{ij}$ for an undirected graph
+
+> Thus, the density of a graph (undirected or directed) is the mean of the corresponding adjecancy matrix
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+### Network Summary Statistics: Density in R
+
+**Directed**
+```{r,echo=FALSE}
+Y<-matrix(c(NA,0,1,0,0,0,NA,0,1,0,0,0,NA,0,0,0,0,1,NA,0,1,1,0,1,NA),nc=5,byrow=TRUE)
+```
+```{r}
+sum(Y,na.rm=TRUE)
+nrow(Y)
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+
+### Network Summary Statistics: Density in R
+
+**Directed**
+```{r}
+sum(Y,na.rm=TRUE)/(nrow(Y)*(nrow(Y)-1))
+mean(Y,na.rm=TRUE)
+```
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+
+### Network Summary Statistics: Examples!
+
+
+Densities can be view as,
+
+* Probabilities of the existence of a tie between randomly sampled nodes
+* Estimates of these probabilities
+
+Let,
+
+* $i$ and $j$ be two randomly sampled individuals
+* Let $\theta$ be the probability that $y_{ij} = 1$
+$$\Pr(Y_{ij} = 1) = \theta$$
+
+Then
+
+$\bar{y} = \theta$ if your nodeset is the entire population of nodes
+$\bar{y} = \hat{\theta}$ if your nodeset is arandom sample of nodes 
+
+\tiny{Peter Hoff. Statistical Networks. University of Washington}
+
+# R for Descriptive Analysis: An Introduction
+
+### References and Places for More Information {.allowframebreaks}
+
+

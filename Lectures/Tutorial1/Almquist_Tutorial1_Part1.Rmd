@@ -1,0 +1,823 @@
+---
+title: "Social Network Analysis: Overview Part 1"
+subtitle: "EPIC - SNA, Columbia University"
+author: "Zack W Almquist"
+institute: "University of Minnesota"
+date: "June 11th, 2018"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+      after_body: footer.tex
+toc: true
+#toc_depth: 2
+#keep_tex: true
+#https://github.com/matze/mtheme
+---
+
+```{r,include=FALSE,cache=FALSE}
+require(knitr)
+opts_chunk$set(echo=TRUE,
+               cache=TRUE, autodep=TRUE, cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,comment=NA,prompt=FALSE)
+options(width=60)
+
+## Packages
+library(networkMethods)
+library(networkdata)
+library(sna)
+library(network)
+library(ergm)
+library(xtable)
+
+colorLegend<-function(net,attr){
+  unique(cbind(net%v%attr,plotArgs.network(net, "vertex.col", attr)))
+}
+
+```
+
+# Format and Overview of Course
+
+### Format of the Course
+
+**(Most Days)**
+
+- 1 hour lecture
+- 1 hour lab
+- Break (5-10 minutes)
+- 1 hour lecture
+- 1 hour lab
+
+
+### Overview of this Course
+
+- Day 1 - Overview of Networks and Introduction to R for analysis
+- Day 2 - Network Descriptives
+- Day 3 - More Network Descriptives and Introduction to Statistical Inference for Networks
+- Day 4 - Introduction to Statistical Models
+- Day 5 - Advanced Statistical Models: Network Autocorrelation, TERGM and SAOM
+
+### About these notes
+
+Portions of material adapted from courses by:
+
+- jimi adams, University of Colorado, Denver
+- Carter Butts, UCI
+
+\&
+
+\tiny
+
+- David Schaefer, Arizona State University
+- Ryan Light, University of Oregon
+- Ann McCranie, Indiana University
+- Benjamin Lind, HSE-Moscow
+- Daniel McFarland, Stanford University
+- David Knoke, University of Minnesota
+- Garry Robins, University of Melbourne
+- Krista Gile, University of Massachusetts
+- Lada Adamic, University of Michigan
+- Michał Bojanowski, University of Warsaw
+- Mark Handcock, UCLA
+- Mark Newman, University of Michigan
+- James Moody, Duke University
+- Martina Morris, University of Washington
+- Ryan Acton, University of Massachusetts
+
+
+# What is Social Network Analysis?
+
+### What is Social Network Analysis?
+
+- A \red{theoretical perspective} that attempts to explain how individual and group behaviors and relations are linked to patterns in society
+
+- A set of relational \red{methods} for systematically analyzing the ties/relations between nodes/actors
+
+\tiny{Borgatti, SP., A Mehra, DJ Brass, \& G Labianca. 2009. "Network Analysis in the Social Sciences." Science 323:892}
+
+### What is Social Network Analysis?
+
+- A \red{theory} and a \red{method} for social scientific analysis that relies on:
+    - \emph{Structural} intuition
+    - Systematic collection of \emph{relational} data   
+    - Use of graphic \emph{visualizations}
+    - Mathematical or computational \emph{models}
+
+\tiny{Freeman, Linton C. 2004. The Development of Social Network Analysis. Empirical Press.}
+
+### What is Social Network Analysis?
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/moreno}
+\end{center}
+
+\tiny{Martina Morris. Statistical Models for Social Networks. University of Washington.}
+
+### What is Social Network Analysis?
+
+\includegraphics[width=1\linewidth]{figures/googleNgram.png}
+
+### What is Social Network Analysis?
+
+\begin{textblock*}{60mm}(-3mm,-.4\textheight)
+\begin{itemize}
+\item Relational (network) data concerns connections among entities, rather than attributes of entities
+\begin{itemize}
+\item \red{Entities} can be persons, organizations, concepts, etc.
+\item \red{Relations} can be interaction, proximity, membership, etc.
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{50mm}(60mm,-.4\textheight)
+```{r,echo=FALSE,message=FALSE,warnings=FALSE,cache=TRUE,results='hide'}
+data(emon)
+i<-4
+w<-as.sociomatrix(emon[[i]],"Frequency")
+w<-(1/max(w))*w
+pdf("figures/emonMt.pdf")
+set.seed(99)
+par(bg=NA,mar=c(0, 0, 0, 0) + 0.1)
+plot(emon[[i]],
+#main=names(emon)[i],
+#edge.lwd="Frequency",
+edge.col=rgb(0,0,0,.75),
+edge.lwd=w,
+displayisolates=FALSE, 
+vertex.col=rainbow(8),
+vertex.cex=2,
+usecurve =TRUE,
+displaylabels=FALSE)
+#legend("left",legend=(emon[[i]]%v%"vertex.names")[degree(emon[[i]])!=0],pch=19,col=rainbow(8),bty="n",cex=1.5)
+dev.off()
+pdf("figures/emonMt_legend.pdf")
+par(bg=NA,mar=c(0, 0, 0, 0) + 0.1)
+plot.new()
+legend("center",legend=(emon[[i]]%v%"vertex.names")[degree(emon[[i]])!=0],pch=19,col=rainbow(8),bty="n",cex=1.5)
+dev.off()
+```
+\tiny{Mt. Si Search and Rescue Emergent Multi-organizational Network}
+\includegraphics[width=1\linewidth]{figures/emonMt.pdf}
+
+\end{textblock*}
+
+\begin{textblock*}{50mm}(60mm,0.025\textheight)
+\includegraphics[width=1\linewidth]{figures/emonMt_legend.pdf}
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-3mm,.425\textheight)
+\tiny{Drabek, T.E.; Tamminga, H.L.; Kilijanek, T.S.; and Adams, C.R. (1981). Data from Managing Multiorganizational Emergency Responses: Emergent Search and Rescue Networks in Natural Disaster and Remote Area Settings. Program on Technology, Environment, and Man Monograph 33. Institute for Behavioral Science, University of Colorado.}
+\end{textblock*}
+
+# Preliminaries: Why Networks?
+
+### Some Types of Networks
+
+\begin{itemize}
+\item Conceptual: shared or antithetic properties
+\begin{itemize}
+\item E.g., similarity/difference in individual attributes, correlation among variables, inclusion/exclusion, surface matchings on proteins
+\end{itemize}
+\item Co-categorical: shared membership
+\begin{itemize}
+\item E.g., organizational co-membership, event co-participation, co-occurrence of words within texts
+\end{itemize}
+\item Nominational: resulting from the behavior of respondent (\red{ego})
+\begin{itemize}
+\item E.g., attributions of friendship/enmity, kinship (fictive or otherwise), causal narratives, reported sexual contact networks, reported needle sharing
+\end{itemize}
+\item Behaviorial
+\begin{itemize}
+\item E.g., face-to-face communication, radio communication, physical contact
+\end{itemize}
+\item Online Social networks
+\begin{itemize}
+\item E.g., Facebook, Twitter, Linkedin
+\end{itemize}
+\end{itemize}
+
+### Examples!
+
+Now let's look at some examples\dots
+
+### Correlates of War Project: Militarized Interstate Disputes
+
+```{r, echo=FALSE,message=FALSE,out.width='.55\\textwidth',fig.align='center'}
+data(mids_1993)
+ideg <- degree(mids_1993, cmode="indegree")              # Indegree for MIDs
+odeg <- degree(mids_1993, cmode="outdegree")             # Outdegree for MIDs
+gplot(mids_1993, vertex.cex=(ideg+odeg)^0.5/2, vertex.sides=50, 
+    boxed.labels=FALSE,label.cex=0.4, 
+    vertex.col=rgb(odeg/max(odeg),0,ideg/max(ideg)), 
+    label=network.vertex.names(mids_1993))
+title("1993 militarized interstate disputes (MIDs)")#,sub="Correlates of War Project")
+```
+
+### Correlates of War Project: Contiguity Network
+
+```{r, echo=FALSE,message=FALSE,out.width='.5\\textwidth',fig.align='center'}
+data(contig_1993)
+bet <- betweenness(contig_1993, gmode="graph")       # Geographic betweenness
+gplot(contig_1993, vertex.cex=sqrt(bet)/25, gmode="graph")   # Use w/gplot
+title("Contiguity Network, 1993")#,sub="Correlates of War Project")
+```
+
+
+### Faux Desert High (Simulation of an Add Health HS)
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.9\\textwidth'}
+data(faux.desert.high)
+plot(faux.desert.high,vertex.col="grade",edge.col=rgb(0,0,0,.3),displayisolates=FALSE)
+col<-colorLegend(faux.desert.high,"grade")
+legend("bottomright",col=col[order(col[,2]),2],pch=19,legend=col[order(col[,2]),1],bty="n")
+```
+
+\tiny{Hunter, D. R., Handcock, M. S., Butts, C. T., Goodreau, S. M., \& Morris, M. (2008). ergm: A package to fit, simulate and diagnose exponential-family models for networks. Journal of statistical software, 24(3).}
+
+
+### World Trade Center Radio Communication
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.5\\textwidth'}
+load("data/relevent_sunbelt_2014.Rdata")
+WTCPoliceNet <- as.sociomatrix.eventlist(WTCPoliceCalls,37) 
+gplot(WTCPoliceNet,edge.lwd=WTCPoliceNet^0.75,vertex.col=2+WTCPoliceIsICR,vertex.cex=1.25,edge.col=rgb(0,0,0,.5))
+title(main="Responder Communication Network")
+```
+
+\tiny{Butts, C. T., Petrescu-Prahova, M., \& Remy Cross, B. (2007). Responder communication networks in the World Trade Center disaster: Implications for modeling of communication within emergency settings. Mathematical Sociology, 31(2), 121-147.}
+
+### David Krackhardt's Perceived Friendships
+
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.7\\textwidth'}
+data(krack)
+kfr.conc<-consensus(krack$krackfr,method="romney.batchelder",verbose=FALSE)
+##Plot
+gplot(kfr.conc,displaylabels=TRUE,displayisolates = FALSE)
+title("Consensus Model of Perceived Friendships in an Organization")
+```
+
+\tiny{Krackhardt, D. (1987). Cognitive social structures. Social networks, 9(2), 109-134.}
+
+### SAR EMONs, All Reported Ties, from Drabek et al 1981
+```{r,fig.align='center',echo=FALSE,message=FALSE,out.width='.8\\textwidth'}
+data(emon)   #Load the emon data set
+#Plot the EMONs
+par(mfrow=c(2,4),mar=c(0, 0, .6, 0) + 0.1)
+for(i in 1:length(emon)){
+  plot(emon[[i]],edge.lwd="Frequency",edge.col=rgb(0,0,0,.4))
+	title(main=names(emon)[i],outer=FALSE)
+}
+```
+
+\tiny{Marcum, C. S., Bevc, C. A., \& Butts, C. T. (2012). Mechanisms of control in emergent interorganizational networks. Policy Studies Journal, 40(3), 516-546.}
+
+
+### Needle Network
+
+```{r,echo=FALSE,fig.align='center',results='hide',cache=TRUE}
+load("data/HealthNetworks/flagstaff_rural.rda")
+```
+
+```{r,echo=FALSE,fig.align='center',out.width='.6\\textwidth'}
+plot(flag_needle_net,vertex.col="race",main="Rural Arizona Risk Networks: Needle Sharing")
+col<-colorLegend(flag_needle_net,"race")
+legend("bottomright",col=col[,2],pch=19,legend=col[,1],bty="n")
+```
+
+\tiny{Morris, Martina, and Rothenberg, Richard. HIV Transmission Network Metastudy Project: An Archive of Data From Eight Network Studies, 1988--2001. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2011-08-09. https://doi.org/10.3886/ICPSR22140.v1}
+
+### Sexual Contact Network
+
+```{r,echo=FALSE,fig.align='center',out.width='.6\\textwidth'}
+plot(flag_sex_net,vertex.col="race",main="Rural Arizona Risk Networks: Sex")
+col<-colorLegend(flag_sex_net,"race")
+legend("bottomright",col=col[,2],pch=19,legend=col[,1],bty="n")
+```
+
+\tiny{Morris, Martina, and Rothenberg, Richard. HIV Transmission Network Metastudy Project: An Archive of Data From Eight Network Studies, 1988--2001. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2011-08-09. https://doi.org/10.3886/ICPSR22140.v1}
+
+### Social Contact Network
+
+```{r,echo=FALSE,fig.align='center',out.width='.6\\textwidth'}
+plot(flag_social_net,vertex.col="race",main="Rural Arizona Risk Networks: Social")
+col<-colorLegend(flag_social_net,"race")
+legend("bottomright",col=col[,2],pch=19,legend=col[,1],bty="n")
+```
+
+\tiny{Morris, Martina, and Rothenberg, Richard. HIV Transmission Network Metastudy Project: An Archive of Data From Eight Network Studies, 1988--2001. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2011-08-09. https://doi.org/10.3886/ICPSR22140.v1}
+
+### Drug Contact Network
+
+```{r,echo=FALSE,fig.align='center',out.width='.6\\textwidth'}
+plot(flag_drug_net,vertex.col="race",main="Rural Arizona Risk Networks: Drug")
+col<-colorLegend(flag_drug_net,"race")
+legend("bottomright",col=col[,2],pch=19,legend=col[,1],bty="n")
+```
+
+\tiny{Morris, Martina, and Rothenberg, Richard. HIV Transmission Network Metastudy Project: An Archive of Data From Eight Network Studies, 1988--2001. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2011-08-09. https://doi.org/10.3886/ICPSR22140.v1}
+
+# Network Representations (Data Structures/Visualizations)
+
+### Defining Terms: A Basis in Graph Theory
+
+- \red{Points} (or \red{nodes}/\red{vertices})
+    - In social science – "actors"
+        - People, organizations, nation-states, mobs, papers, ideas
+    - In other settings – "entities"   
+        - Animals, locations, objects
+
+- \red{Lines} (or \red{ties}/\red{relations}) – interaction b/t nodes
+    - These can be directed (\red{arcs}), non-directed (\red{edges}) and/or valued (counts/weights)
+    - Social:
+        - Friend, relative, neighbor, conversation partner, email sender/recipient, co-member, citations
+    - Other:
+        - Grooming behavior, traversal patterns, etc.
+
+\tiny{Borgatti, SP. 1994. "A Quorum of Graph Theoretic Concepts." Connections 17:47-49.}
+
+### Defining Terms: A Basis in Graph Theory
+
+\begin{textblock*}{60mm}(-3mm,-.4\textheight)
+\textbf{Network, graph, sociogram}
+\begin{itemize}
+\item Aggregate of ALL nodes AND ties for entire population in a single representation
+\begin{itemize}
+\item directed (digraph) or un-directed (graph)
+\item Can be dissected into a variety of \red{subgraphs}
+\end{itemize}
+\item Mathematical notation, $G=(V,E)$
+\end{itemize}
+\end{textblock*}
+
+\begin{textblock*}{55mm}(60mm,-.4\textheight)
+\includegraphics[width=1\linewidth]{figures/graphSubgraph.png}
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-3mm,.3\textheight)
+\tiny{Borgatti, SP. 1994. "A Quorum of Graph Theoretic Concepts." Connections 17:47-49.}
+\end{textblock*}
+
+### Relational Data
+
+\begin{textblock*}{50mm}(-3mm,-.3\textheight)
+\tiny
+```{r,echo=FALSE,results='asis'}
+set.seed(1982)
+g <-rgraph(5)
+print(xtable(g,digits=0),floating=FALSE)
+```
+\end{textblock*}
+\begin{textblock*}{40mm}(40mm,-.4\textheight)
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='left'}
+sociomatrixplot(g,cex.lab=3)
+```
+\end{textblock*}
+\begin{textblock*}{30mm}(80mm,-.4\textheight)
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='right'}
+gplot(g)
+```
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-5mm,0\textheight)
+\begin{itemize}
+\item A collection of entities and a set of measured relations between them
+\begin{itemize}
+    \item \red{Entities}: nodes, actors, egos, units, respondents
+    \item \red{Relations}: ties, links, edges
+\end{itemize}
+\item Relations can be
+\begin{itemize}
+    \item Directed or undirected
+    \item Valued or dichotomous (binary)
+\end{itemize}
+\end{itemize}
+\end{textblock*}
+
+### Relational Data
+
+\begin{textblock*}{50mm}(-3mm,-.3\textheight)
+\tiny
+\textbf{Adjacency Matrix}
+```{r,echo=FALSE,results='asis'}
+adj<-matrix(c(NA,0,1,0,0,0,0,NA,1,0,0,0,1,1,NA,1,0,0,0,0,1,NA,1,1,0,0,0,1,NA,1,0,0,0,1,1,NA),nc=6,nr=6)
+rownames(adj)<-colnames(adj)<-1:6
+print(xtable(adj,digits=0),floating=FALSE)
+```
+
+\begin{itemize}
+\item Self-ties are known as "loops"
+\item Typically ignored
+\end{itemize}
+
+\end{textblock*}
+\begin{textblock*}{40mm}(40mm,-.4\textheight)
+\tiny
+\textbf{Edge List (Arc List)}
+
+```{r,echo=FALSE,results='asis'}
+el<-as.edgelist.sna(adj,suppress.diag =TRUE)
+print(xtable(el[,1:2],digits=0),floating=FALSE,include.rownames=FALSE)
+```
+\end{textblock*}
+\begin{textblock*}{50mm}(60mm,-.4\textheight)
+\tiny
+\begin{center}
+\textbf{Graph}
+\end{center}
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='right'}
+set.seed(99)
+gplot(adj,label=colnames(adj),gmode="graph",vertex.cex=1.5,label.cex=2)
+```
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-5mm,0.4\textheight)
+\tiny{Knoke D, Yang S. Social Network Analysis: Sage; 2007.}
+\end{textblock*}
+
+### Relational Data
+
+\begin{textblock*}{50mm}(-3mm,-.3\textheight)
+\tiny
+\textbf{Friendship Nomination}
+
+\textbf{Adjacency Matrix}
+
+```{r,echo=FALSE,results='asis'}
+adj<-matrix(c(NA,2,0,0,0,0,1,NA,1,0,0,0,1,1,NA,2,0,0,0,0,2,NA,0,1,0,0,0,1,NA,2,0,0,0,0,0,NA),nc=6,nr=6)
+rownames(adj)<-colnames(adj)<-1:6
+print(xtable(adj,digits=0),floating=FALSE)
+```
+
+\end{textblock*}
+\begin{textblock*}{40mm}(40mm,-.4\textheight)
+\tiny
+\textbf{Friendship Nomination}
+
+\textbf{Edge List (Arc List)}
+
+```{r,echo=FALSE,results='asis'}
+el<-as.edgelist.sna(adj,suppress.diag =TRUE)
+print(xtable(el[!is.na(el[,3]),1:2],digits=0),floating=FALSE,include.rownames=FALSE)
+```
+\end{textblock*}
+\begin{textblock*}{50mm}(60mm,-.4\textheight)
+
+\begin{center}
+\tiny
+\textbf{Friendship Nomination}
+
+\textbf{Graph}
+\end{center}
+
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='right'}
+set.seed(9)
+gplot(adj,label=colnames(adj),gmode="digraph",vertex.cex=1.5,label.cex=2,usecurve =TRUE)
+```
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-5mm,0.4\textheight)
+\tiny{Knoke D, Yang S. Social Network Analysis: Sage; 2007.}
+\end{textblock*}
+
+### Relational Data
+
+\begin{textblock*}{50mm}(-3mm,-.3\textheight)
+\tiny
+\textbf{Friendship Nomination}
+
+\textbf{Adjacency Matrix (Weighted)}
+
+```{r,echo=FALSE,results='asis'}
+adj<-matrix(c(NA,2,0,0,0,0,1,NA,1,0,0,0,1,1,NA,2,0,0,0,0,2,NA,0,1,0,0,0,1,NA,2,0,0,0,0,0,NA),nc=6,nr=6)
+rownames(adj)<-colnames(adj)<-1:6
+print(xtable(adj,digits=0),floating=FALSE)
+```
+
+\end{textblock*}
+\begin{textblock*}{40mm}(40mm,-.4\textheight)
+\tiny
+\textbf{Friendship Nomination}
+
+\textbf{Weighted Edge List (Arc List)}
+
+```{r,echo=FALSE,results='asis'}
+el<-as.edgelist.sna(adj,suppress.diag =TRUE)
+print(xtable(el[!is.na(el[,3]),1:3],digits=0),floating=FALSE,include.rownames=FALSE)
+```
+\end{textblock*}
+\begin{textblock*}{50mm}(60mm,-.4\textheight)
+\begin{center}
+\tiny
+\textbf{Friendship Nomination}
+
+\textbf{Graph}
+\end{center}
+
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='right'}
+set.seed(9)
+gplot(adj,edge.lwd=5*adj,label=colnames(adj),gmode="digraph",vertex.cex=1.5,label.cex=2,usecurve =TRUE)
+```
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-5mm,0.4\textheight)
+\tiny{Knoke D, Yang S. Social Network Analysis: Sage; 2007.}
+\end{textblock*}
+
+### Relational Data
+
+\begin{textblock*}{50mm}(-3mm,-.3\textheight)
+\tiny
+\textbf{Friendship Nomination}
+
+\textbf{Adjacency Matrix (Weighted)}
+```{r,echo=FALSE,results='asis'}
+adj<-matrix(c(NA,2,0,0,0,0,1,NA,1,0,0,0,1,1,NA,2,0,0,0,0,2,NA,0,1,0,0,0,1,NA,2,0,0,0,0,0,NA),nc=6,nr=6)
+rownames(adj)<-colnames(adj)<-1:6
+print(xtable(adj,digits=0),floating=FALSE)
+```
+
+\tiny
+\textbf{\red{Family Nomination}}
+```{r,echo=FALSE,results='asis'}
+adjf<-matrix(c(NA,1,1,0,0,0,1,NA,1,0,0,0,1,1,NA,0,0,0,0,0,0,NA,1,1,0,0,0,1,NA,1,0,0,0,1,1,NA),nc=6,nr=6)
+rownames(adjf)<-colnames(adjf)<-1:6
+adjfp<-matrix(paste("\\red{",adjf,"}",sep=""),nc=6,nr=6)
+rownames(adjfp)<-colnames(adjfp)<-paste("\\red{",1:6,"}",sep="")
+diag(adjfp)<-""
+print(xtable(adjfp,digits=0),floating=FALSE,sanitize.text.function = function(x) x)
+```
+
+\end{textblock*}
+\begin{textblock*}{40mm}(40mm,-.4\textheight)
+\end{textblock*}
+
+\begin{textblock*}{60mm}(50mm,-.4\textheight)
+\begin{center}
+\tiny
+\textbf{Friendship Nomination}
+\end{center}
+
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='right'}
+set.seed(9)
+coords<-gplot(adj,edge.lwd=5*adj,label=colnames(adj),gmode="digraph",vertex.cex=1.5,label.cex=2,usecurve =TRUE)
+gplot(adjf,new=FALSE,coord=coords,vertex.cex=1.5,edge.col="red")
+```
+\end{textblock*}
+
+\begin{textblock*}{100mm}(-5mm,0.4\textheight)
+\tiny{Knoke D, Yang S. Social Network Analysis: Sage; 2007.}
+\end{textblock*}
+
+### Relational Data: Multiplexity
+
+\begin{center}
+\includegraphics[width=.85\linewidth]{figures/multiplexTies}
+\end{center}
+
+\tiny{adams j, Moody J, Morris M. "Sex, Drugs, and Race:  How Behaviors Differentially Contribute to Sexually Transmitted Infection Risk Network Structure." AJPH 2013;103(2):322-9.}
+
+### Relational Data: Network Change
+
+\begin{center}
+\includegraphics[width=.7\linewidth]{figures/dynamics.png}
+\end{center}
+
+\tiny{Butts, C. T., Acton, R. M., \& Marcum, C. S. (2012). Interorganizational Collaboration in the Hurricane Katrina Response. Journal of Social Structure, 13.}
+
+### Common Features of Interest
+
+Beyond nodal and dyadic attributes, many networks exhibit the following features:
+
+- \red{Reciprocity} of ties
+- \red{Degree heterogeneity} among actors 
+    - Sociability, Popularity
+- \red{Homophily} by actor attributes
+    - Higher propensity to form ties between actors with similar attr
+- \red{Transitivity} of relationships
+    - Friends of friends have a higher propensity to be friends
+- \red{Balance} of relationships
+    - Liking those who dislike whom you dislike
+- \red{Equivalence} of nodes
+    - Some nodes may have identical/similar patterns of relationships
+
+### How to Think about Network Data
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/typology}
+\end{center}
+
+\tiny{James Moody."Introduction to Social Network Analysis - Duke Sociology"}
+
+### How to Think about Network Data
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{figures/networkdata}
+\end{center}
+
+### Frameworks (Orientation)
+
+- Methodological Aims
+   - Level of Analysis
+   - Unit of Analysis
+- Theoretical Modtivations
+    - Descriptive
+    - Analytic
+
+
+\tiny{Knoke D, Yang S. Social Network Analysis: Sage; 2007.}
+
+
+### Level of Analysis: Sampling
+
+- Ego-Networks
+    - A respondent and the set of people they have relationships with
+- Measures:
+    - Size
+    - Density
+    - Types of Relationships
+    - Similarity
+    - Composition
+
+\begin{textblock*}{60mm}(50mm,-.4\textheight)
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='right',cache=TRUE}
+load("data/egonet.Rda")
+
+build_edgelist_sna<-function(el){
+vnam<-unique(unlist(el))
+vnam<-vnam[order(vnam)]
+e1<-match(el[,1],vnam)
+e2<-match(el[,2],vnam)
+el_sna<-cbind(e1,e2,rep(1,length(e1)))
+colnames(el_sna)<-c("snd","rec","weight")
+attr(el_sna,"n")<-length(vnam)
+attr(el_sna,"vnames")<-vnam
+el_sna
+}
+
+el_sna<-build_edgelist_sna(el=egonet[,1:2])
+mat<-as.sociomatrix.sna(el_sna)
+mat[,]<-symmetrize(as.sociomatrix.sna(el_sna))
+col<-rep("red",nrow(mat))
+col[rownames(mat)=="Me"]<-"blue"
+par(mar=c(0, 0, 0, 0) + 0.1)
+gplot(mat,gmode="graph",vertex.col=col,label=rownames(mat),label.cex=1.5)
+```
+\end{textblock*}
+
+\begin{textblock*}{60mm}(10mm,.5\textheight)
+\tiny{Laumann EO, Marsden PV, Prensky D. 1994. "The Boundary Specification Problem in Network Analysis." In: Freeman LC, White DR, Romney AK, (eds.)}
+\end{textblock*}
+
+### Levels of Analysis: Complete Population
+
+- Complete or Global Networks
+    - The collection or relationships among all members of a population
+- Measures:
+    - Ego Network (collection of all egos/respondents)
+    - Centrality
+    - Sub-groups (sometimes called clusters or communities)
+    - Equivalence (and orther issues of role)
+    
+### Levels of Analysis: Why do levels matter?
+
+**Who’s at greatest risk of contracting an STI?**
+\begin{center}
+\includegraphics[width=.6\linewidth]{figures/stiexample}
+\end{center}
+
+\begin{textblock*}{80mm}(10mm,0\textheight)
+\tiny{Bearman PS, Moody J, Stovel K. Chains of affection: The structure of adolescent romantic and sexual networks. American Journal of Sociology 2004;110(1):44-9}
+\end{textblock*}
+
+### Levels of Analysis: Why do levels matter?
+
+**Who’s at greatest risk of contracting an STI?**
+
+\begin{center}
+\includegraphics[width=.6\linewidth]{figures/stiexample2}
+\end{center}
+
+\begin{textblock*}{80mm}(10mm,0\textheight)
+\tiny{Bearman PS, Moody J, Stovel K. Chains of affection: The structure of adolescent romantic and sexual networks. American Journal of Sociology 2004;110(1):44-9}
+\end{textblock*}
+
+### Unit of Analysis: Measurement Issues
+
+\begin{textblock*}{80mm}(0mm,-.4\textheight)
+\begin{itemize}
+\item Measurement issues can occure at varying levels
+\begin{itemize}
+\item Nodes/Vertices/Actors
+\item Ties/Relationships/Edges
+\item (small) Groups
+\item Complete Networks
+\end{itemize}
+\end{itemize}
+
+\begin{center}
+\textbf{Who/What is Important?}
+\end{center}
+\end{textblock*}
+
+\begin{textblock*}{60mm}(60mm,-.1\textheight)
+```{r,echo=FALSE,out.width='.9\\textwidth',fig.align='left',cache=TRUE}
+data(emon)
+i<-6
+plot(emon[[i]],
+sub=names(emon)[i],
+edge.lwd="Frequency",
+displayisolates=FALSE, 
+vertex.col=rainbow(8),displaylabels=FALSE,
+edge.col=rgb(0,0,0,.3))
+legend("bottomright",legend=(emon[[i]]%v%"vertex.names")[sna::degree(emon[[i]])!=0],pch=19,col=rainbow(8),bty="n",cex=.7)
+```
+\end{textblock*}
+
+### Theoretical Frameworks: Common Metaphors
+
+**"Pipes" – A Connectionist Metaphor**
+
+- Networks provide potential pathways through which various ``bits"" can be passed from one node to another via the links between them, e.g.:
+    - Diffusion of information
+    - Spread of an infectious disease
+    - Traffic flows
+    - VoIP
+- Analyzing networks therefore aims to identify properties that will \red{promote} or \red{constrain} the potential transmission of those bits through the population
+    - Node-level (trust)
+    - Dyad-level (respect, distance, status difference, etc.)
+    - Network-level (centrality, clustering, timing, etc.)
+
+\tiny{adams, jimi. EPIC - SNA, 2017. Columbia University.}
+
+### Theoretical Frameworks: Common Metaphors
+
+**"Pipes" – A Connectionist Metaphor**
+
+  - [A fun game!](http://vax.herokuapp.com/) to Illustrate the ideas
+
+\tiny{adams, jimi. EPIC - SNA, 2017. Columbia University.}
+
+### Theoretical Frameworks: Common Metaphors
+
+**"Prisms" - A Topological Metaphor**
+
+- Network patterns reveal \red{differences} or \red{similarities} in \red{status/role} comparisons
+    - "equivalence" (e.g., relatives, employment hierarchies)
+    - Identify groups
+    - Identify advantageous individual positions
+    - Role/identity construction – e.g., through shared memberships
+
+- SNA in this case is interested in identifying patterns that can \red{differentiate} between varieties of \red{networks} or varieties of \red{locations} within networks
+    - Equivalence 
+    - Cohesion
+    - Clustering
+    
+\tiny{adams, jimi. EPIC - SNA, 2017. Columbia University.}
+
+### Theoretical Frameworks: Common Metaphors
+
+- Why might a pair of nodes be "similar"? 
+    - Pipes metaphor
+        - Connectionist/Pathways 
+    - Prisms metaphor
+        - Topological/Roles
+
+\tiny{adams, jimi. EPIC - SNA, 2017. Columbia University.}
+
+### Theoretical Frameworks: Common Metaphors
+
+\includegraphics[width=.8\linewidth]{figures/metaphor}
+
+\begin{center}
+\tiny{adams, jimi. EPIC - SNA, 2017. Columbia University.}
+\end{center}
+
+
+### Common Features of Interest
+
+Beyond nodal and dyadic attributes, many networks exhibit the following features:
+
+- \red{Reciprocity} of ties
+- \red{Degree heterogeneity} among actors 
+    - Sociability, Popularity
+- \red{Homophily} by actor attributes
+    - Higher propensity to form ties between actors with similar attr
+- \red{Transitivity} of relationships
+    - Friends of friends have a higher propensity to be friends
+- \red{Balance} of relationships
+    - Liking those who dislike whom you dislike
+- \red{Equivalence} of nodes
+    - Some nodes may have identical/similar patterns of relationships
+
+\tiny{Peter Hoff. Statistical Networks. Lecture Notes. University of Washington.}
+
+# Review of R and Discussion of Network Data in R
+
+### Review of R
+
+- [Intro R Tutorial](https://ssdalab.github.io/IntroR/)
+
+
+# References and Places for More Information 
+
+### References and Places for More Information {.allowframebreaks}
+
+

@@ -1,0 +1,15 @@
+\usepackage{etoolbox}
+\usepackage{amsmath}
+\usepackage{textpos}
+
+\usetheme{metropolis}
+
+
+
+\makeatletter
+\patchcmd{\beamer@sectionintoc}{\vskip1.5em}{\vskip0.5em}{}{}
+\makeatother
+
+\newcommand{\white}[1]{{\textcolor{white}{#1}}}
+\newcommand{\red}[1]{{\textcolor{red}{#1}}}
+\newcommand{\gray}[1]{{\textcolor{light-gray}{#1}}}
