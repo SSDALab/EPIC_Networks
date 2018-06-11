@@ -114,7 +114,7 @@ library(xtable)
 ### Visualization: Gaining Some Intuition
 
 \begin{center}
-\includegraphics[width=1\linewidth]{figures/vis/vis7}
+\includegraphics[width=1\linewidth]{figures/vis/vis7.png}
 \end{center}
 \tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
 \tiny{Origin: Lada Adamic }
@@ -122,7 +122,7 @@ library(xtable)
 ### Visualization: Gaining Some Intuition
 
 \begin{center}
-\includegraphics[width=1\linewidth]{figures/vis/vis6}
+\includegraphics[width=1\linewidth]{figures/vis/vis6.png}
 \end{center}
 \tiny{jimi adama. EPIC - SNA 2017. Columbia, Univeristy.}
 \tiny{Origin: }
