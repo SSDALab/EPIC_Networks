@@ -7,12 +7,12 @@ output:
 ---
 
 - [Lecture 1](Lec/Almquist_Tutorial1_Part1.pdf)
-    - [Intro R](https://github.com/SSDALab/IntroR)
+    - [Intro R](https://ssdalab.github.io/IntroR/)
     - [R Helper Card](Labs/R_Short-refcard.pdf)
 - [Lecture 2](Lec/Almquist_Tutorial1_Part2.pdf)
-    - [Lab 1: Intro](Labs/Tutorial_1-Intro.R)
-    - [Lab 1: Data](Labs/Tutorial_data.R)
+    - [Lab 2: Intro](Labs/Tutorial_1-Intro.R)
+    - [Lab 2: Data](Labs/Tutorial_data.R)
     - [Data Zipfile](Labs/data.zip)
-    - [Lab 1:](Labs/intro_Statnet.R)
+    - [Lab 2:](Labs/intro_Statnet.R)
     - [igraph visualization](http://kateto.net/network-visualization)
 - [Supp Matrix Algebra](Lec/adams_matrix.pdf)
