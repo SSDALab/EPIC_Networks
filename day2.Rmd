@@ -7,6 +7,21 @@ output:
 ---
 
 - [Lecture 1](Lec/Almquist_Tutorial2_Part1.pdf)
-    - [Lab 1]()
 - [Lecture 2](Lec/Almquist_Tutorial2_Part2.pdf)
-    - [Lab 2]()
+- Lab for Lecture 2
+    - Lab 2: Statnet Tutorial 1: [R](Labs/Lab2/lab2_statnetTutorial.R); [RMarkdown](Labs/Lab2/lab2_statnetTutorial.Rmd); [HTML](Labs/Lab2/lab2_statnetTutorial.html)
+    - Lab 2: Statnet Tutorial 2: [R](Labs/Lab2/lab2_statnet.R); [RMarkdown](Labs/Lab2/lab2_statnet.Rmd); [HTML](Labs/Lab2/lab2_statnet.html)
+    - Lab 2: More Statnet and Networks: [R](Labs/Lab2/statnet_network_example.R)
+    - Lab 2: igraph (and some statnet): [R](Labs/Lab2/Tutorial_2-Descriptives.R)
+        - [Supp file](Labs/Lab2/IQV.R)
+        - [Constraint Example](Labs/Lab2/constraint_computation.R)
+    
+    
+
+
+
+
+
+
+
+    

@@ -617,7 +617,7 @@ Beyond nodal and dyadic attributes, many networks exhibit the following features
 - Methodological Aims
    - Level of Analysis
    - Unit of Analysis
-- Theoretical Modtivations
+- Theoretical Motivations
     - Descriptive
     - Analytic
 
