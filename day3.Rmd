@@ -13,4 +13,4 @@ output:
     - Lab 2: (Intro) Inferential Statistics for Networks: [R](Labs/Lab3/Statnet_Lab3_InferentialStats.R); [RMarkdown](Labs/Lab3/Statnet_Lab3_InferentialStats.Rmd); [html](Labs/Lab3/Statnet_Lab3_InferentialStats.html)
       - [data](Labs/Lab3/coord.Rda)
     - [igraph community detection](Labs/Lab3/igraph_community.R)
-    - [igraph mixing matrix](Labs/Lab3/igraph_community.R)
+    - [igraph mixing matrix](Labs/Lab3/mixingMatrix_igraph.R.R)
