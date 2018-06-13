@@ -187,7 +187,7 @@ Boundary Specification Probblem
 While students were given the option to name friends in the other school, they rarely do.  As such, the school likely serves as a strong substantive boundary
 
 
-
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
 
 
 
@@ -196,16 +196,16 @@ While students were given the option to name friends in the other school, they r
 * Own-tie reports
 	* Personal ties elicited from each ego
 	* Standard instruments: roster and name generator 
-	* Pros: Easily implemented, most common design 
-	* Cons: Vulnerable to reporting error
+	    * Pros: Easily implemented, most common design 
+	    * Cons: Vulnerable to reporting error
 * Egocentric network sampling
 	* Personal ties elicited from ego, followed by induced ties 
 	* Standard instrument: name generator followed by roster
-	* Pros: Well-suited to large-scale survey sampling; provides information on ego's neighborhood
-	* Cons: Vulnerable to reporting error; false positives/negatives on own ties contaminate sampling of neighbors' ties
+	    * Pros: Well-suited to large-scale survey sampling; provides information on ego's neighborhood
+	    * Cons: Vulnerable to reporting error; false positives/negatives on own ties contaminate sampling of neighbors' ties
 
 
-
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
 
 ### Instruments: Name Generators and Rosters
 
@@ -216,7 +216,7 @@ While students were given the option to name friends in the other school, they r
 * Cons:
 	* High rate of forgetting; unclear boundary
 
-
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
 
 
 ### Roster: asks respondents to choose names from fixed list
@@ -225,7 +225,7 @@ While students were given the option to name friends in the other school, they r
 	* Pros: More accurate, clear boundary
 	* Cons: List may be prohibitively long, can be imposing; alters must be known in advance
 
-
+\tiny{Carter Butts. Social Network Methodology. University of California, Irvine.}
 
 
 ### Instruments: Complete Egonet
@@ -788,6 +788,7 @@ sum(Eu[,3])/(4*3/2)
 ### Network Summary Statistics: Density
 
 **Density:** The proportion of edges present in a graph
+
 > $= \frac{\textrm{the number of edges}}{\textrm{the maximum possible number of edges}}$ 
 
 The number of observed is $|E|$
@@ -795,7 +796,7 @@ The number of possible edges is
 
 * $n(n-1)$ in a directed graph
 * $n(n-1)/2$ in an undirected graph
-    * **Derivation** A $n$ by $n$ adjacency matrix (minus its diagonals) has $2*{n \choose 2} = \frac{n!}{2!(n-2)!} = n(n-1)$ cells
+* **Derivation** A $n$ by $n$ adjacency matrix (minus its diagonals) has $2*{n \choose 2} = \frac{n!}{2!(n-2)!} = n(n-1)$ cells
 
 $$\delta_d = \frac{|E|}{n(n-1)} \textrm{ , } \delta_u =  \frac{|E|}{n(n-1)/2}$$
 
@@ -809,7 +810,7 @@ Let $y_{ij}$ be the binary indicator of an eged from $i$ to $j$
 Then,
 
 * $|E|=\sum_{ i < j } y_{ij}$ or an undirected graph
-* $|E|=\sum_{i \neq j} y_{ij}$ for an undirected graph
+* $|E|=\sum_{i \neq j} y_{ij}$ for an directed graph
 
 > Thus, the density of a graph (undirected or directed) is the mean of the corresponding adjecancy matrix
 

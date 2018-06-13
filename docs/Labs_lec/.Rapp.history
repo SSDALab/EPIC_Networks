@@ -1,0 +1,51 @@
+library(knitr)#
+ifiles<-dir("Lab2")
+ifiles
+dir()
+setwd("..")
+dir()
+ifiles<-dir("Lab2")
+ifiles
+ifiles<-ifiles[grep(".Rmd",ifiles)]
+ifiles
+o<-strsplit("//.",ifiles)
+o
+o<-strsplit(".",ifiles)
+o
+o<-strsplit("\\.",ifiles)
+o
+o<-strsplit("\.",ifiles)
+o<-strsplit("//.",ifiles)
+o
+args(strsplit)
+o<-strsplit(ifiles,"\\.")
+o
+o<-sapply(strsplit(ifiles,"\\."),"[[",1)
+o
+ofiles<-paste("lab2/",o,".R",sep="")
+ofiles
+for(i in 1:length(ifiles)){#
+purl(ifiles[i], output = ofiles[i], documentation = 2)#
+}
+for(i in 1:length(ifiles)){#
+purl(paste("Lab2/",ifiles[i],sep=""), output = ofiles[i], documentation = 2)#
+}
+dir("Lab3")
+ifiles<-ifiles[grep(".Rmd",ifiles)]
+ifiles<-dir("Lab3")#
+ifiles<-ifiles[grep(".Rmd",ifiles)]
+ifiles
+ifiles<-paste("Lab3/",ifiles,sep="")
+ifiles
+sapply(strsplit(ifiles,"\\."),"[[",1)
+ofiles<-paste(sapply(strsplit(ifiles,"\\."),"[[",1),".R",sep="")
+ofiles
+library(knitr)#
+ifiles<-dir("Lab3")#
+ifiles<-ifiles[grep(".Rmd",ifiles)]#
+ifiles<-paste("Lab3/",ifiles,sep="")#
+ofiles<-paste(sapply(strsplit(ifiles,"\\."),"[[",1),".R",sep="")#
+#
+for(i in 1:length(ifiles)){#
+purl(ifiles[i], output = ofiles[i], documentation = 2)#
+}

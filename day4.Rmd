@@ -6,5 +6,9 @@ output:
     toc_depth: 2
 ---
 
-- [Lecture 4](Lec/Almquist_Tutorial4_Part1.pdf)
-    - [Lab 4]()
+- [Lecture 1](Lec/Almquist_Tutorial4_Part1.pdf)
+    - Lab 4: ERGM [R](Labs/Lab4/ergm_tutorial.R); [Rmarkdown](Labs/Lab4/ERGM_Lab.Rmd); [html](Labs/Lab4/ERGM_Lab.html);
+        - [ergm-terms](Labs/Lab4/ergm-terms.html)
+    - [More ERGM Examples](Labs/Lab4/Lab_More_ERGM_Examples.R)
+    - [Even More ERGM Examples](Labs/Lab4/Tutorial_3-ERGM.R)
+    - [Egocentric Analysis Tutorial](https://statnet.org/trac/raw-attachment/wiki/Sunbelt2016/ergm.ego_tutorial.html)

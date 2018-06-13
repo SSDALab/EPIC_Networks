@@ -5,7 +5,6 @@
 #######################################
 
 #######################################
-###
 ### function that takes a list of network objects and outputs classic
 ###    centrality scores by nodes and ranks them
 #######################################

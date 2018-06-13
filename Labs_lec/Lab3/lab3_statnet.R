@@ -1,0 +1,261 @@
+#' ---
+#' title: "Lab 1: Descriptives Using STATNET"
+#' author: "Zack W Almquist (University of Minnesota)"
+#' date: "06/12/2018"
+#' output: 
+#'   html_document:
+#'     toc: true
+#' ---
+#' 
+#' # Necessary R Packages to follow along (not required)
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/2,fig.width=12/2----
+#library(conflicted)
+library(sna)
+library(network)
+library(networkdata)
+library(networkMethods)
+#library(igraph)
+library(knitr)
+
+#' 
+#' ## Centrality and Nodel Level Indicies
+#' 
+#' How do we explain whether a position is different or not? One solution is node level indices (NLI).  
+#' 
+#' **Node-level index:** a real-valued function of a graph and a vertex. 
+#' 
+#' Specifically we can look at purely structural NLIs as depending only on unlabeled graph properties, which we can represent as mapping.
+#' 
+#' $$f(v,G) \rightarrow \Re$$
+#' 
+#' Some primary uses of NLIs include quantifying properties of individual positions (e.g. describing local neighborhoods).
+#' 
+#' Some common families of indices include: 
+#' 
+#' - Centrality 
+#' - Ego-net structure 
+#' - alter covariate indices 
+#' 
+#' **Centrality** is the most prominent. Which we will now look at.
+#' 
+#' The core question here is: how do individual *positions* vary? One manner in which positions vary is the extent to which they are ``central" in the network. Important concerns of social scientists (and junior high school students, could be true of college professors also). 
+#' 
+#' Many distinct concepts: No one way to be central in a network-- there are many different kinds of centrality -- different types of centrality aid/hinder different kinds of actions. Being highly central in one respect doesn't always mean being central in other respects (although the measures generally correlate).
+#' 
+#' **Centrality indices**
+#' 
+#' What makes a measure a centrality measure? Currently we know it when we see, there has been attempts to axiomatize this literature, however there has not been any success so far. Core concepts so far,
+#' 
+#' - **Reach:** Centrality based on ability of ego to reach other vertices (e.g. degree, or closeness).
+#' - **Flow mediation:**  Centrality based on quantity/weight of walks passing through ego (e.g. stress, or betweenness).
+#' - **Vitality:** Centrality based on effect of removing ego from the network (e.g. flow betweenness, cutpoint status).
+#' - **Feedback:** Centrality of ego defined as a recursive function of alter centralities (e.g. eigenvector centrality, Bonacich Power)
+#' 
+#' We will now consider the classic centrality measures: degree, betweenness, and closeness.
+#' 
+#' ### Degree Centrality
+#' 
+#' **Degree:** the number of direct ties. Overall activity or extent of the involvement in relation. High degree positions are influential, but also may be subject to a great deal of influences from others.
+#' 
+#' **Types of degree centrality**
+#' 
+#' -  Degree (undirected)
+#' 
+#' $$d(i,Y)= \sum_{j=1}^N Y_{ij}$$
+#' 
+#' -  Indegree 
+#' 
+#' $$d_i(i,Y)= \sum_{j=1}^N Y_{ji}$$
+#' 
+#' -  Outdegree \index{centrality!degree!outdegree}
+#' 
+#' $$d_o(i,Y)= \sum_{j=1}^N Y_{ij}$$
+#' 
+#' -  Freeman degree 
+#' $$d_f(i,j,Y)= \sum_{i=1}^N \sum_{j=1}^N Y_{ij}$$
+#' 
+#' A common way of normalizing  degree is to divide by $n-1$. 
+#' 
+#' ### Betweenness Centrality
+#' 
+#' **Betweenness:** tendency of ego to reside on shortest paths between third parties. High betweenness positions are associated with `broker` or `gatekeeper` roles; may be able to `firewall` information flow.
+#' 
+#' $$
+#' b(i,Y) = \sum_{j\neq i} \sum_{k \neq i} \frac{g^{'} (j,k,i)}{g(j,k)}
+#' $$
+#' 
+#' Where $g(j,k)$ is the number of $j,k$ geodesics, $g^{'}(j,k,i)$ is the number of $j,k$ geodesics including $i$. If two nodes are disconnected then we treat geodesic distance as 0. 
+#' 
+#' **Examples**
+#' 
+#' Three examples of betweenness follow: an isolate, a star, and graph G and betweenness scores. 
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/1.5,fig.width=12/1.5----
+betex.isolate<- matrix(0,nc=1,nr=1)
+gplot(betex.isolate,gmode="graph", main="Isolate")
+sna::betweenness(betex.isolate)
+
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/1.5,fig.width=12/1.5----
+betex.star<-matrix(0,nc=6,nr=6)
+betex.star[1,2:6]<-1
+betex.star[2:6,1]<-1
+gplot(betex.star,gmode="graph", main="Star")
+sna::betweenness(betex.star)
+
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/1.5,fig.width=12/1.5----
+ betex.g<-matrix(0,nc=5,nr=5)
+ betex.g[1:4,1:4]<-1
+ betex.g[4,5]<-1
+ betex.g[5,4]<-1
+ betex.g[3,5]<-1
+ betex.g[5,3]<-1
+ diag(betex.g)<-0
+ gplot(betex.g,gmode="graph", main="G")
+ sna::betweenness(betex.g)
+
+#' 
+#' ### Closeness Centrality
+#' 
+#' **Closeness:** ratio of minimum distance to other nodes to observed distance to other nodes. 
+#' 
+#' Closeness measures the extent to which position has shortest paths to other positions. High closeness positions can quickly distribute information, but may have limited direct influence. A limitation to standard definition of closeness is that it is not useful on disconnected graphs and one may need to symmetrize directed graphs too.
+#' 
+#' $$c \left(i,Y \right) = \frac{N-1}{\sum_{j=1}^N D(i,j)}$$
+#' 
+#' Where $D(i,j)$ is the distance from $i$ to $j$.
+#' 
+#' Close can be modified in the following way so as to allow it to still have meaning if the graph is disconnected.
+#' Modified closeness:
+#' $$c_m \left(i,Y \right) = \sum_{j=1 }\frac{1}{D(i,j)}$$
+#' **Examples**
+#' 
+#' Three examples of closeness follow: isolates, star, and graph G.
+#' 
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/1.5,fig.width=12/1.5----
+ closex.isolate<- matrix(0,nc=1,nr=1)
+ gplot(closex.isolate,gmode="graph", main="Isolate")
+ sna::closeness(closex.isolate)
+
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/1.5,fig.width=12/1.5----
+ closex.star<-matrix(0,nc=6,nr=6)
+ closex.star[1,2:6]<-1
+ closex.star[2:6,1]<-1
+ gplot(closex.star,gmode="graph", main="Star")
+ sna::closeness(closex.star)
+
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/1.5,fig.width=12/1.5----
+ closex.g<-matrix(0,nc=5,nr=5)
+ closex.g[1:4,1:4]<-1
+ closex.g[4,5]<-1
+ closex.g[5,4]<-1
+ closex.g[3,5]<-1
+ closex.g[5,3]<-1
+ diag(closex.g)<-0
+ gplot(closex.g,gmode="graph", main="G")
+ sna::closeness(closex.g)
+
+#' 
+#' ### Comparison of degree, closeness, and betweenness
+#' 
+#' Compare the centrality of the network G, below:
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8/1.5,fig.width=12/1.5----
+adj<-matrix(0,nc=10,nr=10)
+colnames(adj)<-c(1:10)
+rownames(adj)<-colnames(adj)
+adj[3,c(2,4,5,6)]<-1
+adj[c(2,4,5,6),3]<-1
+adj[2,c(1,4,5)]<-1
+adj[c(1,4,5),2]<-1
+adj[5,c(6,7)]<-1
+adj[c(6,7),5]<-1
+adj[6,c(4,7)]<-1
+adj[c(4,7),6]<-1
+adj[1,4]<-1
+adj[4,1]<-1
+adj[8,c(4,6,9)]<-1
+adj[c(4,6,9),8]<-1
+adj[9,10]<-1
+adj[10,9]<-1
+diag(adj)<-0
+coord<-gplot(adj,gmode="graph",label=colnames(adj),
+ boxed.labels=F)
+title("G")
+sort(sna::degree(adj),decreasing=T)
+sort(sna::betweenness(adj),decreasing=T)
+sort(sna::closeness(adj),decreasing=T)
+vertex.cent.size<-rep(1,10)
+vertex.cent.size[c(3,4,6,8)]<-3
+vertex.cent.col<-rep("red",10)
+vertex.cent.col[3]<-"green"
+vertex.cent.col[4]<-"purple"
+vertex.cent.col[6]<-"purple"
+vertex.cent.col[8]<-"yellow"
+gplot(adj,gmode="graph",label=colnames(adj), 
+boxed.labels=F, vertex.cex=vertex.cent.size,
+vertex.col=vertex.cent.col,coord=coord)
+title("G")
+legend("topright",fill=
+c("green","yellow","purple"),title="Top Centrality Score",
+legend=c("Degree","Betweenness","Closenes"))
+
+#' 
+#' ### Centrality Example: Krackhardt's office data
+#' 
+#' A brief example of Krackhardt's famous office data on advice-seeking, scaling the data by centrality measures.
+#' 
+#' > These data were collected from the managers of a high-tech company. The company manufactured high-tech equipment on the west coast of the United States and had just over 100 employees with 21 managers. Each manager was asked "To whom do you go to for advice?" and "Who is your friend?" Data for the item “To whom do you report?" was taken from company documents. In addition attribute information was collected. This consisted of the managers age (in years), length of service or tenure (in years), level in the corporate hierarchy (coded 1,2 and 3; 1=CEO, 2= Vice President, 3 = manager) and department (coded 1,2,3,4 with the CEO in department 0 i.e. not in a department).
+#' 
+#' The data,
+## ------------------------------------------------------------------------
+data(krackht)
+silsys.ad.ilas<-krackht$ADVICE
+kable(as.data.frame(silsys.ad.ilas[,]))
+
+#' 
+#' The alternative closeness measure discussed earlier.
+## ------------------------------------------------------------------------
+##Alternative closeness function
+closeness2 <- function(x){          
+    geo <- 1/geodist(x)$gdist         
+    diag(geo) <- 0                    
+   apply(geo, 1, sum)               
+}
+
+#' 
+## ----warning=FALSE,message=FALSE,fig.align='center',fig.height=8*2,fig.width=12*2----
+par(mfrow=c(3,2),mar=c(0, 0, 3, 0) + 0.1)
+plot(silsys.ad.ilas, displayisolates=F,vertex.cex=
+10*sna::betweenness(silsys.ad.ilas)/sum(sna::betweenness(silsys.ad.ilas)),
+edge.col="grey",edge.lwd=.1)
+title("Krackhardt advice seeking network\n scaled by betweenness",cex.main=2)
+
+plot(silsys.ad.ilas, displayisolates=F,vertex.cex=
+20*sna::degree(silsys.ad.ilas)/sum(sna::degree(silsys.ad.ilas)),
+edge.col="grey",edge.lwd=.1)
+title("Krackhardt advice seeking network\n scaled by Freeman degree",cex.main=2)
+
+plot(silsys.ad.ilas, displayisolates=F,vertex.cex=
+20*sna::degree(silsys.ad.ilas,cmode="indegree")/
+sum(sna::degree(silsys.ad.ilas,cmode="indegree")),
+edge.col="grey",edge.lwd=.1)
+title("Krackhardt advice seeking network\n scaled by indegree",cex.main=2)
+
+plot(silsys.ad.ilas, displayisolates=F,vertex.cex=
+20*sna::degree(silsys.ad.ilas,cmode="outdegree")/
+sum(sna::degree(silsys.ad.ilas,cmode="outdegree")),
+edge.col="grey",edge.lwd=.1)
+title("Krackhardt advice seeking network\n scaled by outdegree",cex.main=2)
+
+plot(silsys.ad.ilas, displayisolates=F,vertex.cex=
+20*closeness2(silsys.ad.ilas)/sum(closeness2(silsys.ad.ilas)),
+edge.col="grey",edge.lwd=.1)
+title("Krackhardt advice seeking network\n scaled by modified closeness",cex.main=2)
+
+

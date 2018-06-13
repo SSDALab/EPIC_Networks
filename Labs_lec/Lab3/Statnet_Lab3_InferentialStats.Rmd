@@ -1,0 +1,581 @@
+---
+title: 'Statnet Lab 3: Introduction to Inferential Statistics'
+author: "Zack W Almquist (University of Minnesota)"
+date: "June 13, 2018"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Necessary R packages
+
+```{r,warning=FALSE,message=FALSE}
+library(sna)
+library(network)
+library(ergm)
+library(networkdata)
+```
+
+A note about this tutorial. It is largely based off of Carter Butts Social Network Methodology course at the University of California, Irvine.
+
+# Example data set: Sampson Monistary
+
+Sampson recorded the social interactions among a group of monks while resident as an experimenter on vision, and collected numerous sociometric rankings. During his stay, a political "crisis in the cloister" resulted in the expulsion of four monks (Nos. 2, 3, 17, and 18) and the voluntary departure of several others - most immediately, Nos. 1, 7, 14, 15, and 16. (In the end, only 5, 6, 9, and 11 remained).
+
+Most of the present data are retrospective, collected after the breakup occurred. They concern a period during which a new cohort entered the monastery near the end of the study but before the major conflict began. The exceptions are "liking" data gathered at three times: SAMPLK1 to SAMPLK3 - that reflect changes in group sentiment over time (SAMPLK3 was collected in the same wave as the data described below). Information about the senior monks was not included.
+
+Four relations are coded, with separate matrices for positive and negative ties on the relation. Each member ranked only his top three choices on that tie. The relations are esteem (SAMPES) and disesteem (SAMPDES), liking (SAMPLK) and disliking (SAMPDLK), positive influence (SAMPIN) and negative influence (SAMPNIN), praise (SAMPPR) and blame (SAMPNPR). In all rankings 3 indicates the highest or first choice and 1 the last choice. (Some subjects offered tied ranks for their top four choices).
+
+```{r,fig.align='center'}
+data(sampson)
+
+### Plot the resulting networks
+par(mfrow=c(2,5),mar= c(0, 0, 0, 0) + 0.1)
+for(i in 1:10){
+  plot(sampson[[i]],vertex.cex=1.3,edge.col=rgb(0,0,0,.5),edge.lwd=as.sociomatrix(sampson[[i]],"edgevalue"))
+}
+
+```
+
+# More Graph Descriptive Statistics
+
+## The Dyad Census 
+
+The dyad census is sometimes call the MAN statistics, because it breaks down into the three key statistics for the network:
+
+- Mutual (M): (i,j) and (j,i)
+- Assummetrix(A): (i,j) or (j,i), but not both
+- Null(N): neither (i,j) or (j,i)
+
+Some properties of the MAN statistics
+
+$$M+A+N = \textrm{Number of dyads}$$
+$$2M+A = \textrm{Number of edges}$$
+$$(M+A/2)/(M+A+N) = \textrm{Density}$$
+
+We can do this in R pretty straight forwardedly:
+```{r}
+dyad.census(sampson[[1]])
+
+```
+
+
+
+
+## Reciprocity
+
+```{r}
+#-Reciprocity and the dyad census-----------------------------------------------
+#
+# Get dyadic recprocity for the Sampson monastery data
+grecip(sampson)
+
+# Several relations have identical indices.  The dyad census shows why:
+dc<-dyad.census(sampson)                       # Get dyad census
+dc                                             # Several have same # Asyms
+(dc[,1]+dc[,3])/rowSums(dc) == grecip(sampson) # Confirm the definition
+```
+
+
+```{r,fig.align='center'}
+# Try edgewise reciprocity (more useful, in general)
+grecip(sampson,measure="edgewise")             # Calculate the measure
+2*dc[,1]/(2*dc[,1]+dc[,2])                     # Show it the "hard way"
+
+# Compare edgewise reciprocity to density ("r4" in the Butts article)
+log(grecip(sampson,measure="edgewise")/gden(sampson))
+```
+
+Are positive relations more reciprocal (relative to density) than negative
+ ones?  Let's try a simple permutation test:
+```{r,fig.align=TRUE}
+r4<-log(grecip(sampson,measure="edgewise")/gden(sampson))
+ispos<-c(TRUE,FALSE,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,TRUE,FALSE)
+obs<-sum(r4[ispos])-sum(r4[!ispos])
+reps<-vector()
+for(i in 1:1e4){
+  temp<-sample(ispos)
+  reps[i]<-sum(r4[temp])-sum(r4[!temp])
+}
+mean(reps>=obs)                                             # Upper tail p-value
+mean(abs(reps)>=abs(obs))                                   # Two-sided version
+hist(reps)
+abline(v=obs,col=2,lwd=3)                                   # Visualize it
+```
+
+## Hierarchy and centralization
+
+```{r}
+# Hierarchy is the flip side of reciprocity.  Let's try it here:
+hierarchy(sampson)                       # Default measure: 1-dyadic reciprocity
+1-grecip(sampson)                        # Manually confirm
+hierarchy(sampson,measure="krackhardt")  # Krackhardt's non-local measure
+# Visualize the difference:
+plot(hierarchy(sampson),hierarchy(sampson,measure="krackhardt"))
+
+# What about centralization?
+centralization(sampson,degree,cmode="indegree")    #Indegree centralization
+centralization(sampson,degree,cmode="outdegree")   #Outdegree centralization
+centralization(sampson,betweenness)                #Betweenness centralization
+```
+
+## Transitivity
+
+```{r}
+# Get transitivity for the Sampson monastery data
+gtrans(sampson)
+
+# How does transitivity compare to density?  (Log-odds method)
+log(gtrans(sampson)/gden(sampson))
+
+# Are positive relations more transitive (relative to density) than negative
+# ones?  (Compare to last lecture's reciprocity test.)  Let's try a vector
+# permutation test:
+ltr<-log(gtrans(sampson)/gden(sampson))
+ispos<-c(TRUE,FALSE,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,TRUE,FALSE)
+obs<-sum(ltr[ispos])-sum(ltr[!ispos])
+reps<-vector()
+for(i in 1:1e4){
+  temp<-sample(ispos)
+  reps[i]<-sum(ltr[temp])-sum(ltr[!temp])
+}
+mean(reps>=obs)                                             # Upper tail p-value
+mean(abs(reps)>=abs(obs))                                   # Two-sided version
+hist(reps)
+abline(v=obs,col=2,lwd=3)                                   # Visualize it
+
+# Now, let's get the triad census for each network
+triad.census(sampson)
+
+# Cool trick: two-way correspondence analysis of graphs and their triad census
+# scores (aka a "Faust diagram").  Networks here appear close to the triad
+# types they contain at excess frequency (distances are chi-squared based; 
+# see references in ?corresp for more detail).
+library(MASS)                                        # Requires the MASS package
+plot(corresp(triad.census(sampson),nf=2))       # Plot network/triad association
+
+# What if this data were symmetric?  We can symmetrize to illustrate.
+triad.census(symmetrize(sampson),mode="graph")    #Need to use mode="graph" here
+```
+
+### A bit about the triad census
+
+A visualization of the Triad Census:
+```{r,echo=FALSE,fig.align='center',fig.width=12*2,fig.height=12*2}
+library(sna)
+triad<-matrix(0,nc=3,nr=3)
+
+list.triad<-vector("list",16)
+
+for(i in 1:16){
+list.triad[[i]]<-triad
+}
+
+
+list.triad[[2]][2,1]<-1
+
+list.triad[[3]][1,2]<-1
+list.triad[[3]][2,1]<-1
+
+list.triad[[4]][1,2]<-1
+list.triad[[4]][1,3]<-1
+
+list.triad[[5]][2,1]<-1
+list.triad[[5]][3,1]<-1
+
+list.triad[[6]][2,1]<-1
+list.triad[[6]][1,3]<-1
+
+list.triad[[7]][1,3]<-1
+list.triad[[7]][3,2]<-1
+list.triad[[7]][2,3]<-1
+
+list.triad[[8]][3,1]<-1
+list.triad[[8]][3,2]<-1
+list.triad[[8]][2,3]<-1
+
+list.triad[[9]][2,1]<-1
+list.triad[[9]][3,1]<-1
+list.triad[[9]][2,3]<-1
+
+list.triad[[10]][1,2]<-1
+list.triad[[10]][2,3]<-1
+list.triad[[10]][3,1]<-1
+
+list.triad[[11]][1,2]<-1
+list.triad[[11]][2,1]<-1
+list.triad[[11]][3,2]<-1
+list.triad[[11]][2,3]<-1
+
+list.triad[[12]][1,2]<-1
+list.triad[[12]][1,3]<-1
+list.triad[[12]][3,2]<-1
+list.triad[[12]][2,3]<-1
+
+list.triad[[13]][2,1]<-1
+list.triad[[13]][3,1]<-1
+list.triad[[13]][3,2]<-1
+list.triad[[13]][2,3]<-1
+
+list.triad[[14]][2,1]<-1
+list.triad[[14]][1,3]<-1
+list.triad[[14]][3,2]<-1
+list.triad[[14]][2,3]<-1
+
+list.triad[[15]][2,1]<-1
+list.triad[[15]][3,1]<-1
+list.triad[[15]][1,3]<-1
+list.triad[[15]][3,2]<-1
+list.triad[[15]][2,3]<-1
+
+list.triad[[16]][1:3,1:3]<-1
+#coord<-gplot(list.triad[[1]],label=c(1:3),interactive=TRUE)
+#save(coord,file="coord.Rda")
+load("coord.Rda")
+tc<-triad.census(list.triad[[15]])
+tnam<-colnames(tc)
+
+par(mfrow=c(4,4),cex.sub=3,cex.main=3)
+for(i in 1:16){
+	gplot(list.triad[[i]],coord=coord,vertex.cex=3,arrowhead.cex=3)
+	box(which="figure")
+	title(main=paste("Count: ",tc[i],sep=""),sub=tnam[i])
+	}
+```
+
+Compute the observed triad census for all the sampson networks:
+```{r}
+trCensus<-triad.census(sampson)
+trCensus
+```
+
+
+
+
+## Centrality Scores
+
+```{r}
+data(emon)                                     #Load Drabek et al. data
+
+#Extract ties from the Cheyenne EMON communicating at least "every few hours"
+g<-as.sociomatrix(emon[[1]],"Frequency")       #Need to get the frequency info
+g<-symmetrize((g>0)&(g<4))                     #Note the reverse coding!
+
+#Get some potential covariates
+drs<-emon[[1]]%v%"Decision.Rank.Score"         #Get decision rank (see man page)
+crs<-emon[[1]]%v%"Command.Rank.Score"          #Get command rank
+
+#Calculate some basic centrality measures
+deg<-degree(g,gmode="graph")
+bet<-betweenness(g,gmode="graph")
+clo<-closeness(g,gmode="graph")
+
+#Raw correlations
+cor(cbind(deg,bet,clo),cbind(drs,crs))
+
+#Classical tests (using asymptotic t distribution)
+cor.test(deg,drs)
+cor.test(bet,drs)
+cor.test(clo,drs)
+
+#Permutation tests
+perm.cor.test<-function(x,y,niter=5000){  #Define a simple test function
+  c.obs<-cor(x,y,use="complete.obs")
+  c.rep<-vector()
+  for(i in 1:niter)
+    c.rep[i]<-cor(x,sample(y),use="complete.obs")
+  cat("Vector Permutation Test:\n\tObserved correlation: ",c.obs,"\tReplicate quantiles (niter=",niter,")\n",sep="")
+  cat("\t\tPr(rho>=obs):",mean(c.rep>=c.obs),"\n")
+  cat("\t\tPr(rho<=obs):",mean(c.rep<=c.obs),"\n")
+  cat("\t\tPr(|rho|>=|obs|):",mean(abs(c.rep)>=abs(c.obs)),"\n")
+  invisible(list(obs=c.obs,rep=c.rep))
+}
+perm.cor.test(deg,drs)                     #Non-parametric tests of correlation
+perm.cor.test(bet,drs)
+perm.cor.test(clo,drs)
+```
+
+## Mixing Matrix
+
+```{r,fig.align='center'}
+data("fauxhigh")
+data("faux.mesa.high")
+fauxhigh<-faux.mesa.high
+
+# Display the data, along with covariates
+plot(fauxhigh,vertex.col="Sex")        # Plot by gender (covariate is misnamed!)
+vals<-sort(unique(fauxhigh%v%"Sex"))   # Let's add a legend....
+legend("topleft",fill=1:length(vals),legend=vals,bty="n")
+
+plot(fauxhigh,vertex.col="Grade")      # Now, plot by grade
+legend("topleft",fill=7:12,legend=7:12,bty="n")
+
+plot(fauxhigh,vertex.col="Race")       # Finally, plot by race
+vals<-sort(unique(fauxhigh%v%"Race"))
+legend("topleft",fill=1:length(vals),legend=vals,bty="n")
+
+
+
+#-Obtaining mixing matrices-----------------------------------------------------
+
+# The mixingmatrix command is poorly documented, but very useful.  Let's
+# obtain mixing matrices for each of the above attributes: 
+mms<-mixingmatrix(fauxhigh,"Sex")               # Compute w/a network object and
+mmg<-mixingmatrix(fauxhigh,"Grade")             # attribute name  
+mmr<-mixingmatrix(fauxhigh,"Race")
+mms                                             # See what we have...
+mmg
+mmr
+names(mms)                                      # This is a complex object
+class(mms)
+mms$matrix                                      # Extract the mixing matrix
+
+# Can crudely visualize using plot.sociomatrix:
+plot.sociomatrix(mms$matrix)                    # Must use matrix, not object
+plot.sociomatrix(mmg$matrix)
+plot.sociomatrix(mmr$matrix)
+#
+#-Obtaining expectations and z-scores-------------------------------------------
+#
+# Let's examine mixing by grade....
+mmg
+gmarg<-rowSums(mmg$matrix)                       # Marginals for grade
+gmarg
+emmg<-(gmarg%o%gmarg)/sum(gmarg)                 # Expected mixing matrix
+emmg
+sum(emmg)==sum(gmarg)                 # Confirm: edges preserved
+sum(gmarg)==sum(mmg$matrix)           # Confirm: edges preserved
+dmmg<-mmg$matrix-emmg                            # Divergence from expectation
+dmmg
+zmmg<-dmmg/sqrt(emmg)                            # Approximate z-scores
+zmmg                                             # Note the strong homophily!
+
+#Plot the z-scores as a reduced form signed blockmodel
+gplot(abs(zmmg)>2,edge.col=sign(zmmg)+3,label=7:12,boxed.lab=FALSE,
+    usearrows=FALSE,diag=TRUE)                   # All avoid grade 7?
+```
+
+## Regression and Node Level Indices 
+
+```{r}
+#Using NLIs as regression covariates--------------------------------------------
+data(emon)
+
+pstaff<-emon[[1]]%v%"Paid.Staff"                     # Get more EMON covariates
+vstaff<-emon[[1]]%v%"Volunteer.Staff"
+govt<-((emon[[1]]%v%"Sponsorship")!="Private")
+
+#Very simple model: decision rank is linear in size, degree, and govt status
+mod<-lm(drs~deg+pstaff+vstaff+govt)
+summary(mod)
+anova(mod)                                            #Some useful lm tools
+AIC(mod)
+
+#Does total size change the picture?
+mod2<-lm(drs~deg+I(pstaff+vstaff)+govt)                #Pre-add sizes
+summary(mod2)
+
+#Try with alternative measures....
+mod3<-lm(drs~bet+pstaff+vstaff+govt)                   #Betweenness
+summary(mod3)
+mod4<-lm(drs~clo+pstaff+vstaff+govt)                   #Closeness
+summary(mod4)
+AIC(mod,mod3,mod4)                                     #Closeness wins!
+
+```
+
+# Introduction to Random Graphs
+
+A graph $G=(V,E)$ can be considered a random variable $G$ on some set of $G$ possible graphs. The proability mass function (pmf) can thus be written as $\Pr(G=g)$.
+
+In practice, we primarly work the adjaceny matrix represenation. We can consider $Y$ to be the matrix of random graph $G$. Then $Y$ is a random matrix with pmf $\Pr(Y=y)$.
+
+Then $Y_{ij}$ is a binary random variable which indicates the state of the (random) $i,j$ edge. Then we can write the marginal of $Y_{ij}$ edge stat as $\Pr(Y_{ij}=$y_{ij})$.
+
+## Erdos-Renyi Random graph 
+
+The Erdos-Renyi Random graph is based on the notion of conditioning on the size and density of the network. This is sometimes call the NM family of random graphs. 
+
+- N is the network size
+- M is the number of (observed) edges
+- $M_m$ is the maxim number of edges in the graph
+
+Then
+
+$$\Pr(G=g|N,M) = \frac{1}{{\choose M_m M}}$$
+
+In r,
+
+```{r}
+rgnm(1, 10, 20) 
+```
+
+## Brnoulli Graphs
+
+Bernoulli graphs come from the "idea" that we if all ties are independent (or conditionally independent) we can represent the graph as series of bernoullie trials. This is sometimes called the NP family of network models. If we use the above notation:
+
+$$\Pr(G=g|N,p) = p^M(1-p)^{M_m-M}$$
+
+Notice that in matrix notation this will be:
+
+**Directed Case**
+$$\Pr(Y=y|N,p) = \prod_{i\neq j} p^{Y_{ij}}(1-p)^{1-Y_{ij}}$$
+**Undirected Case**
+$$\Pr(Y=y|N,p) = \prod_{i< j} p^{Y_{ij}}(1-p)^{1-Y_{ij}}$$
+The matrix notation is very important because it naturally leads to first class of (inferential) network models. Notice that we could fit $\Pr(Y=y|N,p)$ with standard likelihood methods - further, if we are willing to assume that $logit(p)$ is linear in the predictors we will have logistic regression!
+
+
+We can generate Bernoulli Random Graphs in R using the `rgraph` function. Take for example a graph of size 10 with a uniform probability $3/9$ for an edge.
+
+
+```{r}
+rgraph(10)                            # A uniform random digraph of size 10 
+rgraph(10, tp=3/9)                    # Homogeneous Bernoulli w/mean degree 3
+rgraph(10, tp=3/9, mode="graph")         # As above, but undirected
+```
+
+## U|MAN 
+
+We can extend this simple case to the so called `U|MAN` model, i.e., a uniform random graph conditioned on the MAN statistics. This is a richer set of "random graphs", because it allows us to condition on the MAN statistics. This will be come important for the Conditional Uniform Graph (CUG) test. In probability terms we can write conditioning on the MAN statistics in two ways. First by counts,
+$$\Pr(G=g|M,A,N) = \frac{M!A!N!}{(M+A+N)!}$$
+and secondly, as a (homogenous) multinomial model (u|man - lowercase):
+$$\Pr(G=g|m,a,n) = m^Ma^An^N$$
+where $m,a,n$ are probabilties each (requires a constraint that three sum to 1). 
+
+We can generate `U|MAN` graph in R using the `rguman`
+
+```{r}
+rguman(1, 10, mut=0.5, asym=0.25, null=0.25)  # Homogeneous multinomial on 
+                                              # dyad census
+rguman(1, 10, mut=0, asym=1, null=0)     # An extreme case: random tournament
+grecip(rguman(1,10,mut=0,asym=1,null=0)) # Note the asymmetry....
+```
+
+## Conditioning random graphs observed statistics
+
+Random graphs conditional on observed statistics
+
+```{r,fig.align='center'}
+# Begin by drawing a uniform digraph with the same order as the "praise" network
+g.un<-rgraph(network.size(sampson[[9]]))
+
+# Now, try a uniform digraph with the same expected number of edges
+g.unem<-rgraph(network.size(sampson[[9]]),tp=gden(sampson[[9]]))
+
+# How about a uniform digraph with the same exact number of edges?
+g.unm<-rgnm(1,network.size(sampson[[9]]),network.edgecount(sampson[[9]]))
+
+# We can also try the same expected dyad census...
+g.uneman<-rguman(1,network.size(sampson[[9]]),mut=dc[9,1],asym=dc[9,2],
+    null=dc[9,3])
+
+# ...and, finally, the same exact dyad census
+g.unman<-rguman(1,network.size(sampson[[9]]),mut=dc[9,1],asym=dc[9,2],
+    null=dc[9,3],method="exact")
+
+# Plot all of the above, along with the original graph
+par(mfrow=c(2,3))                                   # Create a 2x3 panel display
+plot(sampson[[9]],main="Praise")
+gplot(g.un,main="U|N")
+gplot(g.unem,main="U|N,E(M)")
+gplot(g.unm,main="U|N,M")
+gplot(g.uneman,main="U|N,E(MAN)")
+gplot(g.unman,main="U|N,MAN")
+par(mfrow=c(1,1))                                   # Reset the display
+```
+
+This is the basis of the permutation tests (CUG tests).
+
+# Conditional Uniform Graph tests
+
+Introduced by Anderson, B.S.; Butts, C.T.; and Carley, K.M. (1999) CUG tests are part of the larger litature in statistics known as Monte Carlo tests. CUG tests can (in a lot of ways) be thought of as the begining point of inferential statistics on networks.
+
+The idea goes like this -- we want to know there is some sort of signal in our data! If we can accurately represent the network with a "simple" random graph we know there is no meaningful "structure" in the data (this is analogous to being able to represent a proportion with a mean or showing that your data is well reprented by normal distribution with no covariates). 
+
+Here are the four most important baseline models:
+
+- Uniform conditioned on size
+- Uniform conditioned on the number of edges
+- Uniform conditioned on the dyad census
+- Uniform conditioned on all unlabled properties (this is the permutation distribution of a graph)
+
+
+```{r}
+g<-rguman(1,15,mut=0.25,asym=0.05,null=0.7)
+
+#Test transitivity against size, density, and the dyad census
+cug.test(g,gtrans,cmode="size")
+cug.test(g,gtrans,cmode="edges")
+cug.test(g,gtrans,cmode="dyad.census")
+```
+
+Now let's do an emperical case with famous data set on international trade.
+
+```{r,fig.align='center'}
+## Emperical Case
+data(trade)
+ctrade<-trade$CRUDE_MATERIALS
+cug.test(ctrade,gden)                 # Call cug.test with the gden (density) function
+
+# Is there more reciprocity than density would suggest?  Let's see.
+cug.test(ctrade,grecip,cmode="edges")       # Conditioning on edges, calling grecip
+
+# Given biases in density and reciprocity, we might look to see if there is a
+# bias in transitivity, too.  This time, let's condition on all of the above.
+cug.test(ctrade,gtrans,cmode="dyad")   #                Conditioning on dyad census
+
+# We are not limited to simple commands.  Let's try indegree centralization:
+ct<-cug.test(ctrade,centralization,cmode="dyad",FUN.arg=list(FUN=degree,
+    cmode="indegree"))  # Note that we here must pass not only arguments to 
+                        # cug.test, but also to centralization and degree!
+ct                                                           # Print the result
+plot(ct)                                                     # Can also plot it!
+```                     
+
+# Bonus code for centrality measures
+
+```{r}
+#######################################
+### function that takes a list of network objects and outputs classic
+###    centrality scores by nodes and ranks them
+#######################################
+node.centrality<-function(list.net){
+  lapply(list.net,
+         function(z){
+           x<-symmetrize(as.sociomatrix.sna(z))
+           central.nodes<-cbind(degree(x,cmode="indegree"), degree(x,cmode="outdegree"),evcent(x),betweenness(x,rescale=TRUE),
+                                closeness(x,cmode="suminvundir"))
+           colnames(central.nodes)<-c("idegree","odegree","eigen","betweenness","closeness")
+           rownames(central.nodes)<-attr(z,"vnames")
+           
+           o1<-order(central.nodes[,1],decreasing =TRUE)
+           o2<-order(central.nodes[,2],decreasing =TRUE)
+           o3<-order(central.nodes[,3],decreasing =TRUE)
+           o4<-order(central.nodes[,4],decreasing =TRUE)
+           o5<-order(central.nodes[,5],decreasing =TRUE)
+           list(ranking=central.nodes,order=cbind(o1,o2,o3,o4,o5))
+         })
+}
+
+#########################
+### Let's do an example
+#########################
+
+### Lin Freeman's famous Beach data
+#help(beach)
+data(beach)
+
+
+### Compute Centrality scores
+nc<-node.centrality(beach)
+
+### Print
+lapply(nc,function(x){head(x[[1]])})
+
+### Print ordered by degre
+lapply(nc,function(x){head(x[[1]][x$order[,1],])})
+```
