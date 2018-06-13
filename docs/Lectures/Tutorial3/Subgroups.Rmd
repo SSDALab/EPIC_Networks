@@ -190,7 +190,7 @@ gplot(communication,coord=coord,gmode = "graph") ## Plot by MDS Clusering
 ```
 
 
-### Convert adjacency matrix object to igraph opbject
+### Convert adjacency matrix object to igraph object
 ```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
 class(communication)
 ## Conversion

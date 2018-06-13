@@ -8,7 +8,7 @@ output:
 
 - [Lecture 1](Lec/Almquist_Tutorial3_Part1.pdf)
 - [Lecture 2](Lec/Almquist_Tutorial3_Part2.pdf)
-    - [Supplement: Subgroups](Lec/Subgroups.html)
+    - [Supplement: Subgroups](Lec/Subgroups.html);  [Rmarkdown](Lec/Subgroups.Rmd)
     - Lab 1: Centrality: [R](Labs/Lab3/lab3_statnet.R); [Rmarkdown](Labs/Lab3/lab3_statnet.Rmd); [html](Labs/Lab3/lab3_statnet.html)
     - Lab 2: (Intro) Inferential Statistics for Networks: [R](Labs/Lab3/Statnet_Lab3_InferentialStats.R); [RMarkdown](Labs/Lab3/Statnet_Lab3_InferentialStats.Rmd); [html](Labs/Lab3/Statnet_Lab3_InferentialStats.html)
       - [data](Labs/Lab3/coord.Rda)

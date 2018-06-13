@@ -64,6 +64,8 @@ library(xtable)
 \end{itemize}
 \end{itemize}
 
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+
 ### ``Classical" Random Graphs
 
 \begin{itemize}
@@ -82,6 +84,7 @@ $$\Pr(G=g \; | \; N,p) = p^{M}(1-p)^{M_m-M}$$
 \end{itemize}
 \end{itemize}
 
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 
 ### Relaxation 1: Intra-dyadic Independence
 
@@ -101,6 +104,7 @@ $$\Pr(G=g \; | \; m,a,n)= m^{M}a^{A}n^{N}$$
 \end{itemize}
 \end{itemize}
 
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 
 
 ### Relaxation 2: Homogeneity
@@ -123,6 +127,7 @@ $$\Pr(G=g\; | \; \Phi,\Psi) = \prod_{(i,j)} \left[
 \end{itemize}
 \end{itemize}
 
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 
 ### Simple Random Graph Models in Practice
 
@@ -139,6 +144,7 @@ $$\Pr(G=g\; | \; \Phi,\Psi) = \prod_{(i,j)} \left[
 \item Dyad dependent models are much more complex, but we'll see them later\dots
 \end{itemize}
 \end{itemize}
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 
 # Cohesion and Subgroups
 

@@ -56,6 +56,8 @@ Introduction to classic Social Network Metrics (Positional or Node-level indices
 \end{itemize}
 \end{itemize}
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 \begin{textblock*}{55mm}(55mm,-.4\textheight)
@@ -92,6 +94,7 @@ Introduction to classic Social Network Metrics (Positional or Node-level indices
 \end{itemize}
 \end{itemize}
 
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 
 ### Types of Centrality Measures
 
@@ -117,6 +120,7 @@ Introduction to classic Social Network Metrics (Positional or Node-level indices
 \end{itemize}
 \end{itemize}
 
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 
 ### Degree
 
@@ -135,6 +139,8 @@ $$d(i,Y)=\sum_{j=1}^N Y_{ij}$$
 \item Outdegree: $d_o(i,Y)=\sum_{j=1}^N Y_{ij}$
 \end{itemize}
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 \begin{textblock*}{50mm}(60mm,-.4\textheight)
@@ -160,6 +166,8 @@ gplot(net,main="directed network",label=1:5,edge.col=rgb(0,0,0,.3),label.cex=2)
 \item The length of an $i,j$ geodesic is called the geodesic distance from $i$ to $j$
 \end{itemize}
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 \begin{textblock*}{50mm}(-5mm,-.1\textheight)
@@ -192,6 +200,8 @@ print(xtable(g$gdist),floating=FALSE)
 $$b(i,Y)=\sum_{j\neq i}\sum_{k\neq l} \frac{g^{'}(j,k,l)}{g(j,k)}$$
 Where $g(j,k)$ is the number of $j,k$ geodesics, $g^{'}(j,k,i)$ is the number of $j,k$ geodesics including $i$
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 \begin{textblock*}{50mm}(65mm,-.4\textheight)
@@ -202,6 +212,7 @@ plot(star,main="Undirected Star",label=1:7, edge.col=rgb(0,0,0,.3),label.cex=2)
 
 gplot(symmetrize(net),main="directed",label=1:5,edge.col=rgb(0,0,0,.3),label.cex=2)
 ```
+
 
 \end{textblock*}
 
@@ -336,6 +347,8 @@ Where $D(I,j)$ is the distance from $i$ to $j$
 \end{itemize}
 \end{itemize}
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 
@@ -362,7 +375,7 @@ Where $D(I,j)$ is the distance from $i$ to $j$
 \end{itemize}
 \item Results
 \begin{itemize}
-\item $t_{obs}= 0.86$; $\Pr(|t^{(i)}\geq|t_{obs}|) \approx 3e-5$
+\item $t_{obs}= 0.86$; $\Pr(|t^{(i)}|\geq|t_{obs}|) \approx 3e-5$
 \item Correlation this large very unlikely under null hypothesis
 \item Upper tail test similar (see figure)
 \end{itemize}
@@ -398,6 +411,8 @@ Where $D(I,j)$ is the distance from $i$ to $j$
 \item Multiple NLIs may be strongly correlated; may not be able to distinguish among related measures in practice
 \end{itemize}
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 # Graph Level Indicies 
@@ -463,6 +478,8 @@ gden(directed,mode="digraph")
 \end{itemize}
 \end{itemize}
 
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
+
 ### Illustration: Mean Degree Constancy and Density Decline
 
 \tiny
@@ -498,6 +515,8 @@ grid.arrange(p1, p2, ncol=1)
 \item $(M+A/2)/(M+A+N)$= Density
 \end{itemize}
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 \begin{textblock*}{60mm}(60mm,-.3\textheight)
@@ -509,11 +528,11 @@ asym[3,2]<-1
 mut<-matrix(c(0,1,1,0),nc=2)
 null<-matrix(c(0,0,0,0),nc=2)
 par(mfrow=c(1,3),cex.main=4)
-gplot(mut,mode="circle",main="Mutual")
+gplot(mut,mode="circle",main="Mutual",vertex.cex=2,arrowhead.cex = 2)
 box()
-gplot(asym,mode="circle",main="Asymmetric")
+gplot(asym,mode="circle",main="Asymmetric",vertex.cex=2,arrowhead.cex = 2)
 box()
-gplot(null,mode="circle",main="Null")
+gplot(null,mode="circle",main="Null",vertex.cex=2,arrowhead.cex = 2)
 box()
 ```
 
@@ -563,6 +582,8 @@ print(xtable(dyad.census(graph)))
 
 \begin{textblock*}{60mm}(65mm,-.4\textheight)
 \includegraphics[width=.7\linewidth]{figures/reachability}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 ### Hierarchy
@@ -617,6 +638,8 @@ $$C(G) = \sum_{i=1}^N \left(\max_v c(v,G)-c(i,G)\right) $$
 \item True for most centrality measures
 \end{itemize}
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 \end{textblock*}
 
 \begin{textblock*}{60mm}(65mm,-.4\textheight)
@@ -624,7 +647,7 @@ $$C(G) = \sum_{i=1}^N \left(\max_v c(v,G)-c(i,G)\right) $$
 ```{r,out.width='.65\\linewidth',echo=FALSE,fig.align='center'}
 graph<-rgraph(15,tprob=.5,mode="graph")
 star<-matrix(0,nc=10,nr=10); star[1,]<-1; star[,1]<-1
-par(mfrow=c(2,1),mar=c(0, 0, 0, 0),cex.main=3)
+par(mfrow=c(2,1),mar=c(0, 0, 0, 0),cex.main=2)
 gplot(graph,main="Random Network")
 gplot(star,main="Star Network")
 ```
@@ -669,6 +692,8 @@ print(xtable(cbind(centralization(star,g=1,degree),centralization(star,g=1,close
 \end{itemize}
 \item A lesson: optimal performance $\neq$ optimal satisfaction ...
 \end{itemize}
+
+\tiny{Carter Butts. Social Network Methods. University of California, Irvine.}
 
 # References and Places for More Information 
 

@@ -1,0 +1,292 @@
+
+---
+title: "EPIC Social Network Analysis: Groups"
+author: "Zack W Almquist (University of Minnesota)"
+date: "June 13th, 2018"
+output: 
+  html_document:
+    toc: true
+---
+
+# Necessary R Packages to follow along (not required)
+
+```{r,warning=FALSE,message=FALSE,fig.align='center',fig.height=8/2,fig.width=12/2}
+library(sna)
+library(network)
+library(networkdata)
+library(igraph)
+library(knitr)
+library(xtable)
+```
+
+# Group Structure
+
+## Basic scientific intuition: humans form aggregates with special properties
+
+- Relatively high rates of within-set interactions
+- Bias towards positive within-set interactions, negative external interactions
+- Set membership frequently enduring
+- Often institutionalized (including marked membership, externally recognition apart from its members, etc.)
+
+## Cohesive Subgroups
+
+In *social network analysis* measures for the "cohesiveness" or strength of a given group have long been of interest. Other areas in network theory sometimes call this *community finding*. There is a long history in social psychology, sociology and social network analysis to attempt to find the ideal measure of a *group*.
+
+The work in this section attempts to define effective "group"" notion within a larger population, from dyadic basis (i.e., measures on a graph or network). If this can be done, it would/does allow for group to be inferred from observations of low-level (dyadic) relationships alone! Key assumption:  "group" can be effectively represented as relations among dyads ("ontological dyadism?"). In otherwords we are assuming that group dynamics boil down to the indivual relationships between the group members up to some reasonable(?) aggregate. 
+
+The network literature has typically used ideas of mutuality, closeness or reachability of subgroup members, frequency of ties among members or relative frequency of ties among subgroup members compared to non-members. To this end, the most basic measure of "cohesion" is the **clique**.
+
+### Cliques
+
+**Definition** Clique: Set of mutually adjacent vertices.
+
+Cliques are complete subgraphs (i.e., all nodes are connected). Typically, we talk about the *maximal clique set* (i.e., what is the largest clique a node belongs to?). The isolate is a special case -- isolate, lone dyad is the smallest clique.
+
+**Example of Maximal Cliques from 1 to 6**
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+oneClique<-matrix(1,nc=1,nr=1)
+twoClique<-matrix(1,nc=2,nr=2)
+threeClique<-matrix(1,nc=3,nr=3)
+fourClique<-matrix(1,nc=4,nr=4)
+fiveClique<-matrix(1,nc=5,nr=5)
+sixClique<-matrix(1,nc=6,nr=6)
+par(mfrow=c(2,3),c(4, 0,0, 0) + 0.1)
+gplot(oneClique,sub="One")
+gplot(twoClique,sub="Two")
+gplot(threeClique,sub="Three")
+gplot(fourClique,sub="Four")
+gplot(fiveClique,sub="Five")
+gplot(sixClique,sub="Six")
+```
+
+**Mathematical Properties** Combinatorially nested (order N clique contains N choose k order k cliques). Can (and do) overlap substantially. Very "Fragile" measure -- definition fails on edge removal. No internal differentiation and can have external shared partners.
+
+**Overview** CLiques are a popular measure of cohesion/subgroup analysis of networks because they are well defined (everyone in the maximal clique is member and everyone outside is not) and it has appealing intuition - if everyone is co-connected and knows eachother on X relation than they must represent some sort of "group". This definition is very appealing, but problomatic in practice. If a network has any (error) -- which we know from lecture is possible, then we could mis-classify group members. Maybe requiring everyone to be completely connected in the group is unreasonable, maybe the percentage requirement is simply most, not all. This leads two core areas of group find finding in social network analysi: (1) Block Models and (2) community detection (or network clustering).
+
+### Block Models
+
+A block model for networks is where we allow for some sort of grouping (e.g., maximal cliques) and then use that to identify subgroups of our matrix. Let's do an example to get a handle on this:
+
+**Sampson Monestary Data: Liking Relation**
+
+> Sampson (a social science researcher) recorded the social interactions among a group of monks while resident as an experimenter on vision, and collected numerous sociometric rankings dissertation. During his stay, a political "crisis in the cloister" resulted in the expulsion of four monks (Network IDS: 2, 3, 17, and 18) and the voluntary departure of several others - most immediately, Network IDs 1, 7, 14, 15, and 16. In the end, only 5, 6, 9, and 11 remained.
+
+> Most of the present data are retrospective, collected after the breakup occurred. They concern a period during which a new cohort entered the monastery near the end of the study but before the major conflict began. The exceptions are "liking" data gathered at three times: SAMPLK1 to SAMPLK3 - that reflect changes in group sentiment over time (SAMPLK3 was collected in the same wave as the data described below). Information about the senior monks was not included.
+
+> Four relations are coded, with separate matrices for positive and negative ties on the relation. Each member ranked only his top three choices on that tie. The relations are esteem (SAMPES) and disesteem (SAMPDES), liking (SAMPLK) and disliking (SAMPDLK), positive influence (SAMPIN) and negative influence (SAMPNIN), praise (SAMPPR) and blame (SAMPNPR). In all rankings 3 indicates the highest or first choice and 1 the last choice. (Some subjects offered tied ranks for their top four choices).
+
+This is a classic dataset for understanding small group dynamics in a network context. Here we are going to consider the first time point in the liking relation which can be accessed via the `networkdata` package. (for more details see `help(sampson)`).
+
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+data(sampson)
+
+## Symmetrize sampson liking data, 
+## we want to work with liking as an undirected relation
+## Add all three time periods, dichotomize and symmetrize
+slik<-sampson$SAMPLK1[,]+sampson$SAMPLK2[,]+sampson$SAMPLK3[,]
+slik<-network(slik)
+slik%n%"directed"<-FALSE
+
+plot(slik)
+```
+
+**Clique Census** To obtain a list of all the clique comemberships we can simply use the comman `clique.census`. Here we are going to look at the undirected relations.
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+# Now, for the clique census
+cs<-clique.census(slik,mode="graph")
+names(cs)
+```
+
+**Count of Cliques by vertex**
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5,results='asis'}
+# Now, for the clique census
+cs<-clique.census(slik,mode="graph")
+print(xtable(cs$clique.count,digits=0),type="html")
+```
+
+A good visualization of this is a boxplot by clique size
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+boxplot(t(cs$clique.count),xlab="Clique Size",ylab="Number of Vertices")
+```
+
+
+**Enumeration of all Cliques**
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+## All cliques of size four ID numbers
+kable(cs$cliques[[4]][[1]])
+kable(cs$cliques[[4]][[2]])
+```
+
+**Cliques co-membership information**
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5,results='asis'}
+# Can also get co-membership information
+cs<-clique.census(slik,clique.comembership="sum")    # Add up all
+print(xtable(cs$clique.comemb,digits=0),type="html")
+```
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5,results='asis'}
+cs<-clique.census(slik,clique.comembership="bysize") # Sort by size
+print(xtable(cs$clique.comemb[1,,],digits=0),type="html")                                # 1-cliques
+print(xtable(cs$clique.comemb[2,,],digits=0),type="html")                                # 2-cliques
+print(xtable(cs$clique.comemb[3,,],digits=0),type="html")                                # 3-cliques
+```
+
+**Clustering by clique-comembership** Here we will look at the clique co-membership and use it to build *blocks* for the network (i.e. a block model of the latent groups with this network). We will do clustering here based on so called *Multi-diminsinal scaling* (MDS) which attempts to find similarity in a standard metric space based on given criterian (in this case comembership in cliques). The code and resulting plot is below. This results in 3-key groupings
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+#
+#-Clustering and scaling with the clique census
+#
+csco<-clique.census(slik,clique.comembership="sum")$clique.comemb
+coord<-cmdscale(1/(1+csco))                          # Perform an MDS
+par(mfrow=c(1,2))
+plot(coord)                                          # Examine points
+gplot(slik,coord=coord,gmode = "graph")              # Use with gplot
+```
+
+**Clustering** To formalize our clusters we will use an algorithm known as hierarchical clustering which will result in a tree-diagram or *Dendrogram* (below). We will plot the Dendrogram, network plot (Colored by cluser) and visualization of the adjacency matrix (a sociogram plot with relationship represented with colored in black square). Here we get 9 groupings.
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+# For clustering, we use the hclust function
+par(mfrow=c(1,3))
+hc<-hclust(as.dist(1/(csco+1)))                      # Cluster by co-membership
+plot(hc)
+rect.hclust(hc,h=0.8)                                # Plot a cutoff point
+ct<-cutree(hc,h=0.8)                                 # Cut the clusters
+gplot(slik,vertex.col=ct)                            # Visualize directly
+plot.sociomatrix(slik[order(ct),order(ct)])          # Show in matrix form
+```
+
+**Block Model** Using this clustering result we can build a block model. The block model is where we collapse the groups into a single node and look at the interaction between groups (and themselves, represented with self loops). This provides an aggregate picture of group-group interaction.
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+# We can also use the clustering to generate a blockmodel
+bm<-blockmodel(slik,ct)
+bm
+gplot(bm$block.model,vertex.cex=table(ct),edge.lwd=6*bm$block.model,
+  diag=TRUE)                                         # View the block image
+```
+
+## Community detection
+
+**Community detection/network cluster analysis** is a term for *network clustering* and refers to series of metrics for finding groups in social network analysis. Different assumptions result in different groupings as we have seen in our clique analysis. Community detection is one of the things the `igraph` package does particularly well. To illustrate some of the populat metrics we will use Lin Freeman's famous `beach` data. You can get this data via the `networkdata` package with `data(beach)`. For details `help(beach)`.
+
+> This was a study of windsurfers on a beach in southern California during the fall of 1986. The windsurfing community was fairly clearly divided into at least two sub-communities. Members of each community seemed, to some degree, to limit their interaction to fellow group members. Contacts between members of the two groups occurred, but these were less frequent. Observations of 43 individuals were made for 31 days. All interpersonal contacts among collections of these individuals were recorded. Then all 43 individuals were interviewed following the end of observation. Data on each individual's perception of social affiliations were collected.
+
+The discussion of the different algorithams is from [Stack Overflow](https://stackoverflow.com/questions/9471906/what-are-the-differences-between-community-detection-algorithms-in-igraph).
+
+**Data**
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+data(beach)
+communication<-as.matrix(beach$bb,attrname="edgevalue")
+communication[communication>1]<-NA
+communication[!is.na(communication)]<-0
+communication[is.na(communication)]<-1
+csco<-clique.census(communication,clique.comembership="sum")$clique.comemb
+coord<-cmdscale(1/(1+csco))                          # Perform an MDS
+gplot(communication,coord=coord,gmode = "graph") ## Plot by MDS Clusering
+```
+
+
+### Convert adjacency matrix object to igraph object
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+class(communication)
+## Conversion
+comm_igraph<-graph_from_adjacency_matrix(communication)
+class(comm_igraph)
+```
+
+### Fast-Greedy Algorithm Community Detection
+
+> `fastgreedy.community` is another hierarchical approach, but it is bottom-up instead of top-down. It tries to optimize a quality function called modularity in a greedy manner. Initially, every vertex belongs to a separate community, and communities are merged iteratively such that each merge is locally optimal (i.e. yields the largest increase in the current value of modularity). The algorithm stops when it is not possible to increase the modularity any more, so it gives you a grouping as well as a dendrogram. The method is fast and it is the method that is usually tried as a first approximation because it has no parameters to tune. However, it is known to suffer from a resolution limit, i.e. communities below a given size threshold (depending on the number of nodes and edges if I remember correctly) will always be merged with neighboring communities.
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+g<-as.undirected(comm_igraph)
+fc <- fastgreedy.community(g)
+par(mfrow=c(1,3))
+dendPlot(fc)
+dendPlot(fc, mode="hclust")
+plot(fc,g, vertex.label=NA)
+```
+
+
+
+### Walk-trap Community Detection
+
+> `walktrap.community` is an approach based on random walks. The general idea is that if you perform random walks on the graph, then the walks are more likely to stay within the same community because there are only a few edges that lead outside a given community. Walktrap runs short random walks of 3-4-5 steps (depending on one of its parameters) and uses the results of these random walks to merge separate communities in a bottom-up manner like fastgreedy.community. Again, you can use the modularity score to select where to cut the dendrogram. It is a bit slower than the fast greedy approach but also a bit more accurate (according to the original publication).
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+g<-as.undirected(comm_igraph)
+wc <- walktrap.community(g)
+modularity(wc)
+membership(wc)
+plot(wc, g, vertex.label=NA)
+```
+
+### Walk-trap Community Detection: Alternative Plot
+
+> `walktrap.community` is an approach based on random walks. The general idea is that if you perform random walks on the graph, then the walks are more likely to stay within the same community because there are only a few edges that lead outside a given community. Walktrap runs short random walks of 3-4-5 steps (depending on one of its parameters) and uses the results of these random walks to merge separate communities in a bottom-up manner like `fastgreedy.community`. Again, you can use the modularity score to select where to cut the dendrogram. It is a bit slower than the fast greedy approach but also a bit more accurate (according to the original publication).
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+g<-as.undirected(comm_igraph)
+set.seed(42)
+c <- walktrap.community(g)
+b <- cutat(c, steps=2)
+modularity(g, b)
+V(g)$color <- c$membership+1
+V(g)[c$membership== 1]$shape <- "square"
+V(g)[c$membership== 2]$shape <- "circle"
+plot(g,vertex.label=NA)
+```
+
+
+### Edge-Betweenness Community Detection
+
+> `edge.betweenness.community` is a hierarchical decomposition process where edges are removed in the decreasing order of their edge betweenness scores (i.e. the number of shortest paths that pass through a given edge). This is motivated by the fact that edges connecting different groups are more likely to be contained in multiple shortest paths simply because in many cases they are the only option to go from one group to another. This method yields good results but is very slow because of the computational complexity of edge betweenness calculations and because the betweenness scores have to be re-calculated after every edge removal. Your graphs with $\sim700$ vertices and $\sim 3500$ edges are around the upper size limit of graphs that are feasible to be analyzed with this approach. Another disadvantage is that edge.betweenness.community builds a full dendrogram and does not give you any guidance about where to cut the dendrogram to obtain the final groups, so you'll have to use some other measure to decide that (e.g., the modularity score of the partitions at each level of the dendrogram).
+
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+g<-as.undirected(comm_igraph)
+ceb <- cluster_edge_betweenness(g)
+dendPlot(ceb, mode="hclust")
+plot(ceb,g,vertex.label=NA)
+#crossing(ceb, g)
+```
+
+### Springlass Community Detection
+
+> spinglass.community is an approach from statistical physics, based on the so-called Potts model. In this model, each particle (i.e. vertex) can be in one of c spin states, and the interactions between the particles (i.e. the edges of the graph) specify which pairs of vertices would prefer to stay in the same spin state and which ones prefer to have different spin states. The model is then simulated for a given number of steps, and the spin states of the particles in the end define the communities. The consequences are as follows: 1) There will never be more than c communities in the end, although you can set c to as high as 200, which is likely to be enough for your purposes. 2) There may be less than c communities in the end as some of the spin states may become empty. 3) It is not guaranteed that nodes in completely remote (or disconencted) parts of the networks have different spin states. This is more likely to be a problem for disconnected graphs only, so I would not worry about that. The method is not particularly fast and not deterministic (because of the simulation itself), but has a tunable resolution parameter that determines the cluster sizes. A variant of the spinglass method can also take into account negative links (i.e. links whose endpoints prefer to be in different communities).
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+g<-as.undirected(comm_igraph)
+clust <- cluster_spinglass(g)
+# Overlay modules on network plots
+layout(matrix(1:2, 1, 2))
+plot(g, vertex.label=NA, mark.groups=communities(clust))
+```
+
+### Leading Eigenvector Community Detection
+
+> `leading.eigenvector.community` is a top-down hierarchical approach that optimizes the modularity function again. In each step, the graph is split into two parts in a way that the separation itself yields a significant increase in the modularity. The split is determined by evaluating the leading eigenvector of the so-called modularity matrix, and there is also a stopping condition which prevents tightly connected groups to be split further. Due to the eigenvector calculations involved, it might not work on degenerate graphs where the ARPACK eigenvector solver is unstable. On non-degenerate graphs, it is likely to yield a higher modularity score than the fast greedy method, although it is a bit slower.
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+g<-as.undirected(comm_igraph)
+clust <- leading.eigenvector.community(g)
+# Overlay modules on network plots
+plot(g, vertex.label=NA, mark.groups=communities(clust))
+```
+
+### Label Propagation Community Detection
+
+> `label.propagation.community` is a simple approach in which every node is assigned one of k labels. The method then proceeds iteratively and re-assigns labels to nodes in a way that each node takes the most frequent label of its neighbors in a synchronous manner. The method stops when the label of each node is one of the most frequent labels in its neighborhood. It is very fast but yields different results based on the initial configuration (which is decided randomly), therefore one should run the method a large number of times (say, 1000 times for a graph) and then build a consensus labeling, which could be tedious.
+
+```{r,fig.align='center',fig.width=12/1.5,fig.height=8/1.5}
+g<-as.undirected(comm_igraph)
+clust <- label.propagation.community(g)
+# Overlay modules on network plots
+plot(g, vertex.label=NA, mark.groups=communities(clust))
+```
+
+

@@ -1,29 +1,31 @@
-name: "EPIC SNA"
-output_dir: "docs"
+name: EPIC SNA
+output_dir: docs
 navbar:
-  title: "EPIC SNA"
+  title: EPIC SNA
   left:
-    - text: "Syllabus"
-      href: syllabus.html
-    - text: "Intro R"    
-      href: https://ssdalab.github.io/IntroR/  
-    - text: "Day 1"
-      href: day1.html
-    - text: "Day 2"
-      href: day2.html
-    - text: "Day 3"
-      href: day3.html
-    - text: "Day 4"
-      href: day4.html
-    - text: "Day 5"
-      href: day5.html
+  - text: Syllabus
+    href: syllabus.html
+  - text: Intro R
+    href: https://ssdalab.github.io/IntroR/
+  - text: Day 1
+    href: day1.html
+  - text: Day 2
+    href: day2.html
+  - text: Day 3
+    href: day3.html
+  - text: Day 4
+    href: day4.html
+  - text: Day 5
+    href: day5.html
 output:
   html_document:
-    theme: cosmo ### cosmo ###### flatly
+    theme: cosmo
     highlight: tango
     include:
       in_header: include_head.html
       before_body: include_header.html
       after_body: footer.html
     css: style.css
-    
+    lib_dir: site_libs
+    self_contained: no
+
