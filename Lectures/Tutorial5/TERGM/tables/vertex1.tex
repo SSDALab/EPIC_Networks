@@ -1,0 +1,36 @@
+\newcolumntype{C}{r}
+\only<1->{\newcolumntype{C}{>{\columncolor{red!60}}r}}
+\only<2->{\newcolumntype{C}{>{\columncolor{red!30}}r}}
+\newcolumntype{P}{l}
+\only<2->{\newcolumntype{P}{>{\columncolor{red!60}}l}}
+
+\newcolumntype{Q}{c}
+\only<1->{\newcolumntype{Q}{>{\columncolor{yellow!90}}c}}
+\only<2->{\newcolumntype{Q}{>{\columncolor{blue!30}}c}}
+
+\begin{tabular}{CcccP}
+\hline
+  \hline
+ & Model 1  & Model 2 & Model 3 & Model 4 \\ 
+  \hline
+  \hline
+\rowcolor{yellow!90}BIC  & 8166.2395 &  7929.2997 & 7699.5743 &  \multicolumn{1}{Q} {7689.1466}  \\ 
+\hline
+\hline
+Intercept & \large{$\checkmark$}  & \large{$\checkmark$}   & &    \\ 
+\hline
+$\mathbb{I}$\{Regular\} &  &  &  &\large{$\checkmark$}  \\ 
+$\mathbb{I}$\{Group 1\}  &  &  & &\large{$\checkmark$}  \\ 
+\hline
+ $V_{t-1}$ & & \large{$\checkmark$} & \large{$\checkmark$} & \large{$\checkmark$}  \\ 
+ 3-Cycle$_{t-1}$  & &  & \large{$\checkmark$}  & \large{$\checkmark$}  \\ 
+\hline
+  $\mathbb{I}$\{Monday\}  &  & & \large{$\checkmark$}  &\large{$\checkmark$}  \\ 
+  $\mathbb{I}$\{Tuesday\}  &  &  & \large{$\checkmark$}  &\large{$\checkmark$}  \\ 
+  $\mathbb{I}$\{Wednesday\}  & &  &  \large{$\checkmark$}  & \large{$\checkmark$} \\ 
+  $\mathbb{I}$\{Thursday\}  &&  & \large{$\checkmark$}  & \large{$\checkmark$} \\ 
+  $\mathbb{I}$\{Friday\}  &  & & \large{$\checkmark$}  & \large{$\checkmark$}  \\ 
+  $\mathbb{I}$\{Saturday\}  &  &&   \large{$\checkmark$} & \large{$\checkmark$}   \\ 
+  $\mathbb{I}$\{Sunday\}  &  &&  \large{$\checkmark$}  & \large{$\checkmark$}  \\ 
+   \hline
+\end{tabular}

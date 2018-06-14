@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: TERGMv.aux
+The style file: ajs.bst
+Database file #1: dynlogit.bib
+Warning--can't use both author and editor fields in xing07
+You've used 42 entries,
+            2436 wiz_defined-function locations,
+            791 strings with 10389 characters,
+and the built_in function-call counts, 19972 in all, are:
+= -- 2100
+> -- 932
+< -- 63
++ -- 274
+- -- 252
+* -- 1654
+:= -- 3407
+add.period$ -- 246
+call.type$ -- 42
+change.case$ -- 252
+chr.to.int$ -- 42
+cite$ -- 43
+duplicate$ -- 800
+empty$ -- 1265
+format.name$ -- 388
+if$ -- 3986
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 46
+newline$ -- 215
+num.names$ -- 210
+pop$ -- 220
+preamble$ -- 1
+purify$ -- 294
+quote$ -- 0
+skip$ -- 577
+stack$ -- 0
+substring$ -- 1311
+swap$ -- 89
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 480
+warning$ -- 1
+while$ -- 186
+width$ -- 0
+write$ -- 592
+(There was 1 warning)

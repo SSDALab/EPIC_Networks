@@ -32,7 +32,272 @@ library(xtable)
 
 ```
 
-# Static Networks: Exponential Random Graph Models
+# Stochastic Actor Oriented Models (SOAM)
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{center}
+\textbf{Stoachastic Actor Oriented Model}
+\end{center}
+
+- A model for estimating the change in network structure over time from panel data
+- Based on the idea that indivuals choose to add or subtract ties myopically based on network structure and exogenous variabls
+- Details to follow...
+
+
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom1}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom2}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom3}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom4}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom5}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom6}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom7}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom8}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom9}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom10}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom11}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom12}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom13}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom14}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom15}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom16}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom17}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom18}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom19}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom20}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom21}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom22}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom23}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom24}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom25}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom26}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom27}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
+### Stochastic Actor Oriented Models (SOAM)
+
+\begin{textblock*}{100mm}(-5mm,-.4\textheight)
+\includegraphics[width=1.1\linewidth]{figures/aom28}
+
+\tiny{jimi adams. EPIC - SNA 2017. Columbia University}
+\tiny{Origin: Snijders TAB, van de Bunt G, Steglich CEG. Introduction to Stochastic Actor-Based Models for Network Dynamics. Social Networks 2010;32:44-60.}
+\end{textblock*}
+
 
 
 # References and Places for More Information 

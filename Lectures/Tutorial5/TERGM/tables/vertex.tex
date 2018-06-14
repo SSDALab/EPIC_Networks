@@ -1,0 +1,70 @@
+\def\colorize<#1>{% 
+\temporal<#1>{\color{black}}{\cellcolor{red!60}}{\color{black!50}}}
+\def\colorizet<#1>{% 
+\temporal<#1>{\color{black}}{}{\color{black!50}}}
+
+
+%\cellcolor{yellow} 
+% \colorize<1>1>
+\cellcolor{blue!50}
+
+
+
+%\begin{tabular}{rcccc}
+%   \hline
+%   \hline
+% & Model 1 & Model 2 & Model 3 & Model 4  \\ 
+%  \hline
+%  \hline
+%\multicolumn{1}{c}{BIC}  & 8166.2395 & 7929.2997 & 7727.7134 & 7695.6264  \\ 
+%\hline
+%\hline
+%  Intercept & -1.5893*  & -1.9250*& -2.5564*  & -3.2988*  \\ 
+%  \hline
+%  \colorize<2>  $\mathbb{I}$\{Regular\} &  \colorize<2>  & \colorize<2>   &  \colorize<2>  & \colorize<2>  \ 0.9245*  \\ 
+% \colorize<2>   $\mathbb{I}$\{Group 1\} &  \colorize<2>  &  \colorize<2>  & \colorize<2>   &   \colorize<2>  \ 0.7827* \\ 
+%  \hline
+%   \colorize<3> $V_{t-1}$ &   \colorize<3> &    \colorize<3> 1.5295* & \colorize<3>  1.1195*  & \colorize<3> \ 0.7764*  \\ 
+%  \colorize<3>   3-Cycle$_{t-1}$ & \colorize<3>   &   \colorize<3> &    \colorize<3> 0.3701*  & \colorize<3>  \ 0.3452* \\ 
+%  \hline
+%  \colorize<4>    $\mathbb{I}$\{Monday\} &\colorize<4>     &\colorize<4>  &\colorize<4>--  &\colorize<4> --   \\ 
+% \colorize<4> $\mathbb{I}$\{Tuesday\} & \colorize<4>       & \colorize<4>   & \colorize<4>0.0421 \  & \colorize<4>-0.0827\  \\ 
+%\colorize<4>  $\mathbb{I}$\{Wednesday\} &\colorize<4>  &\colorize<4>   &  \colorize<4>0.3919* & \colorize<4>\colorize<4> \ 0.2713 \ \\ 
+%\colorize<4>   $\mathbb{I}$\{Thursday\}  & \colorize<4>    &\colorize<4>    & \colorize<4>0.5009* &\colorize<4> \ 0.4182*  \\ 
+% \colorize<4> $\mathbb{I}$\{Friday\}&  \colorize<4>            &\colorize<4>  &  \colorize<4> 0.2788 \  &\colorize<4> \ 0.2014 \  \\ 
+% \colorize<4>  $\mathbb{I}$\{Saturday\}  &  \colorize<4>    &\colorize<4>  &  \colorize<4> 1.3813* & \colorize<4>\ 1.3719*  \\ 
+% \colorize<4> $\mathbb{I}$\{Sunday\} & \colorize<4>         &\colorize<4>  &  \colorize<4> 1.0332*  &\colorize<4> \ 1.0739* \\ 
+%   \hline
+%\end{tabular}
+
+
+\begin{tabular}{rcccc}
+\hline
+  \hline
+ & Model 1  & Model 2 & Model 3 & Model 4 \\ 
+  \hline
+  \hline
+\multicolumn{1}{c}{BIC}  & 8166.2395 &  7929.2997 & 7699.5743 & 7689.1466  \\ 
+\hline
+\hline
+\colorizet<1> Intercept &\colorizet<1> -1.5893* & \colorizet<1> -1.9250*  &  &    \\ 
+\hline
+\colorize<2>  $\mathbb{I}$\{Regular\} &\colorize<2>   & \colorize<2>  & \colorize<2>  & \colorize<2> \ 0.9319* \\ 
+\colorize<2>  $\mathbb{I}$\{Group 1\}  & \colorize<2>  &\colorize<2>   & \colorize<2> & \colorize<2> \ 0.7803* \\ 
+\hline
+\colorize<3>   $V_{t-1}$ & \colorize<3>  & \colorize<3>  \ 1.5295* &\colorize<3>   \ 1.1312* &\colorize<3>   \ 0.7867* \\ 
+\colorize<3>   3-Cycle$_{t-1}$ &\colorize<3>   & \colorize<3>   &\colorize<3>    \ 0.3780* & \colorize<3>  \ 0.3520*  \\ 
+\hline
+ \colorize<4>   $\mathbb{I}$\{Monday\}  &\colorize<4>    &\colorize<4>   &  \colorize<4>  -2.7044*  & \colorize<4>  -3.4522* \\ 
+\colorize<4>    $\mathbb{I}$\{Tuesday\}  &  \colorize<4>  &\colorize<4>    & \colorize<4>   -2.5047*  &\colorize<4>   -3.3754* \\ 
+\colorize<4>    $\mathbb{I}$\{Wednesday\}  \colorize<4>& \colorize<4>   &\colorize<4>    &\colorize<4>    -2.1569* &\colorize<4>   -3.0218* \\ 
+\colorize<4>    $\mathbb{I}$\{Thursday\}  &  \colorize<4>  &\colorize<4>   & \colorize<4>  -2.0497*  &\colorize<4>   -2.8769*\\ 
+\colorize<4>    $\mathbb{I}$\{Friday\}  &  \colorize<4>  &\colorize<4>   &  \colorize<4>  -2.2750*  & \colorize<4>  -3.0973* \\ 
+\colorize<4>    $\mathbb{I}$\{Saturday\}  & \colorize<4>   &\colorize<4>  &  \colorize<4>   -1.1718*  & \colorize<4>  -1.9258*  \\ 
+\colorize<4>    $\mathbb{I}$\{Sunday\}  &  \colorize<4>  &\colorize<4>  &  \colorize<4>  -1.5207*  &\colorize<4>   -2.2235* \\ 
+   \hline
+\end{tabular}
+
+
+
+

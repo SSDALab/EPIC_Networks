@@ -1,0 +1,12 @@
+Package: networkDynamic
+Version: 0.3.2-1695-1697.1-2012.11.26-22.50.33
+Date: 2012-11-26
+Title: Dynamic Extensions for Network Objects
+Type: Package
+Depends: network
+Author: Removed
+Maintainer: Removed <censored@nothere.edu>
+Description: Simple interface routines to facilitate the handling of network objects with complex intertemporal data. "networkDynamic" is a part of the "statnet" suite of packages for network analysis.
+License: GPL-3
+LazyLoad: yes
+URL: http://statnet.org

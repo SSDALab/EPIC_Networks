@@ -6,6 +6,17 @@ output:
     toc_depth: 2
 ---
 
-- Network Autocorrelation Models
-- TERGM
-- SAOM
+- [Network Autocorrelation Models](Lec/autoCorrModel.pdf)
+    - [R](Labs/Lab5/NetAutoCorrelationExample.R)
+- [TERGM with Vertex Dyanmics](Lec/TERGMv.pdf)
+    - [DNR](https://cran.r-project.org/web/packages/dnr/index.html)
+    - [BTERGM](https://www.jstatsoft.org/article/view/v083i06)
+- [STERGM](Lec/stergm.htm)
+    - [R](Labs/Lab5/tergm_tutorial.R)
+- [SAOM](Lec/Almquist_Tutorial5_Part1.pdf)
+    - [R](Labs/Lab5/SABM.R); [Rmarkdown](Labs/Lab5/SIENA.Rmd); [html](Labs/Lab5/SIENA.html)
+        - [data](Labs/Lab5/Tutorial.Rdata)
+
+- Advanced Epidemic Modeling: [epimodel](http://www.epimodel.org/)
+
+

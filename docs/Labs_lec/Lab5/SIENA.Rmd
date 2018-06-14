@@ -1,0 +1,174 @@
+---
+title: 'Stochastic Actor Oriented Models: RSiena'
+author: "Zack W Almquist (University of Minnesota)"
+date: "June 15, 2018"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=FALSE,cache=FALSE}
+require(knitr)
+knitr::opts_chunk$set(cache.comments=FALSE,
+               message=FALSE, warning=FALSE,tidy=TRUE,
+                fig.align='center', 
+                      #fig.show='hold',
+                      #fig.width='\\linewidth',
+                      #out.width='\\linewidth',
+                      prompt=TRUE,comment = NA, cache=TRUE)
+options(replace.assign=TRUE, width=60, prompt="R> ")
+
+## Helpful functions
+logit <- function(p){log(p/(1-p))}
+ilogit <- function(x){exp(x)/(1+exp(x))}
+```
+
+
+# Stochastic Actor Based (Siena) Models
+
+Written by jimi adams, University of Colorado - Denver
+Modified by Zack Almquist, University of Minnesota
+
+## Getting Started
+
+###	Things you'll need
+
+- Download and install the latest release of R's base distribution from [http://cran.r-project.org/](http://cran.r-project.org/)
+- All course materials will be available for download from http://bit.ly/EPIC-SNA.
+- NOTE: This tutorial assumes you save everything in the same working directory. If you choose to move files around, you will need to specify file paths when called. 
+
+```
+install.packages("RSiena",dependancies=TRUE)	
+install.packages("snow")			# The first time you install a package
+install.packages("rlecuyer")		# The first time you install a package
+```
+
+## 	Setting up your R environment
+
+Let’s grab the data and load the libraries file constructed for today and a take a look at what format it’s in.
+
+```{r,results=FALSE,warning=FALSE,message=FALSE}
+library(RSiena)
+library(snow) 
+library(rlecuyer)
+library(network)
+library(sna)
+load("Tutorial.Rdata")
+ls()
+```
+
+# Stochastic Actor-Based Models
+
+We are going to use a script adapted by Tom Snijders and several of his colleagues to estimate a simple model of the coevolution of networks and one behavior, allowing for one other covarying behavior. The data are a synthetic dataset extracted from a larger study of substance use among teens in Scotland. The tutorial we have is an extract from their code, which is available on Tom’s website. For further details on what we’re doing here, you should see their extremely well documented files - [http://www.stats.ox.ac.uk/~snijders/siena/](http://www.stats.ox.ac.uk/~snijders/siena/).
+
+```{r}
+class(friend.data.w1)				# What format are these data in?
+class(drink)
+```
+
+Ok, so basically what we have are a few matrices – one each for the friendship adjacency matrices across the time steps, and one each for the behaviors, with the columns corresponding to the waves. The values are simply coded frequencies of use. Let’s start by getting a sense of what the behavior & network data look like.
+
+```{r,fig.align='center'}
+# look at the data
+print(drink)
+apply(drink,2,table)  # frequencies for each time point "2" applies the table function within columns [use "1" for rows])
+apply(smoke,2,table)
+
+net1 <- as.network(friend.data.w1)
+net2 <- as.network(friend.data.w2)
+net3 <- as.network( friend.data.w3)
+par(mfrow=c(1,3))
+plot( net1, xlab = 'friendship t1')
+plot( net2, xlab = 'friendship t2')
+plot( net3, xlab = 'friendship t3')
+par(mfrow=c(1,1))
+```
+
+Before moving on, let’s add the attributes to the network data and regenerate these plots.
+
+```{r,fig.align='center'}
+set.vertex.attribute(net1, "drink", drink[,1])
+set.vertex.attribute(net2, "drink", drink[,2])
+set.vertex.attribute(net3, "drink", drink[,3])
+net1 %v% "smoke" <- smoke[,1]	# a different way to do the same
+net2 %v% "smoke" <- smoke[,2]	# a different way to do the same
+net3 %v% "smoke" <- smoke[,3]	# a different way to do the same
+par(mfrow=c(1,3))
+plot(net1, vertex.cex=0.5*get.vertex.attribute(net1, "drink"), vertex.col= "smoke", xlab = 'friendship t1')
+plot(net2, vertex.cex=0.5*get.vertex.attribute(net2, "drink"), vertex.col= "smoke", xlab = 'friendship t2')
+legend("top", "Size = Drinking Frequency, Color = Smoking Frequency")
+plot(net3, vertex.cex=0.5*get.vertex.attribute(net3, "drink"), vertex.col= "smoke", xlab = 'friendship t3')
+par(mfrow=c(1,1))
+```
+
+RSiena more or less was developed as a "wrapper" set of scripts for handling an old version of this program that ran as standalone software (known as StOCNet). That is useful for knowing why some of the specification/code norms are a bit "non-standard." In essence you’re creating objects that recreate the file formats that StOCNet relied on. To start, we specify each of the variables we’re going to use, noting what type of variable they will be used as in the model you’re constructing. Here we’re going to predict the coevolution of friendship and drinking behavior, with smoking as a time-varying covariate. To run other sorts of models, you would build your data in a different format corresponding to that model. This is a good point to note that behavioral data in RSiena must be coded as integer values, no higher than 10, and estimation has suggested it’s best and handling those with some, but not too much variation in potential values (e.g., 3-5).
+
+```{r,fig.align='center'}
+friendship <- sienaNet(array(c(friend.data.w1, friend.data.w2, friend.data.w3 ), dim = c(50, 50, 3)), type="oneMode")  
+drinkingbeh <- sienaNet(drink, type = "behavior")	# as a dependent variable
+smoke1 <- varCovar(smoke)							# as a time-varrying covariate
+#gend <- coCovar(gender)							# if instead we wanted a constant covariate
+```
+
+There are other variable options as well, and you should see the documentation for the expected formats of others. Now we need to combine these into a single data object, and initialize the effects object.
+
+```{r}
+mydat <- sienaDataCreate (friendship, smoke1, drinkingbeh)	# putting them all together
+myeff <- getEffects(mydat)		# this contains the model specification, with defaults
+```
+
+
+This specifies an initial model, using the defaults that Siena identifies given the variable definitions you provided (remember we’ve already specified we have 2 DVs and one time-varying covariate; this isn’t just a data.frame. Let’s take a look at what that did. 
+
+```{r}
+print01Report(mydat, modelname = 's50_3_init')		# find this file (in your wd) & take a look
+```
+
+You should find and take a look at the file we just created. It has some details about an initial model specification with the variables we’ve defined. Next, RSiena has some inherent conventions that may be less than obvious. One of these is "shortnames." Here we will make use of them, but explicitly specifying which of them we want via "interactions" (which unfortunately aren’t interactions in the way you’re thinking). Take a look at the available terms and their "shortnames." You’ll note that some of them share "shortnames."
+
+```{r}
+cbind(myeff$effectName,myeff$shortName) 	# RSiena uses "shortNames" in defining some effects, let's have a look
+```
+
+You should take a look at the effects already to be included in the model with the myeff object. Then, we’re going to add some effects to the model.
+
+```{r}
+myeff <- includeEffects(myeff, transTrip, cycle3 )
+```
+
+Now for some node-level behavioral effects. Here we’ll use the ego, alter and similarity versions for each. If we didn’t add the "interaction1" part of these specifications, it wouldn’t know which of the "shortname" egoX/altX/simX variables to grab.
+
+```{r}
+myeff <- includeEffects(myeff, egoX, altX, simX, interaction1 = "smoke1" )  # makes explicit which X's we're after
+myeff <- includeEffects(myeff, egoX, altX, simX, interaction1 = "drinkingbeh" )
+myeff <- includeEffects(myeff, name = "drinkingbeh", avAlt, indeg, outdeg, interaction1 = "friendship" )
+#myeff <- includeEffects(myeff, cycle3, include=F)	# if you wanted to remove an effect from the model
+myeff  # what have we done to this thing
+```
+
+Now let’s initialize the model evaluation and tell it where to write the files. You shouldn’t use the same one as the file above, as you’d like to keep those initialized values and information from being overwritten. Once this file is initialized, each subsequent model you run will have its output appended to the specified file. Once initialized, we’ll run a model.
+
+```{r}
+myCoEvModel <- sienaModelCreate( useStdInits = TRUE, projname = 'model_1' ) # projname is the output file 
+
+ans <- siena07( myCoEvModel, data = mydat, effects = myeff)
+ans
+```
+
+This will bring up a visual console that will summarize the progress of the model being fit. Once it’s run, you should open up the file produced and take a look at the information provided there. Some of it can be summarized by simply calling the model object.
+
+A few things we might want to do. If you would prefer the model estimation updates to be spooled to the R console instead of the visual popup, you can suppress that. Also, if models fail to converge (as indicated by t-statistics that fail to drop below 0.1), you might want to continue running the model, picking up from the end of the prior estimation, rather than starting over.
+
+```{r}
+#ans <- siena07( myCoEvModel, data = mydat, effects = myeff, batch=T, verbose=F)	# suppressing the visual console
+ans2 <- siena07(myCoEvModel, data=mydat, effects=myeff, prevAns=ans)	#rerun, starting from where we left off
+ans2
+```
+
+Here’s an alternate model dropping the in-/out- degree effects on behavior, which improves the fit modestly. Note that since we use the same initialized model, it will be appended to the same file.
+
+```{r}
+myeff2 <- includeEffects(myeff, name = "drinkingbeh", indeg, outdeg, interaction1 = "friendship", include=F)
+ans3 <- siena07( myCoEvModel, data = mydat, effects = myeff2)  
+ans3
+```

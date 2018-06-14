@@ -1,0 +1,12 @@
+Package: dynamicnetwork
+Version: 0.0-4
+Date: June 30, 2007
+Title:  Extension for the network package for working with time-based data
+Author: Skye Bender-deMoll <skyebend@skyeome.net>, 
+        CSDE, University of Washington (list other authors?)
+Maintainer: Skye Bender-deMoll <skyebend@skyeome.net>
+Depends: network
+Suggests: sna, statnet
+Description: Adds additional features to network package for working with networks having edges sets and attributes that change in time
+License: GPL version 2 (June, 1991)
+Packaged: 

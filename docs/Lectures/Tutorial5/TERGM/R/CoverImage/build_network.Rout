@@ -1,0 +1,207 @@
+
+R version 2.13.1 (2011-07-08)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(UScensus2000)
+Loading required package: maptools
+Loading required package: foreign
+Loading required package: sp
+Loading required package: lattice
+Checking rgeos availability: FALSE
+ 	Note: when rgeos is not available, polygon geometry 	computations in maptools depend on gpclib,
+ 	which has a restricted licence. It is disabled by default;
+ 	to enable gpclib, type gpclibPermit()
+Loading required package: UScensus2000tract
+     US Census 2000 Tract Level Shapefiles and
+                    Additional Demographic Data
+Version      0.03 created on      2009-11-11.
+copyright (c) 2009, Zack W. Almquist, University of California-Irvine
+For citation information, type citation("UScensus2000tract").
+Type help(package="UScensus2000tract") to get started.
+Loading required package: UScensus2000blkgrp
+     US Census 2000 Block Group Shapefiles and
+                    Additional Demographic Data
+Version      0.03 created on      2009-11-11.
+copyright (c) 2009, Zack W. Almquist, University of California-Irvine 
+For citation information, type citation("UScensus2000blkgrp").
+Type help(package="UScensus2000blkgrp") to get started.
+Loading required package: UScensus2000cdp
+     US Census 2000 Designated Places Shapefiles and
+                    Additional Demographic Data
+Version      0.03 created on      2009-11-11.
+copyright (c) 2009, Zack W. Almquist, University of California-Irvine
+For citation information, type citation("UScensus2000cdp").
+Type help(package="UScensus2000cdp") to get started.
+Loading required package: gpclib
+General Polygon Clipper Library for R (version 1.5-1)
+	Type 'class ? gpc.poly' for help
+
+     US Census 2000 Suite of R Packages
+Version      1.00 created on      2010-10-05.
+copyright (c) 2010, Zack W. Almquist, University of California-Irvine
+For citation information, type citation("UScensus2000").
+Type help(package="UScensus2000") to get started.
+> library(gpclib)
+> library(spatstat)
+Loading required package: mgcv
+This is mgcv 1.6-2. For overview type 'help("mgcv-package")'.
+Loading required package: deldir
+deldir 0.0-15
+
+     Please note: The process for determining duplicated points
+     has changed from that used in version 0.0-9 (and previously).
+
+spatstat 1.23-3 
+Type ‘help(spatstat)’ for an overview of spatstat 
+     ‘latest.news()’ for news on latest version 
+     ‘licence.polygons()’ for licence information on polygon calculations
+> library(rgdal)
+Geospatial Data Abstraction Library extensions to R successfully loaded
+Loaded GDAL runtime: GDAL 1.6.3, released 2009/11/19
+Path to GDAL shared files: /usr/share/gdal16
+Loaded PROJ.4 runtime: Rel. 4.7.1, 23 September 2009, [PJ_VERSION: 470]
+Path to PROJ.4 shared files: (autodetected)
+> library(multicore)
+
+Attaching package: 'multicore'
+
+The following object(s) are masked from 'package:lattice':
+
+    parallel
+
+> library(networkSpatial)
+Loading required package: network
+     Classes for Relational Data
+Version      1.6 created on      January 28, 2011.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of Washington
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+For citation information, type citation("network").
+Type help("network-package") to get started.
+Loading required package: sna
+     Tools for Social Network Analysis
+Version      2.2-0 created on      2010-11-21.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+Type help(package="sna") to get started.
+
+Attaching package: 'sna'
+
+The following object(s) are masked from 'package:network':
+
+    %c%
+
+The following object(s) are masked from 'package:spatstat':
+
+    maxflow
+
+Tools for the Generation and Analysis of
+               Spatially-embedded Networks
+Version 0.6-1 created on 2011-03-25.
+copyright (c) 2011, Carter T. Butts, University of California-Irvine
+ Zack W Almquist, University of California, Irvine
+Type help(package="networkSpatial") to get started.
+> 
+> load("sf2.rda")
+> load("sf_pts_sp.rda")
+> 
+> ################################
+> ### Projection
+> ################################
+>  as.Polygons.gpc.poly <- function(x, ID) {
++             thisPolys <- lapply(get.pts(x), function(p) {
++                 Polygon(rbind(as.matrix(cbind(p$x, p$y)), c(p$x[1], 
++                   p$y[1])), hole = p$hole)
++             })
++             Polygons(thisPolys, ID)
++   }
+>   
+> buildBB<-function(city,bb.epsilon){
++ 	gpclibPermit()
++   	temp1 <- bbox(city)
++         temp1[1, 1] <- temp1[1, 1] - bb.epsilon
++         temp1[1, 2] <- temp1[1, 2] + bb.epsilon
++         temp1[2, 1] <- temp1[2, 1] - bb.epsilon
++         temp1[2, 2] <- temp1[2, 2] + bb.epsilon
++         temp <- matrix(c(temp1[1, 1], temp1[2, 1], temp1[1, 2], 
++             temp1[2, 1], temp1[1, 2], temp1[2, 2], temp1[1, 1], 
++             temp1[2, 2]), nc = 2, nr = 4, byrow = TRUE)
++         temp.gcp <- as(temp, "gpc.poly")
++         temp.pb <- as.Polygons.gpc.poly(temp.gcp, "temp.gcp1")
++         SpatialPolygons(list(temp.pb), proj4string = CRS("+proj=longlat +datum=NAD83"))
++   }
+> 
+> orthoProj<-function(polygon,pp){
++ 	#projection.point<-coordinates(buildBB(polygon,.0001))
++ 	projection.point<-pp
++ 	trans<-CRS(paste("+proj=ortho +lat_0=",projection.point[2], " +lon_0=", projection.point[1],collapse = "", sep = ""))
++ 	spTransform(polygon,trans)
++ }
+> ################################
+> ### Projection
+> ################################
+> pp<-projection.point<-coordinates(buildBB(sf2,.0001))
+> sf.proj<-orthoProj(sf2,pp)
+> sf.pt.proj<-orthoProj(sfpts,pp)
+> 
+> 
+> 
+> 
+> #################
+> ### Hagerstarand
+> #################
+> sf.net<-rnspatial(1,coordinates(sf.pt.proj),c(0.937, 0.538, 2.956),model="atpowlaw")
+Performing setup
+Subdividing vertices for efficient computation
+	Total elapsed time: 0.00 minutes
+Drawing graph
+	Estimated time to task completion: -nan minutes
+Avoided 2646497956 dyads; fraction avoided was 0.410.
+	Total elapsed time: 24.83 minutes
+Adding edges to graph
+	Estimated time to task completion: 0.00 minutes
+	Estimated time to task completion: 0.00 minutes
+	Estimated time to task completion: 0.07 minutes
+	Estimated time to task completion: 0.06 minutes
+	Estimated time to task completion: 0.04 minutes
+	Estimated time to task completion: 0.02 minutes
+	Estimated time to task completion: 0.01 minutes
+	Estimated time to task completion: 0.01 minutes
+	Total elapsed time: 26.12 minutes
+> 
+> 
+> save(sf.pt.proj,sf.proj,sf.net,file="sfNetwork.rda")
+> 
+> 
+> 
+> png("test.png")
+> plot(sf.proj[10,],border=rgb(0,0,0,.75))
+> plot(sf.pt.proj,pch=19,col=rgb(1,0,0,.5),cex=.1,add=TRUE)
+> dev.off()
+null device 
+          1 
+> 
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+    user   system  elapsed 
+1560.740    1.830 1607.288 

@@ -1,5 +1,5 @@
 ---
-title: "Day 4: "
+title: "Day 4: Introduction to Statistical Models for Networks"
 output:
   html_document:
     toc: true
@@ -7,7 +7,7 @@ output:
 ---
 
 - [Lecture 1](Lec/Almquist_Tutorial4_Part1.pdf)
-    - Lab 4: ERGM [R](Labs/Lab4/ergm_tutorial.R); [Rmarkdown](Labs/Lab4/ERGM_Lab.Rmd); [html](Labs/Lab4/ERGM_Lab.html);
+    - Lab 4: ERGM [R](Labs/Lab4/ergm_tutorial.R); [Rmarkdown](Labs/Lab4/ERGM_Lab.Rmd); [html](Labs/Lab4/ERGM_Lab.html)
         - [ergm-terms](Labs/Lab4/ergm-terms.html)
     - [More ERGM Examples](Labs/Lab4/Lab_More_ERGM_Examples.R)
     - [Even More ERGM Examples](Labs/Lab4/Tutorial_3-ERGM.R)

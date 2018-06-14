@@ -1,0 +1,14 @@
+Package: ndtv
+Type: Package
+Title: Network Dynamic Temporal Visualizations
+Version: 0.1
+Date: 2012-12-10
+Authors@R:c(
+		person("Skye", "Bender-deMoll", role=c("cre","aut"), email="skyebend@uw.edu"),
+    person("Martina", "Morris", role=c("ctb"), email="morrism@u.washington.edu"))
+Depends: R (>= 2.15), network,networkDynamic,animation,sna,statnet.common
+Suggests:tergm
+Enhances: networkDynamic
+Description: Renders dynamic network data from networkDynamic objects as animated movies or other representations of relational structure and node attributes that change over time.
+License: GPL-3
+URL: http://statnet.org

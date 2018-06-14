@@ -1,0 +1,4 @@
+\beamer@endinputifotherversion {3.36pt}
+\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
+\beamer@subsubsectionintoc {1}{0}{1}{Model Adequacy Assessment for DNR w/ Vertex Dynamics}{44}{0}{1}
+\beamer@subsectionintoc {1}{1}{Discussion and Findings}{95}{0}{1}

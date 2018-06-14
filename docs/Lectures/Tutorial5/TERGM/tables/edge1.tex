@@ -1,0 +1,42 @@
+\newcolumntype{C}{r}
+\only<1->{\newcolumntype{C}{>{\columncolor{red!60}}r}}
+\only<2->{\newcolumntype{C}{>{\columncolor{red!30}}r}}
+\newcolumntype{P}{l}
+\only<2->{\newcolumntype{P}{>{\columncolor{red!60}}l}}
+
+\newcolumntype{Q}{c}
+\only<1->{\newcolumntype{Q}{>{\columncolor{yellow!90}}c}}
+\only<2->{\newcolumntype{Q}{>{\columncolor{blue!30}}c}}
+
+\begin{tabular}{CcccP}
+\hline
+  \hline
+ & Model 1 & Model 2 & Model 3  & Model 4 \\ 
+  \hline
+  \hline
+  \rowcolor{yellow!90} BIC & 8166.2395 & 7929.2997 & 7699.5743 &  \multicolumn{1}{Q} {7689.1466} \\ 
+\hline
+\hline
+Intercept &  \normalsize{$\checkmark$}   &  \normalsize{$\checkmark$}   &  &  \\ 
+ Mixing\{Regular (R)\} &  &  & \normalsize{$\checkmark$}  &  \normalsize{$\checkmark$}  \\ 
+ Mixing\{$\neg$ R  $\leftrightarrow$ R\}  &  &  &  \normalsize{$\checkmark$}   &  \normalsize{$\checkmark$}   \\ 
+ Mixing\{$\neg$ R\}   &  &  &  \multicolumn{1}{c}{--}  &  \multicolumn{1}{P}{--} \\ 
+\hline
+  $\mathbb{I}$\{Indiv \ 06\} &   &   &   &     \normalsize{$\checkmark$}  \\ 
+  $\vdots$ &  &  &  &  $\vdots$\\ 
+  $\mathbb{I}$\{Indiv \ 08\} &   &   &   &  \normalsize{$\checkmark$} \\ 
+\hline
+   $\log(n_t )$ &   &   \normalsize{$\checkmark$}  &  \normalsize{$\checkmark$} &   \normalsize{$\checkmark$} \\ 
+\hline
+   $Y_{t-1}$ &   &     \normalsize{$\checkmark$} &   \normalsize{$\checkmark$} &  \normalsize{$\checkmark$}  \\ 
+   $\log($9-Cycle$_{t-1}+1)$ &     &   &  \normalsize{$\checkmark$}   &   \normalsize{$\checkmark$} \\ 
+\hline
+ $\mathbb{I}$\{Monday\} &  &  &  \normalsize{$\checkmark$}   & \normalsize{$\checkmark$}  \\ 
+ $\mathbb{I}$\{Tuesday\}&  &  &   \normalsize{$\checkmark$}  & \normalsize{$\checkmark$}  \\ 
+ $\mathbb{I}$\{Wednesday\} &  &  & \normalsize{$\checkmark$}  &\normalsize{$\checkmark$} \\ 
+ $\mathbb{I}$\{Thursday\} &  &  & \normalsize{$\checkmark$} & \normalsize{$\checkmark$}  \\ 
+ $\mathbb{I}$\{Friday\} &  &  &  \normalsize{$\checkmark$}  & \normalsize{$\checkmark$}  \\ 
+ $\mathbb{I}$\{Saturday\} &  &  & \normalsize{$\checkmark$}   & \normalsize{$\checkmark$}  \\ 
+ $\mathbb{I}$\{Sunday\} &  &   & \normalsize{$\checkmark$} & \normalsize{$\checkmark$}  \\ 
+\hline
+\end{tabular}

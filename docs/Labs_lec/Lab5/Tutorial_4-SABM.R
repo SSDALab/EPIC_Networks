@@ -9,7 +9,6 @@
 ##########################################################################
 #	0. 	Setting up your R environment
 ##########################################################################
-setwd("~/Dropbox/EPIC_2017/tutorial") 	# Path for ALL files w/location unspecified
 #install.packages("RSiena")			# The first time you install a package
 library(RSiena)
 #install.packages("snow")			# The first time you install a package
@@ -68,7 +67,7 @@ smoke1 <- varCovar(smoke)							# as a time-varrying covariate
 
 mydat <- sienaDataCreate (friendship, smoke1, drinkingbeh)	# putting them all together
 myeff <- getEffects(mydat)									# this contains the model specification, with defaults
-print01Report(mydat, myeff, modelname = 's50_3_init')		# find this file (in your wd) & take a look
+print01Report(mydat, modelname = 's50_3_init')	# find this file (in your wd) & take a look
 
 cbind(myeff$effectName,myeff$shortName) 	# RSiena uses "shortNames" in defining some effects, let's have a look
 
@@ -86,7 +85,7 @@ myCoEvModel <- sienaModelCreate( useStdInits = TRUE, projname = 'model_1' ) # pr
 ans <- siena07( myCoEvModel, data = mydat, effects = myeff)
 #ans <- siena07( myCoEvModel, data = mydat, effects = myeff, batch=T, verbose=F)	# suppressing the visual console
 ans2 <- siena07(myCoEvModel, data=mydat, effects=myeff, prevAns=ans)	#rerun, starting from where we left off
-
+ans2
 # A few Addenda
 
 # siena will run faster if your computer has multiple processors (more than 2) 
